@@ -51,6 +51,15 @@ export const Npc = schema({
 }, "Npc");
 export type Npc = SchemaType<typeof Npc>;
 
+// 범퍼카 한 대 (서버 물리 결과) — 좌표는 범퍼카 기구 로컬 좌표, 배열 순서 = 좌석 번호
+export const BumperCar = schema({
+    x: t.float32(),
+    z: t.float32(),
+    // 정면 방향 (라디안, 0 = +z)
+    heading: t.float32(),
+}, "BumperCar");
+export type BumperCar = SchemaType<typeof BumperCar>;
+
 export const ParkState = schema({
     // key = session_id
     players: t.map(Player),
@@ -58,5 +67,7 @@ export const ParkState = schema({
     rides: t.map(Ride),
     // key = npc_id
     npcs: t.map(Npc),
+    // 범퍼카 위치·방향 (index = 좌석 번호)
+    bumper_cars: t.array(BumperCar),
 }, "ParkState");
 export type ParkState = SchemaType<typeof ParkState>;

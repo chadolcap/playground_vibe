@@ -1,7 +1,9 @@
 // 플레이 세션 — 입장 후 내 오리 생성, 입력·카메라 연결, 다른 플레이어 표시·내 위치 전송, 매 프레임 갱신
 import * as THREE from "three";
 import type { Room } from "@colyseus/sdk";
-import { SERVER_MESSAGE, type MoveCorrection } from "@shared";
+import { RIDE_ID, SERVER_MESSAGE, type MoveCorrection } from "@shared";
+import { createBumperCars } from "./bumperCars";
+import { createClickToMove } from "../controls/clickToMove";
 import { createDuckAvatar } from "../character/duckAvatar";
 import { createFollowCamera } from "../controls/followCamera";
 import { createJoystick, type Joystick } from "../controls/joystick";
@@ -104,7 +106,12 @@ export async function startPlaySession(world: ParkWorld, room: Room, ui_layer: H
     const npc_talk = createNpcTalk({ room, local_player, ride_controller, npc_ducks, ui_layer, notify });
     // 터치 기기는 E 키 안내를 붙이지 않음
     const action_bar = createActionBar(ui_layer, joystick === null);
-    const minimap = createMinimap(ui_layer);
+    // 미니맵을 누른 곳까지 자동 걷기 (탑승 중에는 무시)
+    const minimap = createMinimap(ui_layer, (x, z) => {
+        if (!local_player.locked) {
+            local_player.setDestination(x, z);
+        }
+    });
 
     // 서버가 이동을 거부하면(속도 초과 등) 서버가 인정한 위치로 되돌림
     const stop_correction = room.onMessage(SERVER_MESSAGE.MOVE_CORRECTION, (correction: MoveCorrection) => {
@@ -112,16 +119,44 @@ export async function startPlaySession(world: ParkWorld, room: Room, ui_layer: H
         position_sender.resetTo(correction.x, correction.z);
     });
 
+    // 더블클릭(모바일 더블탭)한 곳까지 자동 걷기 — 탑승 중에는 무시
+    const click_to_move = createClickToMove(world.canvas, world.camera, world.scene, (x, z) => {
+        if (!local_player.locked) {
+            local_player.setDestination(x, z);
+        }
+    });
+
+    // 범퍼카: 서버 물리 위치 표시·조종·충돌 연출 (내 차가 부딪히면 화면 흔들림)
+    const myBumperSeat = (): number | null => {
+        const riding = ride_controller.riding;
+        return riding !== null && riding.ride_id === RIDE_ID.BUMPER_CAR ? riding.seat_index : null;
+    };
+    const bumper_cars = createBumperCars({
+        world,
+        room,
+        getMySeat: myBumperSeat,
+        onMyHit: (strength) => follow_camera.shake(Math.min(strength / 6, 1)),
+    });
+
     const unsubscribe = world.onFrame((time, delta) => {
         server_clock.update(delta);
+        // 범퍼카 위치를 먼저 반영해야 좌석에 앉는 오리(나·다른 사람·NPC)가 이번 프레임 차 위치에 앉음
+        bumper_cars.update();
         const inputs = joystick === null ? [keyboard.read()] : [keyboard.read(), joystick.read()];
         local_player.update(inputs, follow_camera.yaw, delta, time);
+        click_to_move.update(local_player.destination, time);
         ride_controller.update();
+        const bumper_seat = myBumperSeat();
+        // 범퍼카에 타고 있으면 이동 입력이 곧 운전 입력 (위·아래 = 가속·후진, 좌·우 = 핸들)
+        bumper_cars.drive(inputs, bumper_seat, delta);
         position_sender.update(delta);
         remote_players.update(time, delta);
         npc_ducks.update(time, delta);
         npc_talk.update();
-        follow_camera.setMinDistance(ride_controller.riding === null ? 0 : RIDING_CAMERA_DISTANCE);
+        // 범퍼카는 지붕 아래에서 차 뒤를 따라가며 보고, 다른 기구는 멀리서 기구 전체를 봄
+        const bumper_heading = bumper_seat === null ? null : bumper_cars.headingOf(bumper_seat);
+        follow_camera.setMinDistance(ride_controller.riding === null || bumper_seat !== null ? 0 : RIDING_CAMERA_DISTANCE);
+        follow_camera.setYawTarget(bumper_heading === null ? null : bumper_heading + Math.PI);
         follow_camera.update(avatar.root.position, delta);
         // 타기/내리기가 먼저 (E 키), 그다음 말 걸기
         action_bar.setActions([...ride_controller.getActions(), ...npc_talk.getActions()]);
@@ -144,6 +179,8 @@ export async function startPlaySession(world: ParkWorld, room: Room, ui_layer: H
             server_clock.dispose();
             action_bar.dispose();
             minimap.dispose();
+            click_to_move.dispose();
+            bumper_cars.dispose();
             npc_talk.dispose();
             npc_ducks.dispose();
             ride_controller.dispose();

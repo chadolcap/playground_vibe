@@ -94,6 +94,14 @@
         "xlsx"
       ],
       "timestamp": "2026-11-11T06:39:55.326Z"
+    },
+    {
+      "task": "UI 개선: 미니맵·파스텔 툰 그림체·범퍼카 조종/충돌 서버 물리",
+      "agent": "coder",
+      "success": true,
+      "quality": 0.9,
+      "keywords": [],
+      "timestamp": "2026-11-11T07:42:29.496Z"
     }
   ]
 }

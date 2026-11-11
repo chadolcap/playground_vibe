@@ -2,9 +2,11 @@
 // 입장(별명 검증·중복 거부·방 번호·색 배정), 이동 검증, 탑승·하차, NPC 대화, 퇴장·재접속 유예
 import { Room, ServerError, type Client } from "@colyseus/core";
 import {
+    BUMPER,
     CLIENT_MESSAGE,
     ERROR_CODE,
     NPC_ID_PREFIX,
+    RIDE_ID,
     PLAYER_ANIM,
     RIDES,
     RIDE_LIST,
@@ -19,6 +21,7 @@ import {
     isNpcChoiceId,
     isRideId,
     nicknameKey,
+    type BumperInputPayload,
     type ErrorCode,
     type MoveCorrection,
     type NpcTalkResult,
@@ -32,6 +35,7 @@ import { getNpcReply } from "../data/npcDialogs";
 import { hueToHex, pickHue } from "../logic/colors";
 import { checkMove, createBaseline, type MoveBaseline } from "../logic/movement";
 import { Npc, ParkState, Player, Ride, Seat } from "../schema/ParkState";
+import { BumperArena } from "./bumperArena";
 
 // 입장 거부·요청 실패 시 오류 번호 (메시지에는 ERROR_CODE 문자열을 담음)
 const JOIN_REJECT_CODE = 4100;
@@ -104,6 +108,8 @@ export class ParkRoom extends Room<{ state: ParkState }> {
     private player_hues = new Map<string, number>();
     // session_id → 마지막으로 인정한 이동 (속도 검증 기준)
     private move_baselines = new Map<string, MoveBaseline>();
+    // 범퍼카 경기장 (서버 물리)
+    private bumper_arena: BumperArena | null = null;
 
     onCreate(): void {
         this.room_no = acquireRoomNo();
@@ -111,6 +117,20 @@ export class ParkRoom extends Room<{ state: ParkState }> {
         // 매치메이킹 목록(getAvailableRooms 등)에서도 방 번호를 볼 수 있도록 기록
         void this.setMetadata({ room_no: this.room_no });
         this.setupRides();
+
+        // 범퍼카: 초당 30회 물리 계산, 세게 부딪히면 방 전체에 알림 (충돌 연출용)
+        this.bumper_arena = new BumperArena(
+            this.state.bumper_cars,
+            RIDES.bumper_car.seat_count,
+            (hit) => this.broadcast(SERVER_MESSAGE.BUMPER_HIT, hit),
+        );
+        this.setSimulationInterval((delta_ms) => {
+            const seats = this.state.rides.get(RIDE_ID.BUMPER_CAR)?.seats;
+            if (seats !== undefined) {
+                this.bumper_arena?.step(delta_ms / 1000, [...seats], this.clock.currentTime / 1000);
+            }
+        }, 1000 / BUMPER.SIMULATION_RATE);
+        this.onMessage(CLIENT_MESSAGE.BUMPER_INPUT, (client, payload: unknown) => this.handleBumperInput(client, payload));
 
         this.onMessage(CLIENT_MESSAGE.ROOM_INFO, (): RoomInfo => ({
             room_no: this.room_no,
@@ -304,6 +324,19 @@ export class ParkRoom extends Room<{ state: ParkState }> {
         return { npc_id: npc.id, choice_id, text: getNpcReply(npc.ride_id, choice_id) };
     }
 
+    // 범퍼카 조종 입력 — 범퍼카에 타고 있는 사람의 것만 받음 (응답 없음)
+    private handleBumperInput(client: Client, payload: unknown): void {
+        const player = this.state.players.get(client.sessionId);
+        if (player === undefined || player.ride_id !== RIDE_ID.BUMPER_CAR || typeof payload !== "object" || payload === null) {
+            return;
+        }
+        const { throttle, steer } = payload as Partial<BumperInputPayload>;
+        if (typeof throttle !== "number" || typeof steer !== "number") {
+            return;
+        }
+        this.bumper_arena?.setInput(player.seat_index, throttle, steer, this.clock.currentTime / 1000);
+    }
+
     private getPlayerOrReject(client: Client): Player {
         const player = this.state.players.get(client.sessionId);
         if (player === undefined) {
@@ -319,6 +352,10 @@ export class ParkRoom extends Room<{ state: ParkState }> {
 
     // 플레이어가 앉아 있던 좌석을 비우고 탑승 정보 초기화
     private vacateSeat(player: Player): void {
+        if (player.ride_id === RIDE_ID.BUMPER_CAR) {
+            // 내린 뒤에는 그 차가 다시 자동 주행
+            this.bumper_arena?.clearInput(player.seat_index);
+        }
         const seat = this.state.rides.get(player.ride_id)?.seats[player.seat_index];
         if (seat !== undefined && seat.occupant_id === player.session_id) {
             seat.kind = SEAT_KIND.EMPTY;

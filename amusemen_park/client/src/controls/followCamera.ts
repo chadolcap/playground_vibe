@@ -7,6 +7,10 @@ export interface FollowCamera {
     readonly yaw: number;
     // 최소 거리 강제 (탑승 중에는 기구 구조물에 가리지 않도록 멀리서 봄), 0 이면 해제
     setMinDistance(value: number): void;
+    // 카메라를 이 방향(yaw) 쪽으로 천천히 돌림 — 범퍼카 운전 중 차 뒤에서 보도록, null 이면 해제
+    setYawTarget(target_yaw: number | null): void;
+    // 화면 흔들림 (충돌 등), strength 0~1
+    shake(strength: number): void;
     update(target: THREE.Vector3, delta: number): void;
     dispose(): void;
 }
@@ -20,12 +24,18 @@ const ROTATE_SPEED = 0.0055;
 const FOLLOW_RATE = 8;
 // 대상(발밑)에서 바라볼 높이
 const LOOK_HEIGHT = 1.1;
+// 목표 방향 따라가기 빠르기 / 흔들림 최대 폭·잦아드는 빠르기
+const YAW_FOLLOW_RATE = 3;
+const SHAKE_MAX_OFFSET = 0.35;
+const SHAKE_DECAY = 7;
 
 export function createFollowCamera(camera: THREE.PerspectiveCamera, surface: HTMLElement, initial_yaw: number): FollowCamera {
     let yaw = initial_yaw;
     let pitch = 0.42;
     let distance = 7;
     let forced_min_distance = 0;
+    let yaw_target: number | null = null;
+    let shake_amount = 0;
 
     // 화면 위 손가락/마우스 (두 개면 확대·축소)
     const pointers = new Map<number, { x: number; y: number }>();
@@ -83,7 +93,18 @@ export function createFollowCamera(camera: THREE.PerspectiveCamera, surface: HTM
         setMinDistance(value) {
             forced_min_distance = value;
         },
+        setYawTarget(target_yaw) {
+            yaw_target = target_yaw;
+        },
+        shake(strength) {
+            shake_amount = Math.max(shake_amount, THREE.MathUtils.clamp(strength, 0, 1));
+        },
         update(target, delta) {
+            // 드래그 중이 아니면 목표 방향으로 천천히 따라감
+            if (yaw_target !== null && pointers.size === 0) {
+                const difference = Math.atan2(Math.sin(yaw_target - yaw), Math.cos(yaw_target - yaw));
+                yaw += difference * (1 - Math.exp(-YAW_FOLLOW_RATE * delta));
+            }
             look_target.set(target.x, target.y + LOOK_HEIGHT, target.z);
             const current_distance = Math.max(distance, forced_min_distance);
             const horizontal = Math.cos(pitch) * current_distance;
@@ -101,6 +122,14 @@ export function createFollowCamera(camera: THREE.PerspectiveCamera, surface: HTM
                 camera.position.lerp(desired, 1 - Math.exp(-FOLLOW_RATE * delta));
             }
             camera.lookAt(look_target);
+            // 흔들림: 짧게 덜컹거리다 금방 잦아듦
+            if (shake_amount > 0.001) {
+                const offset = shake_amount * SHAKE_MAX_OFFSET;
+                camera.position.x += (Math.random() * 2 - 1) * offset;
+                camera.position.y += (Math.random() * 2 - 1) * offset;
+                camera.rotateZ((Math.random() * 2 - 1) * shake_amount * 0.04);
+                shake_amount *= Math.exp(-SHAKE_DECAY * delta);
+            }
         },
         dispose() {
             surface.removeEventListener("pointerdown", onPointerDown);

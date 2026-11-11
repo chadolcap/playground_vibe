@@ -37,7 +37,8 @@ function createLayer(size_px: number): [HTMLCanvasElement, CanvasRenderingContex
     return [canvas, context];
 }
 
-export function createMinimap(container: HTMLElement): Minimap {
+// on_pick: 미니맵을 누른 지점의 월드 좌표 (그곳까지 자동 걷기)
+export function createMinimap(container: HTMLElement, on_pick: (x: number, z: number) => void): Minimap {
     const ratio = Math.min(window.devicePixelRatio || 1, 2);
     const size_px = Math.round(SIZE * ratio);
     // 월드 좌표(-MAP_HALF~MAP_HALF) → 캔버스 픽셀
@@ -49,6 +50,19 @@ export function createMinimap(container: HTMLElement): Minimap {
     const [canvas, context] = createLayer(size_px);
     wrapper.appendChild(canvas);
     container.appendChild(wrapper);
+    wrapper.title = "누른 곳으로 걸어가요";
+
+    // 누른 위치(화면 크기와 무관하게 비율로) → 월드 좌표
+    const onPointerDown = (event: PointerEvent): void => {
+        const rect = canvas.getBoundingClientRect();
+        const ratio_x = (event.clientX - rect.left) / rect.width;
+        const ratio_z = (event.clientY - rect.top) / rect.height;
+        on_pick(ratio_x * MAP_HALF * 2 - MAP_HALF, ratio_z * MAP_HALF * 2 - MAP_HALF);
+        // 3D 화면 드래그(카메라 회전)·더블탭 판정으로 새지 않게
+        event.stopPropagation();
+        event.preventDefault();
+    };
+    canvas.addEventListener("pointerdown", onPointerDown);
 
     // 고정 배경: 잔디 → 구역 → 길 → 놀이기구
     const [background, bg] = createLayer(size_px);
@@ -116,6 +130,7 @@ export function createMinimap(container: HTMLElement): Minimap {
             context.stroke();
         },
         dispose() {
+            canvas.removeEventListener("pointerdown", onPointerDown);
             wrapper.remove();
         },
     };
