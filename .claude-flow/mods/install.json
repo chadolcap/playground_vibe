@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "installedAt": "2026-11-11T02:50:09.384Z",
+  "files": {
+    "D:\\work\\study\\playground_vibe\\.claude\\settings.json": {
+      "plugins": [
+        "ruflo-mods@ruflo",
+        "ruflo-swarm@ruflo",
+        "ruflo-console@ruflo"
+      ],
+      "marketplace": true,
+      "env": true,
+      "claudeInstalled": [
+        "ruflo-mods@ruflo",
+        "ruflo-swarm@ruflo",
+        "ruflo-console@ruflo"
+      ]
+    }
+  }
+}
