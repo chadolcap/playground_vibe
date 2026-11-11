@@ -1,0 +1,1 @@
+{"v":1,"endedAt":1794367035423,"reason":"prompt_input_exit","totalUsd":2.475227,"byAgent":{"main":2.475227},"byTool":{"PowerShell":1.110374,"Write":0.486334,"Read":0.356106,"Edit":0.244147,"AskUserQuestion":0.118222,"(model)":0.079458,"Bash":0.058391,"Grep":0.022195},"refusals":0,"budget":null}

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+        <meta name="theme-color" content="#ffd84d" />
+        <title>오리 놀이동산</title>
+    </head>
+    <body>
+        <!-- 첫 페이지: 소개 + 입장 -->
+        <main id="intro-screen" class="screen intro">
+            <section class="intro-card">
+                <div class="intro-duck" aria-hidden="true">🐥</div>
+                <h1 class="intro-title">오리 놀이동산</h1>
+                <p class="intro-desc">
+                    새끼 오리가 되어 친구들과 함께 놀이동산을 걸어 다니고,<br />
+                    롤러코스터부터 사파리까지 놀이기구 8종을 타 보세요!
+                </p>
+
+                <form id="join-form" class="join-form" novalidate>
+                    <label class="join-label" for="nickname-input">별명</label>
+                    <div class="join-row">
+                        <input
+                            id="nickname-input"
+                            class="join-input"
+                            type="text"
+                            autocomplete="off"
+                            autocapitalize="off"
+                            spellcheck="false"
+                            enterkeyhint="go"
+                            placeholder="2~10글자 (한글·영문·숫자·_)"
+                        />
+                        <span id="nickname-count" class="join-count">0/10</span>
+                    </div>
+                    <p id="join-message" class="join-message" role="alert" aria-live="polite"></p>
+                    <button id="join-button" class="join-button" type="submit">입장하기</button>
+                </form>
+
+                <details class="guide" open>
+                    <summary>조작법</summary>
+                    <div class="guide-grid">
+                        <div class="guide-col">
+                            <h2>💻 PC</h2>
+                            <ul>
+                                <li><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / 방향키 — 이동</li>
+                                <li>마우스 드래그 — 시점 회전</li>
+                            </ul>
+                        </div>
+                        <div class="guide-col">
+                            <h2>📱 모바일</h2>
+                            <ul>
+                                <li>왼쪽 아래 조이스틱 — 이동</li>
+                                <li>화면 드래그 — 시점 회전</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p class="guide-common">놀이기구 앞에서 <b>타기</b>, 오리 친구 옆에서 <b>말 걸기</b> 버튼을 눌러 보세요.</p>
+                </details>
+            </section>
+        </main>
+
+        <!-- 입장 후 화면: 3D 월드 + 화면 위 UI -->
+        <main id="world-screen" class="world" hidden>
+            <div id="world-canvas" class="world-canvas"></div>
+            <!-- 현재 접속한 방 번호 (화면 좌측 상단 고정) -->
+            <div id="room-badge" class="room-badge"></div>
+            <button id="leave-button" class="leave-button" type="button">나가기</button>
+            <!-- 입장 안내 (잠시 보였다가 사라짐) -->
+            <p id="world-status" class="world-toast" role="status"></p>
+        </main>
+
+        <script type="module" src="/src/main.ts"></script>
+    </body>
+</html>

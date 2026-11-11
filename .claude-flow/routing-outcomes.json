@@ -1,0 +1,99 @@
+{
+  "outcomes": [
+    {
+      "task": "놀이동산 1단계 기반 구성 (server/client/shared, 별칭, env, gitignore)",
+      "agent": "coder",
+      "success": true,
+      "quality": 0.9,
+      "keywords": [
+        "server",
+        "client",
+        "shared",
+        "env",
+        "gitignore"
+      ],
+      "timestamp": "2026-11-11T03:27:40.533Z"
+    },
+    {
+      "task": "놀이동산 2단계 소개·입장 화면, 별명 검증, park 방 입장 거부 처리",
+      "agent": "coder",
+      "success": true,
+      "quality": 0.9,
+      "keywords": [
+        "park"
+      ],
+      "timestamp": "2026-11-11T04:29:27.768Z"
+    },
+    {
+      "task": "놀이동산 3단계 ParkRoom 상태·이동·탑승·NPC·재접속 + 단위/종단 테스트",
+      "agent": "coder",
+      "success": true,
+      "quality": 0.92,
+      "keywords": [
+        "parkroom",
+        "npc"
+      ],
+      "timestamp": "2026-11-11T04:53:48.104Z"
+    },
+    {
+      "task": "놀이동산 4단계 3D 월드: 씬·지형·장식·놀이기구 8종·운행 애니메이션·좌석 앵커",
+      "agent": "coder",
+      "success": true,
+      "quality": 0.88,
+      "keywords": [],
+      "timestamp": "2026-11-11T05:12:42.503Z"
+    },
+    {
+      "task": "놀이동산 5단계 오리 캐릭터·애니메이션·이름표·3인칭 카메라·키보드/조이스틱",
+      "agent": "coder",
+      "success": true,
+      "quality": 0.9,
+      "keywords": [],
+      "timestamp": "2026-11-11T05:21:49.993Z"
+    },
+    {
+      "task": "놀이동산 6단계 멀티플레이 동기화: 원격 플레이어·보간·위치 전송·좌석 표시·보정",
+      "agent": "coder",
+      "success": true,
+      "quality": 0.9,
+      "keywords": [],
+      "timestamp": "2026-11-11T05:50:48.698Z"
+    },
+    {
+      "task": "놀이동산 7단계 탑승: 타기 버튼·좌석 착석·탑승 시점 인셋·내리기·만석",
+      "agent": "coder",
+      "success": true,
+      "quality": 0.9,
+      "keywords": [],
+      "timestamp": "2026-11-11T06:00:40.333Z"
+    },
+    {
+      "task": "탑승자 미표시 버그: 방 시각 동기화 + 기구 자세 시각 함수화",
+      "agent": "coder",
+      "success": true,
+      "quality": 0.92,
+      "keywords": [],
+      "timestamp": "2026-11-11T06:23:59.821Z"
+    },
+    {
+      "task": "놀이동산 8단계 NPC 오리 표시·말 걸기·대화창",
+      "agent": "coder",
+      "success": true,
+      "quality": 0.9,
+      "keywords": [
+        "npc"
+      ],
+      "timestamp": "2026-11-11T06:31:07.292Z"
+    },
+    {
+      "task": "놀이동산 9단계 통신 문서 xlsx 정리·작성·대조 스크립트",
+      "agent": "coder",
+      "success": true,
+      "quality": 0.88,
+      "keywords": [
+        "xlsx"
+      ],
+      "timestamp": "2026-11-11T06:39:55.326Z"
+    }
+  ]
+}

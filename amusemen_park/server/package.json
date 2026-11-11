@@ -1,0 +1,24 @@
+{
+  "name": "amusement-park-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --env-file-if-exists=.env src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --noEmit && npm test && esbuild src/index.ts --bundle --platform=node --target=node22 --format=esm --packages=external --sourcemap --outfile=dist/index.js",
+    "start": "node --env-file-if-exists=.env dist/index.js",
+    "test": "node --import tsx --test \"tests/**/*.test.ts\""
+  },
+  "dependencies": {
+    "@colyseus/core": "^0.18.28",
+    "@colyseus/schema": "^5.0.46",
+    "@colyseus/ws-transport": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "esbuild": "^0.28.2",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

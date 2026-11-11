@@ -1,0 +1,198 @@
+{
+  "tasks": {
+    "task-1794367302822-8zpm90": {
+      "taskId": "task-1794367302822-8zpm90",
+      "type": "feature",
+      "description": "놀이동산 1단계: server(Colyseus+TS)/client(Vite+TS+Three.js)/shared 상수 + 경로 별칭 + .env 분리 + .gitignore",
+      "priority": "high",
+      "status": "pending",
+      "progress": 0,
+      "assignedTo": [],
+      "tags": [
+        "amusement-park",
+        "stage-1",
+        "scaffold"
+      ],
+      "createdAt": "2026-11-11T03:21:42.822Z",
+      "startedAt": null,
+      "completedAt": null
+    },
+    "task-1794371088839-1evdlk": {
+      "taskId": "task-1794371088839-1evdlk",
+      "type": "feature",
+      "description": "놀이동산 2단계: 소개+입장 화면, 별명 검증(shared), park 방 접속, 오류 표시, 반응형 / ParkRoom 입장 검증 최소 구현",
+      "priority": "high",
+      "status": "pending",
+      "progress": 0,
+      "assignedTo": [],
+      "tags": [
+        "amusement-park",
+        "stage-2",
+        "ui"
+      ],
+      "createdAt": "2026-11-11T04:24:48.839Z",
+      "startedAt": null,
+      "completedAt": null
+    },
+    "task-1794372238578-y7q7td": {
+      "taskId": "task-1794372238578-y7q7td",
+      "type": "feature",
+      "description": "놀이동산 3단계: ParkRoom 상태 스키마(Player/Ride/Npc), 색 배정, 이동 검증, 탑승/하차, NPC 대화, 퇴장·재접속 유예 + 서버 단위 테스트",
+      "priority": "high",
+      "status": "pending",
+      "progress": 0,
+      "assignedTo": [],
+      "tags": [
+        "amusement-park",
+        "stage-3",
+        "server"
+      ],
+      "createdAt": "2026-11-11T04:43:58.579Z",
+      "startedAt": null,
+      "completedAt": null
+    },
+    "task-1794373198780-ms4dav": {
+      "taskId": "task-1794373198780-ms4dav",
+      "type": "feature",
+      "description": "놀이동산 4단계: Three.js 씬(조명·하늘·리사이즈·픽셀비율), 구역 지형·길·표지판, 인스턴싱 장식, 놀이기구 8종 도형 모델 + 운행 애니메이션 + 좌석 앵커",
+      "priority": "high",
+      "status": "pending",
+      "progress": 0,
+      "assignedTo": [],
+      "tags": [
+        "amusement-park",
+        "stage-4",
+        "client",
+        "threejs"
+      ],
+      "createdAt": "2026-11-11T04:59:58.780Z",
+      "startedAt": null,
+      "completedAt": null
+    },
+    "task-1794374112427-fgp9rm": {
+      "taskId": "task-1794374112427-fgp9rm",
+      "type": "feature",
+      "description": "놀이동산 5단계: 새끼 오리 모델(분리 모듈)·절차적 애니메이션(대기/걷기/앉기)·이름표·3인칭 추적 카메라·키보드/가상 조이스틱 조작",
+      "priority": "high",
+      "status": "pending",
+      "progress": 0,
+      "assignedTo": [],
+      "tags": [
+        "amusement-park",
+        "stage-5",
+        "client",
+        "character"
+      ],
+      "createdAt": "2026-11-11T05:15:12.427Z",
+      "startedAt": null,
+      "completedAt": null
+    },
+    "task-1794375696992-73hezy": {
+      "taskId": "task-1794375696992-73hezy",
+      "type": "feature",
+      "description": "놀이동산 6단계: 다른 플레이어 생성·제거, 위치 보간, 이름표·색, 내 위치 전송(15Hz·변화 시), 탑승 중 좌석 표시, move_correction 처리",
+      "priority": "high",
+      "status": "pending",
+      "progress": 0,
+      "assignedTo": [],
+      "tags": [
+        "amusement-park",
+        "stage-6",
+        "multiplayer"
+      ],
+      "createdAt": "2026-11-11T05:41:36.992Z",
+      "startedAt": null,
+      "completedAt": null
+    },
+    "task-1794376421094-4umbro": {
+      "taskId": "task-1794376421094-4umbro",
+      "type": "feature",
+      "description": "놀이기구 7단계: 게이트 근처 '타기' 버튼(빈자리 표시·E키), 탑승 요청→좌석 착석, 우측 상단 탑승 시점 인셋 뷰, '내리기', 만석·오류 안내",
+      "priority": "high",
+      "status": "pending",
+      "progress": 0,
+      "assignedTo": [],
+      "tags": [
+        "amusement-park",
+        "stage-7",
+        "ride"
+      ],
+      "createdAt": "2026-11-11T05:53:41.094Z",
+      "startedAt": null,
+      "completedAt": null
+    },
+    "task-1794377905561-2iznv4": {
+      "taskId": "task-1794377905561-2iznv4",
+      "type": "bugfix",
+      "description": "탑승자가 다른 클라이언트에서 보이지 않음: 놀이기구 애니메이션이 클라이언트마다 따로 진행(델타 누적) → 서버 기준 방 시각 동기화(time_sync) + 기구 자세를 시각의 순수 함수로(코스터는 한 바퀴 시간표)",
+      "priority": "critical",
+      "status": "pending",
+      "progress": 0,
+      "assignedTo": [],
+      "tags": [
+        "amusement-park",
+        "bugfix",
+        "sync",
+        "ride"
+      ],
+      "createdAt": "2026-11-11T06:18:25.561Z",
+      "startedAt": null,
+      "completedAt": null
+    },
+    "task-1794378365659-s9no5n": {
+      "taskId": "task-1794378365659-s9no5n",
+      "type": "feature",
+      "description": "놀이동산 8단계: NPC 오리 좌석 표시(npc_N 이름표), NPC 근처 '말 걸기' 버튼(말풍선), 대화창(선택지→서버 대답), 멀어지면 자동 닫기",
+      "priority": "high",
+      "status": "pending",
+      "progress": 0,
+      "assignedTo": [],
+      "tags": [
+        "amusement-park",
+        "stage-8",
+        "npc"
+      ],
+      "createdAt": "2026-11-11T06:26:05.659Z",
+      "startedAt": null,
+      "completedAt": null
+    },
+    "task-1794379037510-hxadr5": {
+      "taskId": "task-1794379037510-hxadr5",
+      "type": "feature",
+      "description": "놀이동산 9단계: 통신 문서 xlsx — 원본 백업, 기존 7개 시트 정리, lobby 형식으로 메시지/상태 동기화/오류 코드 시트 작성, 코드-문서 대조 스크립트",
+      "priority": "normal",
+      "status": "pending",
+      "progress": 0,
+      "assignedTo": [],
+      "tags": [
+        "amusement-park",
+        "stage-9",
+        "docs",
+        "xlsx"
+      ],
+      "createdAt": "2026-11-11T06:37:17.510Z",
+      "startedAt": null,
+      "completedAt": null
+    },
+    "task-1794379461189-34qcpo": {
+      "taskId": "task-1794379461189-34qcpo",
+      "type": "feature",
+      "description": "UI 개선: (1) 좌측 상단 미니맵 (2) 아기자기·부드러운 파스텔 그림체(둥근 도형·카툰 셰이딩·조명) (3) 범퍼카 조종 + 서버 물리 충돌 동기화 + 충돌 연출",
+      "priority": "high",
+      "status": "pending",
+      "progress": 0,
+      "assignedTo": [],
+      "tags": [
+        "amusement-park",
+        "ui",
+        "minimap",
+        "style",
+        "bumper-car"
+      ],
+      "createdAt": "2026-11-11T06:44:21.189Z",
+      "startedAt": null,
+      "completedAt": null
+    }
+  },
+  "version": "3.0.0"
+}

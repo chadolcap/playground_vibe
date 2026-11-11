@@ -1,0 +1,642 @@
+/* 기본 글꼴: 원스토어 모바일 POP체 (한글·영문)
+   출처: https://www.onestorecorp.com/sv/fordev_font/ — 눈누(projectnoonnu) CDN 사용 */
+@font-face {
+    font-family: "ONE-Mobile-POP";
+    src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/ONE-Mobile-POP.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+    /* 글꼴을 받는 동안 대체 글꼴로 먼저 표시 (빈 화면 방지) */
+    font-display: swap;
+    /* POP체는 한자(好 등)·대시(—)·© « » • 등에 "빈 글리프"가 들어 있어, 그대로 두면 대체 글꼴로
+       넘어가지 않고 빈칸으로 보인다. 실제로 그려지는 것을 확인한 범위에만 POP체를 적용하고
+       나머지(한자·가나·키릴·태국어·아랍어·이모지 등 다국어)는 --font-main 의 대체 글꼴이 담당.
+       - 한글 음절 11,172자 전체, ASCII 전체: 그려짐 확인 (2026-11-11 브라우저 캔버스 검사) */
+    unicode-range:
+        U+0020-007E, /* ASCII */
+        U+00A0-00A8, U+00AA, U+00AE-00BA, U+00BC-00FF, /* Latin-1 (© « soft-hyphen » 제외) */
+        U+2018-201A, U+201C-201E, U+2020-2021, U+2025-2026, U+2030-2033, /* 따옴표·말줄임표 등 */
+        U+2190-2193, /* 화살표 */
+        U+1100-1112, U+3131-3163, U+3165-318E, /* 한글 자모 (채움 문자 U+3164 제외) */
+        U+AC00-D7A3; /* 한글 음절 */
+}
+
+/* 공통 */
+:root {
+    /* POP체에 없는 문자(일본어·중국어·태국어·아랍어 등 다국어 채팅, 이모지)는
+       브라우저가 아래 순서대로 글자 단위 대체 */
+    --font-main: "ONE-Mobile-POP", system-ui, -apple-system, "Segoe UI", "Noto Sans", "Noto Sans KR",
+        "Noto Sans JP", "Noto Sans SC", "Noto Sans TC", "Noto Sans Thai", "Noto Sans Arabic",
+        "Hiragino Sans", "PingFang SC", "Microsoft YaHei", "Meiryo", "Malgun Gothic", sans-serif,
+        "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
+    --color-sky-top: #8fd3ff;
+    --color-sky-bottom: #fff4c2;
+    --color-duck: #ffd84d;
+    --color-duck-dark: #f2a900;
+    --color-text: #3b2f1e;
+    --color-text-soft: #6f6250;
+    --color-card: rgba(255, 255, 255, 0.92);
+    --color-error: #d64545;
+    --radius-card: 24px;
+    --radius-control: 14px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    height: 100%;
+    /* 모바일 더블탭 확대·당겨서 새로고침 방지 */
+    touch-action: manipulation;
+    overscroll-behavior: none;
+}
+
+body {
+    font-family: var(--font-main);
+    color: var(--color-text);
+    background: linear-gradient(180deg, var(--color-sky-top), var(--color-sky-bottom));
+    -webkit-tap-highlight-color: transparent;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+/* 입력칸·버튼은 브라우저 기본값이 시스템 글꼴이므로 본문 글꼴을 상속하도록 지정 */
+input,
+button,
+textarea,
+select {
+    font-family: inherit;
+}
+
+.screen {
+    /* 모바일 주소창 높이 변화를 반영하는 dvh 우선, 미지원 브라우저는 vh */
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+        max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+}
+
+/* 첫 페이지 카드 */
+.intro-card {
+    width: 100%;
+    max-width: 440px;
+    padding: 28px 24px 22px;
+    background: var(--color-card);
+    border-radius: var(--radius-card);
+    box-shadow: 0 12px 40px rgba(59, 47, 30, 0.18);
+    text-align: center;
+}
+
+.intro-duck {
+    font-size: 64px;
+    line-height: 1;
+    animation: duck-bounce 1.6s ease-in-out infinite;
+}
+
+@keyframes duck-bounce {
+    0%,
+    100% {
+        transform: translateY(0) rotate(-4deg);
+    }
+    50% {
+        transform: translateY(-8px) rotate(4deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .intro-duck {
+        animation: none;
+    }
+}
+
+.intro-title {
+    margin: 12px 0 8px;
+    font-size: 28px;
+    letter-spacing: -0.5px;
+}
+
+.intro-desc {
+    margin: 0 0 22px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--color-text-soft);
+    word-break: keep-all;
+}
+
+/* 별명 입력 */
+.join-form {
+    text-align: left;
+}
+
+.join-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.join-row {
+    position: relative;
+}
+
+.join-input {
+    width: 100%;
+    height: 50px;
+    padding: 0 64px 0 16px;
+    /* iOS 는 16px 미만 입력칸에 포커스하면 화면을 자동 확대하므로 16px 이상 유지 */
+    font-size: 17px;
+    color: var(--color-text);
+    background: #fff;
+    border: 2px solid #e6dcc8;
+    border-radius: var(--radius-control);
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.join-input:focus {
+    border-color: var(--color-duck-dark);
+}
+
+.join-input:disabled {
+    background: #f5f1e8;
+}
+
+.join-count {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+    font-size: 13px;
+    color: var(--color-text-soft);
+    pointer-events: none;
+}
+
+.join-message {
+    min-height: 20px;
+    margin: 6px 2px 10px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--color-text-soft);
+    word-break: keep-all;
+}
+
+.join-message.is-error {
+    color: var(--color-error);
+}
+
+.join-button {
+    width: 100%;
+    height: 52px;
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--color-text);
+    background: var(--color-duck);
+    border: none;
+    border-radius: var(--radius-control);
+    box-shadow: 0 4px 0 var(--color-duck-dark);
+    cursor: pointer;
+    transition: transform 0.08s, box-shadow 0.08s;
+}
+
+.join-button:active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 var(--color-duck-dark);
+}
+
+.join-button:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+/* 조작법 */
+.guide {
+    margin-top: 20px;
+    text-align: left;
+    font-size: 14px;
+}
+
+.guide summary {
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.guide-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.guide-col h2 {
+    margin: 0 0 6px;
+    font-size: 14px;
+}
+
+.guide-col ul {
+    margin: 0;
+    padding-left: 18px;
+    line-height: 1.8;
+    color: var(--color-text-soft);
+}
+
+.guide-common {
+    margin: 10px 0 0;
+    color: var(--color-text-soft);
+    word-break: keep-all;
+}
+
+kbd {
+    display: inline-block;
+    min-width: 20px;
+    margin-right: 2px;
+    padding: 0 4px;
+    font-family: inherit;
+    font-size: 12px;
+    line-height: 18px;
+    text-align: center;
+    background: #fff;
+    border: 1px solid #d8ccb4;
+    border-bottom-width: 2px;
+    border-radius: 4px;
+}
+
+/* 입장 후 3D 월드 화면 */
+.world {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background: #a8dcff;
+}
+
+.world-canvas {
+    position: absolute;
+    inset: 0;
+}
+
+.world-canvas canvas {
+    display: block;
+    /* 캔버스 위 드래그가 페이지 스크롤·확대로 새지 않게 */
+    touch-action: none;
+}
+
+.leave-button {
+    position: fixed;
+    top: max(12px, env(safe-area-inset-top));
+    right: max(12px, env(safe-area-inset-right));
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--color-text);
+    background: var(--color-card);
+    border: none;
+    border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(59, 47, 30, 0.15);
+    cursor: pointer;
+}
+
+.world-toast {
+    position: fixed;
+    left: 50%;
+    /* 조이스틱·상호작용 버튼 위쪽에 표시 */
+    bottom: calc(max(28px, env(safe-area-inset-bottom)) + 150px);
+    max-width: calc(100% - 32px);
+    margin: 0;
+    padding: 10px 18px;
+    font-size: 15px;
+    text-align: center;
+    word-break: keep-all;
+    background: var(--color-card);
+    border-radius: 999px;
+    box-shadow: 0 4px 16px rgba(59, 47, 30, 0.2);
+    opacity: 0;
+    transform: translate(-50%, 12px);
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+}
+
+.world-toast.is-visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+/* 미니맵 (좌측 상단, 방 번호 배지 아래) */
+.minimap {
+    position: fixed;
+    top: calc(max(12px, env(safe-area-inset-top)) + 42px);
+    left: max(12px, env(safe-area-inset-left));
+    width: 156px;
+    height: 156px;
+    padding: 4px;
+    background: #fffaf0;
+    border-radius: 22px;
+    box-shadow: 0 4px 14px rgba(90, 70, 40, 0.18);
+    pointer-events: none;
+}
+
+.minimap canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 18px;
+}
+
+@media (max-width: 420px) {
+    .minimap {
+        width: 118px;
+        height: 118px;
+    }
+}
+
+/* 상호작용 버튼 (오른쪽 아래 — 왼손은 조이스틱, 오른손은 버튼) */
+.action-bar {
+    position: fixed;
+    right: max(20px, env(safe-area-inset-right));
+    bottom: max(32px, env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    max-width: calc(100% - 200px);
+}
+
+.action-button {
+    min-height: 56px;
+    padding: 0 22px;
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--color-text);
+    background: var(--color-duck);
+    border: none;
+    border-radius: 999px;
+    box-shadow: 0 4px 0 var(--color-duck-dark), 0 6px 18px rgba(0, 0, 0, 0.18);
+    cursor: pointer;
+    word-break: keep-all;
+    touch-action: manipulation;
+    animation: action-pop 0.18s ease-out;
+}
+
+.action-button:active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 var(--color-duck-dark);
+}
+
+.action-button:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+@keyframes action-pop {
+    from {
+        transform: scale(0.85);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* 걸어 다닐 때: 내 오리 머리 위 말풍선 (위치는 transform 으로 매 프레임 지정) */
+.action-bar.is-bubble {
+    left: 0;
+    top: 0;
+    right: auto;
+    bottom: auto;
+    max-width: none;
+    align-items: center;
+    padding: 8px;
+    background: #fff;
+    border-radius: 22px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+    /* 꼬리 높이만큼 위로 띄움 */
+    margin-top: -12px;
+    will-change: transform;
+}
+
+/* 버튼이 없으면 말풍선도 숨김 */
+.action-bar.is-bubble:empty {
+    display: none;
+}
+
+/* 말풍선 꼬리 (아래쪽 가운데, 머리를 가리킴) */
+.action-bar.is-bubble::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -11px;
+    margin-left: -11px;
+    border: 11px solid transparent;
+    border-bottom: 0;
+    border-top-color: #fff;
+}
+
+.action-bar.is-bubble .action-button {
+    min-height: 46px;
+    padding: 0 18px;
+    font-size: 16px;
+    white-space: nowrap;
+}
+
+/* NPC 대화창 (화면 아래 가운데) */
+.npc-dialog {
+    position: fixed;
+    left: 50%;
+    bottom: max(20px, env(safe-area-inset-bottom));
+    width: min(520px, calc(100% - 32px));
+    padding: 14px 16px 16px;
+    background: var(--color-card);
+    border-radius: var(--radius-card);
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.25);
+    transform: translateX(-50%);
+    animation: dialog-rise 0.2s ease-out;
+    /* 조이스틱·버튼보다 위 */
+    z-index: 5;
+}
+
+@keyframes dialog-rise {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 16px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+.npc-dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.npc-dialog-title {
+    margin: 0;
+    font-size: 16px;
+}
+
+.npc-dialog-close {
+    width: 34px;
+    height: 34px;
+    font-size: 16px;
+    color: var(--color-text-soft);
+    background: #f1ece2;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.npc-dialog-reply {
+    min-height: 48px;
+    margin: 10px 0 12px;
+    padding: 12px 14px;
+    font-size: 15px;
+    line-height: 1.55;
+    word-break: keep-all;
+    background: #fff7d6;
+    border-radius: 14px;
+}
+
+.npc-dialog-reply.is-error {
+    color: var(--color-error);
+    background: #fdecec;
+}
+
+.npc-dialog-choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.npc-dialog-choice {
+    min-height: 44px;
+    padding: 6px 10px;
+    font-size: 14px;
+    color: var(--color-text);
+    background: #fff;
+    border: 2px solid #f0d78c;
+    border-radius: 12px;
+    cursor: pointer;
+    word-break: keep-all;
+}
+
+.npc-dialog-choice:active:not(:disabled) {
+    background: #fff3c4;
+}
+
+.npc-dialog-choice:disabled {
+    opacity: 0.55;
+    cursor: default;
+}
+
+@media (max-width: 420px) {
+    .npc-dialog-choices {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 탑승 시점 인셋 화면 테두리 (그림은 3D 캔버스에 직접 그려짐) */
+.inset-frame {
+    position: absolute;
+    border: 3px solid #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    pointer-events: none;
+}
+
+.inset-frame::before {
+    content: "🎢 탑승 시점";
+    position: absolute;
+    left: 8px;
+    top: 6px;
+    padding: 2px 8px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: 999px;
+}
+
+/* 모바일 가상 조이스틱 (왼쪽 아래) */
+.joystick {
+    position: fixed;
+    left: max(24px, env(safe-area-inset-left));
+    bottom: max(28px, env(safe-area-inset-bottom));
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.28);
+    border: 3px solid rgba(255, 255, 255, 0.75);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.joystick.is-active {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.joystick-knob {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 56px;
+    height: 56px;
+    margin: -28px 0 0 -28px;
+    border-radius: 50%;
+    background: var(--color-duck);
+    box-shadow: 0 3px 0 var(--color-duck-dark);
+    pointer-events: none;
+}
+
+/* 접속한 방 번호 표시 */
+.room-badge {
+    position: fixed;
+    top: max(12px, env(safe-area-inset-top));
+    left: max(12px, env(safe-area-inset-left));
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 800;
+    background: var(--color-card);
+    border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(59, 47, 30, 0.15);
+}
+
+/* 좁은 화면 (모바일 세로) */
+@media (max-width: 420px) {
+    .intro-card {
+        padding: 22px 18px 18px;
+    }
+
+    .intro-title {
+        font-size: 24px;
+    }
+
+    .guide-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 낮은 화면 (모바일 가로) — 위쪽부터 배치해 스크롤 가능하게 */
+@media (max-height: 520px) {
+    .screen {
+        align-items: flex-start;
+    }
+
+    .intro-duck {
+        font-size: 44px;
+    }
+
+    .intro-desc {
+        margin-bottom: 14px;
+    }
+}
