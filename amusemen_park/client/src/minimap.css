@@ -1,0 +1,175 @@
+/* 미니맵 — 좌측 상단 미니맵, 모바일 축소·크게보기 팝업 (ui/minimap.ts) */
+
+/* 미니맵 (좌측 상단, 방 번호 배지 아래) */
+.minimap {
+    position: fixed;
+    top: calc(max(12px, env(safe-area-inset-top)) + 42px);
+    left: max(12px, env(safe-area-inset-left));
+    width: 200px;
+    height: 200px;
+    padding: 4px;
+    background: #fffaf0;
+    border-radius: 22px;
+    box-shadow: 0 4px 14px rgba(90, 70, 40, 0.18);
+}
+
+/* 미니맵을 누르면 그곳으로 자동 걷기 */
+.minimap canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 18px;
+    cursor: pointer;
+    touch-action: none;
+}
+
+/* 미니맵 확대·축소 버튼 (오른쪽 아래 모서리) */
+.minimap-zoom {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    display: flex;
+    gap: 4px;
+}
+
+.minimap-zoom-button {
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--color-text);
+    background: rgba(255, 255, 255, 0.92);
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.minimap-zoom-button:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+@media (max-width: 420px) {
+    .minimap {
+        width: 150px;
+        height: 150px;
+    }
+
+    .minimap-zoom-button {
+        width: 24px;
+        height: 24px;
+        font-size: 15px;
+    }
+}
+
+/* 가로로 든 휴대폰처럼 화면 높이가 낮으면 미니맵이 왼쪽 아래 조이스틱을 덮지 않도록 작게 */
+@media (max-height: 520px) {
+    .minimap {
+        width: 130px;
+        height: 130px;
+    }
+}
+
+/* 크게보기·닫기 버튼과 팝업 배경 — 평소엔 숨김 */
+.minimap-expand,
+.minimap-close,
+.minimap-backdrop {
+    display: none;
+}
+
+.minimap-expand {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 50%;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+    color: var(--color-text);
+    background: rgba(255, 250, 240, 0.95);
+    border: none;
+    border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(90, 70, 40, 0.2);
+    transform: translateX(-50%);
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+/* 모바일(터치): 화면을 덜 가리도록 절반 크기, 확대 버튼 대신 크게보기 버튼 */
+@media (pointer: coarse) {
+    .minimap {
+        width: 100px;
+        height: 100px;
+        padding: 3px;
+        border-radius: 16px;
+    }
+
+    .minimap canvas {
+        border-radius: 13px;
+    }
+
+    .minimap .minimap-zoom {
+        display: none;
+    }
+
+    .minimap-expand {
+        display: block;
+    }
+}
+
+@media (pointer: coarse) and (max-width: 420px) {
+    .minimap {
+        width: 75px;
+        height: 75px;
+    }
+}
+
+@media (pointer: coarse) and (max-height: 520px) {
+    .minimap {
+        width: 65px;
+        height: 65px;
+    }
+}
+
+/* 크게보기 팝업: 화면 가운데에 크게, 뒤는 어둡게 (대화창·조이스틱보다 위) */
+.minimap.is-expanded {
+    top: 50%;
+    left: 50%;
+    width: min(88vw, 82vh, 440px);
+    height: min(88vw, 82vh, 440px);
+    padding: 5px;
+    border-radius: 24px;
+    transform: translate(-50%, -50%);
+    z-index: 21;
+}
+
+.minimap.is-expanded canvas {
+    border-radius: 20px;
+}
+
+.minimap.is-expanded .minimap-zoom {
+    display: flex;
+}
+
+.minimap.is-expanded .minimap-expand {
+    display: none;
+}
+
+.minimap.is-expanded .minimap-close {
+    display: block;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.minimap-backdrop.is-visible {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 22, 12, 0.45);
+    z-index: 20;
+}

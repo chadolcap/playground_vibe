@@ -1,7 +1,7 @@
 // 공유 데이터(기구 게이트)·NPC 대화 데이터 테스트
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { NPC_CHOICE, RIDES, RIDE_GATE_DISTANCE, RIDE_LIST, RIDE_NEAR_MARGIN, getRideGate, isInsideMap, isNearRide } from "@shared";
+import { NPC_CHOICE, RIDES, RIDE_GATE_DISTANCE, RIDE_LIST, RIDE_NEAR_MARGIN, getNpcSeats, getRideGate, isInsideMap, isNearRide } from "@shared";
 import { getNpcReply, validateNpcDialogs } from "../src/data/npcDialogs";
 
 test("모든 기구의 게이트는 맵 안, 기구 중심에서 정해진 거리만큼 떨어져 있다", () => {
@@ -66,6 +66,20 @@ test("회귀: 게이트뿐 아니라 기구 바로 옆에서도 '기구 근처'�
 test("NPC 수는 좌석 수보다 적다 (플레이어가 앉을 자리 확보)", () => {
     for (const ride of RIDE_LIST) {
         assert.ok(ride.npc_count >= 1 && ride.npc_count < ride.seat_count, ride.id);
+    }
+});
+
+test("NPC 좌석(npc_seats)은 개수가 맞고 좌석 범위 안이며 겹치지 않는다", () => {
+    for (const ride of RIDE_LIST) {
+        const seats = getNpcSeats(ride);
+        assert.equal(seats.length, ride.npc_count, ride.id);
+        assert.equal(new Set(seats).size, seats.length, `${ride.id} 좌석 중복`);
+        assert.ok(seats.every((seat) => Number.isInteger(seat) && seat >= 0 && seat < ride.seat_count), ride.id);
+    }
+    // 잘못된 데이터는 방을 만들기 전에 오류로 알림
+    const base = RIDES.columbus_adventure;
+    for (const npc_seats of [[8, 10], [8, -1], [8, 8.5], [8, 8], [8]]) {
+        assert.throws(() => getNpcSeats({ ...base, npc_seats }), /npc_seats/, JSON.stringify(npc_seats));
     }
 });
 

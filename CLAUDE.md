@@ -191,8 +191,27 @@ npx @claude-flow/cli@latest hooks worker dispatch --trigger audit
 - 커밋 전에는 항상 빌드 성공 여부를 확인한다
 
 ```bash
-npm run build && npm test
+cd amusemen_park/server && npm run build   # tsc 타입검사 + npm test(node:test) + esbuild 번들
+cd amusemen_park/client && npm run build   # tsc 타입검사 + vite build
 ```
+
+## 놀이동산 프로젝트 (`amusemen_park/`)
+
+- 구조: `server`(Colyseus 0.18) / `client`(Vite+Three.js) / `shared`(공용 상수·판정, `@shared` 별칭 — `shared/package.json`의 `"type":"module"` 필수)
+- `server: npm run dev` - tsx watch, 서버 코드 수정 시 자동 재시작되어 접속자 연결이 끊김 (사용자에게 새로고침 안내)
+- `client: npm run dev` - http://localhost:5173 (같은 망은 `Network:` 주소), 서버 주소는 `VITE_SERVER_URL` (없으면 페이지 호스트의 2567 포트 — `localhost` 고정 금지)
+- 통신(메시지 type·payload·오류 코드·문구·상태 스키마·기구 좌석/NPC·통신 상수) 변경 시 `doc/놀이동산_온라인.xlsx` 갱신 후 `PYTHONIOENCODING=utf-8 python amusemen_park/scripts/check_protocol_doc.py` (새 통신 상수는 스크립트 `CONSTANT_CHECKS` 에 추가)
+- 서버·클라 판정 규칙은 `shared`에 한 함수로 (`isNearRide`, `checkNickname`, `MOVE_RULE`) — 클라는 shrink 0.6 으로 조금 엄격하게
+- 요청/응답은 `room.request` + 서버 `onMessage` 반환값, 실패는 `ServerError(4200, ERROR_CODE)`; 통신 필드는 snake_case
+- 놀이기구 자세는 방 시각(`time`)의 순수 함수로만 계산 — delta 누적 금지 (클라이언트 간 위치 불일치 원인)
+- 3D 도형은 `addMesh`/`getMaterial`(rides/common.ts) 사용 — 툰 재질·둥근 상자가 자동 적용
+- 새 기구: `shared/rides.ts`(필요하면 `npc_seats`)·`server/data/npc_dialogs.json`·`client/src/world/rides/index.ts`·`audio/rideSounds.ts` 의 `RIDE_SOUND_KIND`(빠져도 타입 오류 없이 무음)·xlsx ride_id 목록을 함께 갱신, 좌석 앵커 순서 = 서버 좌석 번호(앞 번호 빈자리부터 배정)
+- 기구 물리(`ridePhysics.ts`): 시간표가 `frames.ups`(뱅크)를 바꾸므로 레일·물길보다 먼저 생성, `trackDesign` fit_ratio 0.9 안팎(1 이상이면 브레이크 구간 사라짐), 물길 회전 반지름 ≥ 폭×1.5, 진자 phase 는 진폭 기준
+- 소리: `audio/gameAudio.ts` 의 guard 안에서만 다룸(예외 나면 소리만 끔), 연속음은 `setLevel`(바뀔 때만 예약), 원샷은 `engine.isRunning()` 일 때만
+- 검증: 개발 서버에서 `window.__park_world`·`__park_session` 노출, 자동화 브라우저 탭은 rAF 3~6fps라 FPS 대신 `stats.frame_ms` 로 측정
+- 물리 검증은 `npx tsx` 로 모델 `update(t)` 를 돌려 속도·G·프레임당 감속을 재고, 소리는 AudioNode 생성 수·Analyser dB 로 확인 (자동화 탭은 실제 클릭으로 입장해야 AudioContext 가 running)
+- 서버 종단 검증은 SDK 봇 스크립트를 `node --import tsx <script>` 로 실행 (shared 확장자 없는 import 해석용)
+- 환경: `.env*` 파일은 읽기·쓰기 권한이 막혀 있음 → 사용자에게 작성 요청, Windows 에 LibreOffice 없음(xlsx 시각 확인 불가)
 
 ## CLI 빠른 참조
 

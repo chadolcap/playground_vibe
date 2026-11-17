@@ -42,6 +42,8 @@ export interface BumperCarsOptions {
     // 내 차가 부딪혔을 때 (화면 흔들림 등)
     onMyHit: (strength: number) => void;
     getMySeat: () => number | null;
+    // 모든 충돌 (효과음용): 부딪힌 지점 월드 좌표, 내 차가 포함됐는지
+    onAnyHit?: (strength: number, point: THREE.Vector3, is_mine: boolean) => void;
 }
 
 function lerpAngle(from: number, to: number, ratio: number): number {
@@ -83,9 +85,11 @@ export function createBumperCars(options: BumperCarsOptions): BumperCars {
         model.root.localToWorld(hit_point);
         effects.spawn(hit_point, hit.strength);
         const my_seat = getMySeat();
-        if (my_seat !== null && (hit.car_a === my_seat || hit.car_b === my_seat)) {
+        const is_mine = my_seat !== null && (hit.car_a === my_seat || hit.car_b === my_seat);
+        if (is_mine) {
             onMyHit(hit.strength);
         }
+        options.onAnyHit?.(hit.strength, hit_point, is_mine);
     });
 
     let input_elapsed = 0;

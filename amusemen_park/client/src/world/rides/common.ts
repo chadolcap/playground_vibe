@@ -13,6 +13,27 @@ export interface RideModel {
     // 운행 애니메이션 — 자세는 반드시 time(방 시각, 초)만으로 결정할 것 (delta 누적 금지)
     // 그래야 같은 방의 모든 클라이언트에서 기구·탑승자 위치가 일치함
     update(time: number, delta: number): void;
+    // 스릴 기구만: 탑승자가 느끼는 속도·G — update 가 매 프레임 방 시각으로 갱신 (탑승 시점 연출·오리 반응용)
+    thrill?: RideThrill;
+}
+
+export interface RideThrill {
+    // 진행 속도 (m/s)
+    speed: number;
+    // 좌석 쪽으로 눌리는 체감 G (1 = 평소, 0.3 미만 = 에어타임으로 몸이 뜸, 2 이상 = 짓눌림)
+    g_force: number;
+    // 덜컹거림 세기 0~1
+    shake: number;
+    // 운행 단계 — 단계마다 다른 진동(체인 딸깍임·브레이크 걸림 등)을 주기 위함
+    phase: RidePhase;
+    // 진자 기구만: 지금 어느 쪽으로 기울었는지 (+1 / -1, 멈춤 0) — 올라간 쪽마다 다른 효과음
+    side?: number;
+}
+
+export type RidePhase = "stopped" | "lift" | "ride" | "brake";
+
+export function createThrill(): RideThrill {
+    return { speed: 0, g_force: 1, shake: 0, phase: "stopped" };
 }
 
 // ───────── 재질 ─────────
@@ -167,50 +188,13 @@ export function placeOnPath(object: THREE.Object3D, frames: PathFrames, u: numbe
     object.position.addScaledVector(temp_up, height_offset);
 }
 
-// 높이에 따른 속도 (위치 에너지 → 운동 에너지 흉내): top_height 에서 가장 느리고 낮을수록 빠름
-export function speedAtHeight(y: number, top_height: number, min_speed: number, scale: number): number {
-    return Math.max(min_speed, Math.sqrt(2 * 9.8 * Math.max(top_height - y, 0)) * scale);
-}
-
 // 한 바퀴 시간표: 속도가 위치마다 다른 기구(코스터 등)도 "시각 → 경로 위치"를 계산할 수 있게 미리 한 바퀴를 시뮬레이션
-// 모든 클라이언트가 같은 방 시각을 넣으면 같은 위치가 나오므로 기구 움직임이 서로 맞음
+// 모든 클라이언트가 같은 방 시각을 넣으면 같은 위치가 나오므로 기구 움직임이 서로 맞음 (실제 계산은 ridePhysics.ts)
 export interface LapTimeline {
     // 한 바퀴 걸리는 시간 (초)
     duration: number;
     // 시각(초) → 경로 위치 u (0~1)
     uAt(time: number): number;
-}
-
-const TIMELINE_STEP = 1 / 60;
-const TIMELINE_MAX_SECONDS = 600;
-
-export function buildLapTimeline(frames: PathFrames, speedAt: (position: THREE.Vector3, tangent: THREE.Vector3) => number): LapTimeline {
-    const times: number[] = [0];
-    const us: number[] = [0];
-    const position = new THREE.Vector3();
-    const tangent = new THREE.Vector3();
-    const up = new THREE.Vector3();
-    let u = 0;
-    let time = 0;
-    while (u < 1 && time < TIMELINE_MAX_SECONDS) {
-        samplePath(frames, u, position, tangent, up);
-        u += (Math.max(speedAt(position, tangent), 0.1) * TIMELINE_STEP) / frames.length;
-        time += TIMELINE_STEP;
-        times.push(time);
-        us.push(Math.min(u, 1));
-    }
-    const duration = time;
-    return {
-        duration,
-        uAt(at_time) {
-            const local = ((at_time % duration) + duration) % duration;
-            // 등간격 표본이라 위치를 바로 계산
-            const scaled = local / TIMELINE_STEP;
-            const index = Math.min(Math.floor(scaled), times.length - 2);
-            const ratio = scaled - index;
-            return us[index] + (us[index + 1] - us[index]) * ratio;
-        },
-    };
 }
 
 // 일정한 속도로 도는 경로의 위치 (시각의 순수 함수)

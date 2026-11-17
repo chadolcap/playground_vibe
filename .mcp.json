@@ -6,7 +6,7 @@
         "/c",
         "npx",
         "-y",
-        "ruflo@latest",
+        "ruflo@3.76.0",
         "mcp",
         "start"
       ],
@@ -19,6 +19,15 @@
         "CLAUDE_FLOW_MEMORY_BACKEND": "hybrid"
       },
       "autoStart": false
+    },
+    "elevenlabs": {
+      "command": "uvx",
+      "args": [
+        "elevenlabs-mcp"
+      ],
+      "env": {
+        "ELEVENLABS_API_KEY": "sk_25340161c244bac49ba21cb37314ce08249565bfb27f9790"
+      }
     }
   }
 }

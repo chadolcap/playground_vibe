@@ -19,6 +19,7 @@ import {
     getRideGate,
     isNearRide,
     isNpcChoiceId,
+    getNpcSeats,
     isRideId,
     nicknameKey,
     type BumperInputPayload,
@@ -228,10 +229,11 @@ export class ParkRoom extends Room<{ state: ParkState }> {
             for (let index = 0; index < ride_info.seat_count; index += 1) {
                 ride.seats.push(new Seat());
             }
-            // NPC 를 좌석 전체에 고르게 흩어 앉힘
+            // NPC 를 정해진 좌석(npc_seats, 검증됨)에, 없으면 좌석 전체에 고르게 흩어 앉힘
+            const npc_seats = getNpcSeats(ride_info);
             for (let order = 0; order < ride_info.npc_count; order += 1) {
                 npc_no += 1;
-                const seat_index = Math.floor((order * ride_info.seat_count) / ride_info.npc_count);
+                const seat_index = npc_seats[order];
                 const npc_id = `${NPC_ID_PREFIX}${npc_no}`;
                 ride.seats[seat_index].kind = SEAT_KIND.NPC;
                 ride.seats[seat_index].occupant_id = npc_id;

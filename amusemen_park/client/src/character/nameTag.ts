@@ -6,7 +6,7 @@ const FONT = '44px "ONE-Mobile-POP", system-ui, sans-serif';
 const CANVAS_HEIGHT = 72;
 const PADDING_X = 22;
 // 월드 단위 높이
-const TAG_HEIGHT = 0.42;
+const TAG_HEIGHT = 0.21;
 
 export interface NameTagStyle {
     background: string;

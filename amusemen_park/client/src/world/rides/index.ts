@@ -4,6 +4,7 @@ import { RIDES, RIDE_GATE_DISTANCE, RIDE_LIST, getRideGate, type RideId, type Ri
 import { createSignBoard } from "../labels";
 import { addMesh, type RideModel } from "./common";
 import { createBumperCar } from "./bumperCar";
+import { createColumbus } from "./columbus";
 import { createLetsTwist } from "./letsTwist";
 import { createLostValley } from "./lostValley";
 import { createPandaWorld } from "./pandaWorld";
@@ -23,6 +24,7 @@ const RIDE_BUILDERS: Record<RideId, () => RideModel> = {
     safari_world: createSafariWorld,
     lost_valley: createLostValley,
     panda_world: createPandaWorld,
+    columbus_adventure: createColumbus,
 };
 
 // 게이트 아치 + 기구 이름 간판 (로컬 +z 쪽 게이트 위치에 세움)

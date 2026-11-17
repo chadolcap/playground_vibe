@@ -19,6 +19,8 @@ export interface ParkWorld {
     onFrame(callback: FrameCallback): () => void;
     // 우측 상단 작은 화면(인셋)에 그릴 두 번째 카메라 — null 이면 인셋을 숨김 (탑승 시점 뷰)
     setInsetCamera(camera: THREE.PerspectiveCamera | null): void;
+    // 인셋 화면 아래쪽 계기 문구 (속도·G 등) — null 이면 숨김
+    setInsetCaption(text: string | null): void;
     // 놀이기구 움직임의 기준 시각(초) — 방 시각을 주면 모든 클라이언트의 기구 자세가 일치, null 이면 로컬 시각
     setRideTimeSource(source: (() => number) | null): void;
     // 성능 점검용: 한 프레임 처리(갱신+그리기 명령) 시간 평균(ms), 마지막 프레임 그리기 호출 수
@@ -36,9 +38,17 @@ function isTouchDevice(): boolean {
     return window.matchMedia("(pointer: coarse)").matches;
 }
 
-// 인셋 화면 배치 (CSS 픽셀): 우측 상단, 나가기 버튼 아래, 화면 폭의 34% (최소 150, 최대 360), 4:3
+// 인셋 화면 배치 (CSS 픽셀): 우측 상단, 나가기·효과음 버튼 아래, 화면 폭의 34% (최소 150, 최대 360), 4:3
+// 노치 기기는 버튼이 안전 영역만큼 내려오므로, 버튼 아래 끝 + 여백과 최소값 중 큰 쪽
 const INSET_TOP = 60;
 const INSET_MARGIN = 12;
+const INSET_GAP_BELOW_BUTTONS = 8;
+
+// 화면 위쪽 고정 버튼(나가기)의 아래 끝 — 화면 크기가 바뀔 때만 다시 잼
+function measureInsetTop(): number {
+    const bottom = document.getElementById("leave-button")?.getBoundingClientRect().bottom ?? 0;
+    return Math.max(INSET_TOP, Math.ceil(bottom) + INSET_GAP_BELOW_BUTTONS);
+}
 
 interface InsetRect {
     left: number;
@@ -47,10 +57,10 @@ interface InsetRect {
     height: number;
 }
 
-function computeInsetRect(view_width: number): InsetRect {
+function computeInsetRect(view_width: number, top: number): InsetRect {
     const width = Math.round(THREE.MathUtils.clamp(view_width * 0.34, 150, 360));
     const height = Math.round(width * 0.75);
-    return { left: view_width - width - INSET_MARGIN, top: INSET_TOP, width, height };
+    return { left: view_width - width - INSET_MARGIN, top, width, height };
 }
 
 // 위(진한 하늘색) → 아래(옅은 하늘색) 그라데이션 배경
@@ -139,6 +149,10 @@ export async function createParkWorld(container: HTMLElement): Promise<ParkWorld
     inset_frame.className = "inset-frame";
     inset_frame.hidden = true;
     container.appendChild(inset_frame);
+    const inset_caption = document.createElement("div");
+    inset_caption.className = "inset-meter";
+    inset_caption.hidden = true;
+    inset_frame.appendChild(inset_caption);
     let inset_camera: THREE.PerspectiveCamera | null = null;
 
     const scene = new THREE.Scene();
@@ -166,12 +180,14 @@ export async function createParkWorld(container: HTMLElement): Promise<ParkWorld
     const frame_callbacks = new Set<FrameCallback>();
     let ride_time_source: (() => number) | null = null;
 
+    let inset_top = INSET_TOP;
     const resize = (): void => {
         const width = Math.max(container.clientWidth, 1);
         const height = Math.max(container.clientHeight, 1);
         renderer.setSize(width, height);
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
+        inset_top = measureInsetTop();
     };
     const resize_observer = new ResizeObserver(resize);
     resize_observer.observe(container);
@@ -199,7 +215,7 @@ export async function createParkWorld(container: HTMLElement): Promise<ParkWorld
         renderer.setViewport(0, 0, view_width, view_height);
         renderer.render(scene, camera);
         if (inset_camera !== null) {
-            const rect = computeInsetRect(view_width);
+            const rect = computeInsetRect(view_width, inset_top);
             // WebGL 뷰포트는 왼쪽 아래가 원점
             const bottom = view_height - rect.top - rect.height;
             renderer.setScissorTest(true);
@@ -232,6 +248,14 @@ export async function createParkWorld(container: HTMLElement): Promise<ParkWorld
         setInsetCamera(next_camera) {
             inset_camera = next_camera;
             inset_frame.hidden = next_camera === null;
+        },
+        setInsetCaption(text) {
+            // 매 프레임 불려도 글자가 바뀔 때만 DOM 갱신
+            const next = text ?? "";
+            if (inset_caption.textContent !== next) {
+                inset_caption.textContent = next;
+            }
+            inset_caption.hidden = text === null;
         },
         stats,
         dispose(): void {

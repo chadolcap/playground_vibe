@@ -10,6 +10,7 @@ export const RIDE_ID = {
     SAFARI_WORLD: "safari_world",
     LOST_VALLEY: "lost_valley",
     PANDA_WORLD: "panda_world",
+    COLUMBUS_ADVENTURE: "columbus_adventure",
 } as const;
 
 export type RideId = (typeof RIDE_ID)[keyof typeof RIDE_ID];
@@ -29,6 +30,8 @@ export interface RideInfo {
     board_radius: number;
     // 기구 모델이 차지하는 반경 (다른 기구·길·나무가 들어오면 안 되는 영역)
     footprint_radius: number;
+    // NPC 가 앉을 좌석 번호 (없으면 좌석 전체에 고르게) — 플레이어는 항상 앞 번호의 빈 좌석부터 앉음
+    npc_seats?: readonly number[];
 }
 
 export const RIDES: Record<RideId, RideInfo> = {
@@ -41,12 +44,30 @@ export const RIDES: Record<RideId, RideInfo> = {
     // 판다월드로 가는 길과 겹치지 않도록 광장 쪽 대각선에서 비켜 배치
     lost_valley: { id: "lost_valley", name: "로스트밸리", zone_id: ZONE_ID.ZOOTOPIA, seat_count: 8, npc_count: 2, x: -48, z: 20, board_radius: 8, footprint_radius: 13.5 },
     panda_world: { id: "panda_world", name: "판다월드", zone_id: ZONE_ID.ZOOTOPIA, seat_count: 6, npc_count: 1, x: -80, z: 70, board_radius: 8, footprint_radius: 12.5 },
+    // 스윙 보트 — 좌석 번호는 배의 양 끝 줄부터(0~3), 가운데 줄이 마지막(8·9). NPC 는 가운데에 앉혀 플레이어가 양 끝(가장 높이 올라가는 자리)부터 앉게 함
+    columbus_adventure: { id: "columbus_adventure", name: "콜럼버스 대탐험", zone_id: ZONE_ID.MAGIC_LAND, seat_count: 10, npc_count: 2, x: 30, z: -100, board_radius: 8, footprint_radius: 13, npc_seats: [8, 9] },
 };
 
 export const RIDE_LIST: readonly RideInfo[] = Object.values(RIDES);
 
 // 게이트가 기구 중심에서 떨어진 거리 (기구 모델 바깥, 맵 중앙 방향)
 export const RIDE_GATE_DISTANCE = 14;
+
+// NPC 가 앉을 좌석 번호 목록 — npc_seats 가 있으면 검증해서 쓰고, 없으면 좌석 전체에 고르게 흩어 앉힘
+// 잘못된 데이터(개수 불일치·범위 밖·정수 아님·중복)는 방을 만들다 엉뚱한 곳에서 터지지 않게 바로 오류로 알림
+export function getNpcSeats(ride: RideInfo): number[] {
+    if (ride.npc_seats === undefined) {
+        return Array.from({ length: ride.npc_count }, (_, order) => Math.floor((order * ride.seat_count) / ride.npc_count));
+    }
+    const seats = [...ride.npc_seats];
+    const is_valid = seats.length === ride.npc_count
+        && seats.every((seat) => Number.isInteger(seat) && seat >= 0 && seat < ride.seat_count)
+        && new Set(seats).size === seats.length;
+    if (!is_valid) {
+        throw new Error(`[rides] ${ride.id} 의 npc_seats ${JSON.stringify(seats)} 가 잘못됨 (NPC ${ride.npc_count}명, 좌석 0~${ride.seat_count - 1}, 중복 불가)`);
+    }
+    return seats;
+}
 
 export function isRideId(value: unknown): value is RideId {
     return typeof value === "string" && Object.hasOwn(RIDES, value);

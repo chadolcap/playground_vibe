@@ -98,6 +98,8 @@ function createFlowers(paths: readonly PathSegment[]): THREE.InstancedMesh {
         flowers.setMatrixAt(order, dummy.matrix);
         flowers.setColorAt(order, colors[order % colors.length]);
     });
+    // 꽃은 밟고 지나감 (캐릭터가 꽃 위에 올라서지 않게 — groundMap 참고)
+    flowers.userData.walk_through = true;
     return flowers;
 }
 

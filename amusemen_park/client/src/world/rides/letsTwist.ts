@@ -1,7 +1,8 @@
 // 렛츠 트위스트 — 큰 팔이 앞뒤로 크게 흔들리고 끝의 좌석 원판이 회전하는 기구 (좌석 8)
 import * as THREE from "three";
 import { RIDE_ID } from "@shared";
-import { addMesh, type RideModel } from "./common";
+import { addMesh, createThrill, type RideModel } from "./common";
+import { createPendulumProgram } from "./ridePhysics";
 
 const SEAT_COUNT = 8;
 const AXLE_HEIGHT = 9.6;
@@ -55,14 +56,28 @@ export function createLetsTwist(): RideModel {
         seat_anchors.push(anchor);
     }
 
+    // 운행 사이클: 승하차(정지) → 모터가 박자 맞춰 밀어 진폭을 키움 → 최고 120° 까지 휘두름 → 서서히 줄여 정지
+    // 흔들림 주기는 팔 길이로 정해지는 진자 주기(√(L/g))를 따름 — 꼭대기에서 멈칫하는 순간 거꾸로 매달린 무중력감
+    const program = createPendulumProgram({
+        arm_length: ARM_LENGTH + 0.2,
+        max_angle: THREE.MathUtils.degToRad(120),
+        load_seconds: 8,
+        pump_seconds: 18,
+        peak_seconds: 14,
+        decay_seconds: 12,
+        wheel_spin: 1.6,
+    });
+    const thrill = createThrill();
+
     return {
         id: RIDE_ID.LETS_TWIST,
         root,
         seat_anchors,
+        thrill,
         update(time) {
-            // 크게 앞뒤로 흔들리며 원판은 계속 회전
-            arm_pivot.rotation.x = Math.sin(time * 0.55) * 2.0;
-            wheel.rotation.y = time * 1.4;
+            arm_pivot.rotation.x = program.angleAt(time);
+            wheel.rotation.y = program.wheelAngleAt(time);
+            program.thrillAt(time, thrill);
         },
     };
 }

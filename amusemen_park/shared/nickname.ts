@@ -34,7 +34,7 @@ export function checkNickname(raw_value: unknown): NicknameCheck {
         return { ok: false, code: ERROR_CODE.INVALID_NAME, reason: `별명은 ${NICKNAME_MIN_LENGTH}~${NICKNAME_MAX_LENGTH}글자로 입력해 주세요.` };
     }
     if (!NICKNAME_PATTERN.test(name)) {
-        return { ok: false, code: ERROR_CODE.INVALID_NAME, reason: "별명에는 한글, 영문, 숫자, 밑줄(_)만 쓸 수 있어요. (공백 불가)" };
+        return { ok: false, code: ERROR_CODE.INVALID_NAME, reason: "별명에는 한글, 영문, 숫자, 밑줄(_)만 쓸 수 있어요. (한글은 완성형 문자로 작성 해 주세요)" };
     }
     if (name.toLowerCase().startsWith(RESERVED_PREFIX)) {
         return { ok: false, code: ERROR_CODE.INVALID_NAME, reason: `"${RESERVED_PREFIX}"로 시작하는 별명은 쓸 수 없어요.` };

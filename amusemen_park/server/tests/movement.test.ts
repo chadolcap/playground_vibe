@@ -32,8 +32,8 @@ test("오래 멈춘 뒤에도 예산은 1초분까지만 쌓인다", () => {
 });
 
 test("회귀: 패킷이 몰려 도착해도 정상 속도 이동은 모두 통과", () => {
-    // 최대 속도 이하(8.5/초)로 15Hz 전송, 단 네트워크에서 2개씩 같은 시각에 도착
-    const speed = 8.5;
+    // 최대 속도보다 조금 빠르게(허용 범위 안) 15Hz 전송, 단 네트워크에서 2개씩 같은 시각에 도착
+    const speed = MOVE_RULE.MAX_SPEED + 0.5;
     const step = speed / MOVE_RULE.SEND_RATE;
     let baseline = createBaseline(0, 0, 0);
     let x = 0;

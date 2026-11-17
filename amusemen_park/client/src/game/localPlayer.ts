@@ -40,7 +40,11 @@ function combineInputs(inputs: readonly MoveInput[]): MoveInput {
     return length > 1 ? { x: x / length, y: y / length } : { x, y };
 }
 
-export function createLocalPlayer(avatar: DuckAvatar): LocalPlayer {
+// push_out: 지나갈 수 없는 곳(바위)에 들어간 위치를 밖으로 밀어냄, 빠져나오지 못하면 이동 전 위치로 (밀어냈으면 true)
+export function createLocalPlayer(
+    avatar: DuckAvatar,
+    push_out: (position: THREE.Vector3, from_x: number, from_z: number) => boolean = () => false,
+): LocalPlayer {
     const limit = MAP_HALF - MAP_EDGE_MARGIN;
     const move = new THREE.Vector3();
     let destination: { x: number; z: number } | null = null;
@@ -93,8 +97,17 @@ export function createLocalPlayer(avatar: DuckAvatar): LocalPlayer {
             }
             move.normalize();
 
+            const before_x = root.position.x;
+            const before_z = root.position.z;
             root.position.x = THREE.MathUtils.clamp(root.position.x + move.x * speed * delta, -limit, limit);
             root.position.z = THREE.MathUtils.clamp(root.position.z + move.z * speed * delta, -limit, limit);
+            // 바위에 막히면 가장자리를 따라 미끄러짐, 자동 걷기가 정면으로 막혀 거의 못 가면 목적지 취소
+            if (push_out(root.position, before_x, before_z) && destination !== null) {
+                const moved = Math.hypot(root.position.x - before_x, root.position.z - before_z);
+                if (moved < speed * delta * 0.2) {
+                    destination = null;
+                }
+            }
             root.rotation.y = turnToward(root.rotation.y, Math.atan2(move.x, move.z), 1 - Math.exp(-TURN_RATE * delta));
 
             avatar.anim = PLAYER_ANIM.WALK;

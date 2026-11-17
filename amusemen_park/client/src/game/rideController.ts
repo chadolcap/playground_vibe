@@ -18,6 +18,7 @@ import type { ActionItem } from "../ui/actionBar";
 import type { ParkWorld } from "../world/parkWorld";
 import type { LocalPlayer } from "./localPlayer";
 import type { PositionSender } from "./positionSender";
+import { createRideHaptics } from "./rideHaptics";
 import { placeOnSeat } from "./seatPlacement";
 
 // 서버 판정(기구 근처)보다 조금 안쪽에서만 버튼을 띄움 — 서버 위치가 최대 1/15초 늦기 때문
@@ -26,6 +27,18 @@ const CLIENT_RADIUS_MARGIN = 0.6;
 const RIDER_EYE_HEIGHT = 1.05;
 const RIDER_EYE_FORWARD = 0.65;
 const HALF_TURN = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
+// 탑승 시점 스릴 연출 (보이는 것만 바꾸고 기구·좌석 위치는 그대로)
+// - 속도감: 빠를수록 시야각을 넓혀 풍경이 옆으로 빨리 흘러가 보이게
+// - 체감 G: 1G 미만(에어타임)이면 시선이 붕 뜨고, 고G 면 짓눌려 내려감
+// - 진동: 레일 이음매를 지나는 덜컹거림
+const RIDER_BASE_FOV = 70;
+const FOV_PER_SPEED = 0.9;
+const MAX_FOV_BOOST = 24;
+const G_HEAD_SHIFT = 0.12;
+const SHAKE_AMOUNT = 0.07;
+const MS_TO_KMH = 3.6;
+const AIRTIME_G = 0.3;
+const HIGH_G = 3;
 
 const RIDE_ERROR_TEXT: Record<string, string> = {
     [ERROR_CODE.RIDE_FULL]: "만석이에요! 잠시 후 다시 타 보거나 다른 놀이기구를 타 보세요.",
@@ -74,6 +87,40 @@ export function createRideController(options: RideControllerOptions): RideContro
 
     let riding: Riding | null = null;
     let is_pending = false;
+    // 모바일: 덜컹거림·체인·브레이크를 휴대폰 진동으로
+    const haptics = createRideHaptics();
+
+    // 스릴 기구면 탑승 시점 카메라에 속도·G·진동을 입히고 계기를 표시 (느린 관람 기구는 그대로)
+    // 탑승 시점 시야각 설정 (바뀔 때만 투영 행렬 갱신)
+    function setRiderFov(fov: number): void {
+        if (Math.abs(rider_camera.fov - fov) > 0.05) {
+            rider_camera.fov = fov;
+            rider_camera.updateProjectionMatrix();
+        }
+    }
+
+    function applyThrill(ride_id: RideId): void {
+        const thrill = world.rides.get(ride_id)?.thrill;
+        if (thrill === undefined) {
+            // 관람 기구는 기본 시야각 (스릴 기구에서 넓어진 채 남지 않게)
+            setRiderFov(RIDER_BASE_FOV);
+            world.setInsetCaption(null);
+            return;
+        }
+        setRiderFov(RIDER_BASE_FOV + Math.min(thrill.speed * FOV_PER_SPEED, MAX_FOV_BOOST));
+        const head_shift = THREE.MathUtils.clamp((1 - thrill.g_force) * G_HEAD_SHIFT, -0.2, 0.25);
+        // 진동은 방 시각과 무관한 화면 효과라 로컬 시계로 충분
+        const now = performance.now() / 1000;
+        haptics.update(thrill, now);
+        const shake = thrill.shake * SHAKE_AMOUNT;
+        temp_offset.set(Math.sin(now * 41) * shake, head_shift + Math.sin(now * 53) * shake, 0).applyQuaternion(avatar.root.quaternion);
+        rider_camera.position.add(temp_offset);
+        rider_camera.rotateZ(Math.sin(now * 29) * shake * 0.5);
+
+        const speed_text = `${Math.round(thrill.speed * MS_TO_KMH)} km/h · ${thrill.g_force.toFixed(1)}G`;
+        const badge = thrill.speed > 0 && thrill.g_force < AIRTIME_G ? "🪶 에어타임! " : thrill.g_force >= HIGH_G ? "💥 " : "";
+        world.setInsetCaption(badge + speed_text);
+    }
 
     // 서버 상태의 빈자리 수 (버튼에 표시)
     function countEmptySeats(ride_id: RideId): number {
@@ -134,6 +181,10 @@ export function createRideController(options: RideControllerOptions): RideContro
             const result = await room.request<undefined, RideLeaveResult>(CLIENT_MESSAGE.RIDE_LEAVE);
             riding = null;
             world.setInsetCamera(null);
+            world.setInsetCaption(null);
+            haptics.stop();
+            // 다음 탑승은 기본 시야각에서 시작
+            setRiderFov(RIDER_BASE_FOV);
             // 좌석에서 기울어졌던 자세를 바로 세우고, 기구 반대편(통로 쪽)을 바라보며 내림
             const ride = RIDES[ride_id];
             avatar.root.position.set(result.x, 0, result.z);
@@ -166,6 +217,7 @@ export function createRideController(options: RideControllerOptions): RideContro
             rider_camera.quaternion.copy(avatar.root.quaternion).multiply(HALF_TURN);
             temp_offset.set(0, RIDER_EYE_HEIGHT, RIDER_EYE_FORWARD).applyQuaternion(avatar.root.quaternion);
             rider_camera.position.copy(avatar.root.position).add(temp_offset);
+            applyThrill(riding.ride_id);
         },
         getActions() {
             if (riding !== null) {
@@ -181,6 +233,8 @@ export function createRideController(options: RideControllerOptions): RideContro
         },
         dispose() {
             world.setInsetCamera(null);
+            world.setInsetCaption(null);
+            haptics.stop();
         },
     };
 }

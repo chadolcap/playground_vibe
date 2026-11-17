@@ -5,8 +5,8 @@
       "type": "feature",
       "description": "놀이동산 1단계: server(Colyseus+TS)/client(Vite+TS+Three.js)/shared 상수 + 경로 별칭 + .env 분리 + .gitignore",
       "priority": "high",
-      "status": "pending",
-      "progress": 0,
+      "status": "completed",
+      "progress": 100,
       "assignedTo": [],
       "tags": [
         "amusement-park",
@@ -15,15 +15,19 @@
       ],
       "createdAt": "2026-11-11T03:21:42.822Z",
       "startedAt": null,
-      "completedAt": null
+      "completedAt": "2026-11-12T02:28:59.297Z",
+      "result": {
+        "evidence": "server/client/shared 구조와 @shared 별칭 구성됨",
+        "commit": "f89dcc6"
+      }
     },
     "task-1794371088839-1evdlk": {
       "taskId": "task-1794371088839-1evdlk",
       "type": "feature",
       "description": "놀이동산 2단계: 소개+입장 화면, 별명 검증(shared), park 방 접속, 오류 표시, 반응형 / ParkRoom 입장 검증 최소 구현",
       "priority": "high",
-      "status": "pending",
-      "progress": 0,
+      "status": "completed",
+      "progress": 100,
       "assignedTo": [],
       "tags": [
         "amusement-park",
@@ -32,15 +36,19 @@
       ],
       "createdAt": "2026-11-11T04:24:48.839Z",
       "startedAt": null,
-      "completedAt": null
+      "completedAt": "2026-11-12T02:29:00.173Z",
+      "result": {
+        "evidence": "shared checkNickname, 입장 화면 구현",
+        "commit": "f89dcc6"
+      }
     },
     "task-1794372238578-y7q7td": {
       "taskId": "task-1794372238578-y7q7td",
       "type": "feature",
       "description": "놀이동산 3단계: ParkRoom 상태 스키마(Player/Ride/Npc), 색 배정, 이동 검증, 탑승/하차, NPC 대화, 퇴장·재접속 유예 + 서버 단위 테스트",
       "priority": "high",
-      "status": "pending",
-      "progress": 0,
+      "status": "completed",
+      "progress": 100,
       "assignedTo": [],
       "tags": [
         "amusement-park",
@@ -49,15 +57,19 @@
       ],
       "createdAt": "2026-11-11T04:43:58.579Z",
       "startedAt": null,
-      "completedAt": null
+      "completedAt": "2026-11-12T02:29:00.944Z",
+      "result": {
+        "evidence": "server/src/rooms/ParkRoom.ts, server/tests/*.test.ts",
+        "commit": "f89dcc6"
+      }
     },
     "task-1794373198780-ms4dav": {
       "taskId": "task-1794373198780-ms4dav",
       "type": "feature",
       "description": "놀이동산 4단계: Three.js 씬(조명·하늘·리사이즈·픽셀비율), 구역 지형·길·표지판, 인스턴싱 장식, 놀이기구 8종 도형 모델 + 운행 애니메이션 + 좌석 앵커",
       "priority": "high",
-      "status": "pending",
-      "progress": 0,
+      "status": "completed",
+      "progress": 100,
       "assignedTo": [],
       "tags": [
         "amusement-park",
@@ -67,15 +79,19 @@
       ],
       "createdAt": "2026-11-11T04:59:58.780Z",
       "startedAt": null,
-      "completedAt": null
+      "completedAt": "2026-11-12T02:29:01.646Z",
+      "result": {
+        "evidence": "client rides/common.ts addMesh, 놀이기구 8종",
+        "commit": "f89dcc6"
+      }
     },
     "task-1794374112427-fgp9rm": {
       "taskId": "task-1794374112427-fgp9rm",
       "type": "feature",
       "description": "놀이동산 5단계: 새끼 오리 모델(분리 모듈)·절차적 애니메이션(대기/걷기/앉기)·이름표·3인칭 추적 카메라·키보드/가상 조이스틱 조작",
       "priority": "high",
-      "status": "pending",
-      "progress": 0,
+      "status": "completed",
+      "progress": 100,
       "assignedTo": [],
       "tags": [
         "amusement-park",
@@ -85,15 +101,19 @@
       ],
       "createdAt": "2026-11-11T05:15:12.427Z",
       "startedAt": null,
-      "completedAt": null
+      "completedAt": "2026-11-12T02:29:02.386Z",
+      "result": {
+        "evidence": "오리 모델, 가상 조이스틱 구현",
+        "commit": "f89dcc6"
+      }
     },
     "task-1794375696992-73hezy": {
       "taskId": "task-1794375696992-73hezy",
       "type": "feature",
       "description": "놀이동산 6단계: 다른 플레이어 생성·제거, 위치 보간, 이름표·색, 내 위치 전송(15Hz·변화 시), 탑승 중 좌석 표시, move_correction 처리",
       "priority": "high",
-      "status": "pending",
-      "progress": 0,
+      "status": "completed",
+      "progress": 100,
       "assignedTo": [],
       "tags": [
         "amusement-park",
@@ -102,15 +122,19 @@
       ],
       "createdAt": "2026-11-11T05:41:36.992Z",
       "startedAt": null,
-      "completedAt": null
+      "completedAt": "2026-11-12T02:29:03.071Z",
+      "result": {
+        "evidence": "MOVE_CORRECTION: ParkRoom.ts:261, playSession.ts:117",
+        "commit": "f89dcc6"
+      }
     },
     "task-1794376421094-4umbro": {
       "taskId": "task-1794376421094-4umbro",
       "type": "feature",
       "description": "놀이기구 7단계: 게이트 근처 '타기' 버튼(빈자리 표시·E키), 탑승 요청→좌석 착석, 우측 상단 탑승 시점 인셋 뷰, '내리기', 만석·오류 안내",
       "priority": "high",
-      "status": "pending",
-      "progress": 0,
+      "status": "completed",
+      "progress": 100,
       "assignedTo": [],
       "tags": [
         "amusement-park",
@@ -119,15 +143,19 @@
       ],
       "createdAt": "2026-11-11T05:53:41.094Z",
       "startedAt": null,
-      "completedAt": null
+      "completedAt": "2026-11-12T02:29:03.747Z",
+      "result": {
+        "evidence": "탑승 요청·좌석·내리기 구현",
+        "commit": "f89dcc6"
+      }
     },
     "task-1794377905561-2iznv4": {
       "taskId": "task-1794377905561-2iznv4",
       "type": "bugfix",
       "description": "탑승자가 다른 클라이언트에서 보이지 않음: 놀이기구 애니메이션이 클라이언트마다 따로 진행(델타 누적) → 서버 기준 방 시각 동기화(time_sync) + 기구 자세를 시각의 순수 함수로(코스터는 한 바퀴 시간표)",
       "priority": "critical",
-      "status": "pending",
-      "progress": 0,
+      "status": "completed",
+      "progress": 100,
       "assignedTo": [],
       "tags": [
         "amusement-park",
@@ -137,15 +165,19 @@
       ],
       "createdAt": "2026-11-11T06:18:25.561Z",
       "startedAt": null,
-      "completedAt": null
+      "completedAt": "2026-11-12T02:29:04.435Z",
+      "result": {
+        "evidence": "TIME_SYNC: ParkRoom.ts:140, client/src/game/serverClock.ts:37",
+        "commit": "f89dcc6"
+      }
     },
     "task-1794378365659-s9no5n": {
       "taskId": "task-1794378365659-s9no5n",
       "type": "feature",
       "description": "놀이동산 8단계: NPC 오리 좌석 표시(npc_N 이름표), NPC 근처 '말 걸기' 버튼(말풍선), 대화창(선택지→서버 대답), 멀어지면 자동 닫기",
       "priority": "high",
-      "status": "pending",
-      "progress": 0,
+      "status": "completed",
+      "progress": 100,
       "assignedTo": [],
       "tags": [
         "amusement-park",
@@ -154,15 +186,19 @@
       ],
       "createdAt": "2026-11-11T06:26:05.659Z",
       "startedAt": null,
-      "completedAt": null
+      "completedAt": "2026-11-12T02:29:05.148Z",
+      "result": {
+        "evidence": "npc_N 이름표, NPC 대화창 구현",
+        "commit": "f89dcc6"
+      }
     },
     "task-1794379037510-hxadr5": {
       "taskId": "task-1794379037510-hxadr5",
       "type": "feature",
       "description": "놀이동산 9단계: 통신 문서 xlsx — 원본 백업, 기존 7개 시트 정리, lobby 형식으로 메시지/상태 동기화/오류 코드 시트 작성, 코드-문서 대조 스크립트",
       "priority": "normal",
-      "status": "pending",
-      "progress": 0,
+      "status": "completed",
+      "progress": 100,
       "assignedTo": [],
       "tags": [
         "amusement-park",
@@ -172,15 +208,19 @@
       ],
       "createdAt": "2026-11-11T06:37:17.510Z",
       "startedAt": null,
-      "completedAt": null
+      "completedAt": "2026-11-12T02:29:05.845Z",
+      "result": {
+        "evidence": "doc/놀이동산_온라인.xlsx, scripts/check_protocol_doc.py",
+        "commit": "f89dcc6"
+      }
     },
     "task-1794379461189-34qcpo": {
       "taskId": "task-1794379461189-34qcpo",
       "type": "feature",
       "description": "UI 개선: (1) 좌측 상단 미니맵 (2) 아기자기·부드러운 파스텔 그림체(둥근 도형·카툰 셰이딩·조명) (3) 범퍼카 조종 + 서버 물리 충돌 동기화 + 충돌 연출",
       "priority": "high",
-      "status": "pending",
-      "progress": 0,
+      "status": "completed",
+      "progress": 100,
       "assignedTo": [],
       "tags": [
         "amusement-park",
@@ -191,7 +231,312 @@
       ],
       "createdAt": "2026-11-11T06:44:21.189Z",
       "startedAt": null,
-      "completedAt": null
+      "completedAt": "2026-11-12T02:29:06.531Z",
+      "result": {
+        "evidence": "미니맵, 툰 재질, server/tests/bumperPhysics.test.ts",
+        "commit": "f89dcc6 범퍼카_수정완료"
+      }
+    },
+    "task-1794451741292-yug08p": {
+      "taskId": "task-1794451741292-yug08p",
+      "type": "feature",
+      "description": "기구 스릴 강화: 실제 물리(에너지 보존·마찰·체인 리프트·브레이크·정차) 기반 코스터 시간표, 클로소이드 루프, 진자 기구 펌핑 사이클, 썬더폴스 물보라, 탑승 시점 G·속도 연출(FOV·흔들림·계기), 에어타임 시 오리 날개 반응",
+      "priority": "high",
+      "status": "completed",
+      "progress": 100,
+      "assignedTo": [],
+      "tags": [
+        "amusement-park",
+        "ride-physics",
+        "thrill"
+      ],
+      "createdAt": "2026-11-12T02:49:01.292Z",
+      "startedAt": null,
+      "completedAt": "2026-11-12T03:01:21.207Z",
+      "result": {
+        "evidence": "client/src/world/rides/ridePhysics.ts (신규), tExpress/rollingXTrain/thunderFalls/letsTwist, rideController.applyThrill, seatPlacement excitement",
+        "verify": "client npm run build 통과, 브라우저 탑승 검증: 롤링엑스 최고 55km/h·G 0.10~5.51·에어타임/고G 배지, 렛츠트위스트 0→120°→0 사이클, 물보라 1.6초/바퀴, 콘솔 오류 0, frame_ms 5.1",
+        "commit": "미커밋"
+      }
+    },
+    "task-1794453782953-xpjz83": {
+      "taskId": "task-1794453782953-xpjz83",
+      "type": "feature",
+      "description": "T익스프레스 실제 기구처럼 재설계(평면 경로+높이 단면 설계, 직선 체인 리프트·77° 낙하·에어타임 언덕·브레이크 구간, A자 목재 벤트+X 가새, 리프트 체인) + 모바일 탑승 진동(Vibration API)",
+      "priority": "high",
+      "status": "completed",
+      "progress": 100,
+      "assignedTo": [],
+      "tags": [
+        "amusement-park",
+        "t-express",
+        "haptics"
+      ],
+      "createdAt": "2026-11-12T03:23:02.953Z",
+      "startedAt": null,
+      "completedAt": "2026-11-12T03:23:08.413Z",
+      "result": {
+        "evidence": "client/src/world/rides/tExpressTrack.ts(신규), tExpress.ts, ridePhysics.ts(리프트 감지·뱅크 조건·phase), game/rideHaptics.ts(신규), rideController.ts",
+        "verify": "client build 통과, 1바퀴 51초·최고 80km/h·G -0.63~5.9·반경 32.5, 진동 흐름 점검(리프트 37·주행 105·에어타임 정지 1·강진동 4·브레이크 패턴 1), 브라우저 탑승 콘솔 오류 0·frame_ms 5.1",
+        "commit": "미커밋"
+      }
+    },
+    "task-1794454619740-xbpd8z": {
+      "taskId": "task-1794454619740-xbpd8z",
+      "type": "feature",
+      "description": "미니맵 기구 이름·확대(버튼·휠·핀치) / 썬더폴스 실제 구성(턴테이블·백워드 드롭·리버싱 룸·45° 낙하) / 오리 이동 속도 6→8",
+      "priority": "high",
+      "status": "completed",
+      "progress": 100,
+      "assignedTo": [],
+      "tags": [
+        "amusement-park",
+        "minimap",
+        "thunder-falls",
+        "move-speed"
+      ],
+      "createdAt": "2026-11-12T03:36:59.740Z",
+      "startedAt": null,
+      "completedAt": "2026-11-12T03:37:11.756Z",
+      "result": {
+        "evidence": "client/src/ui/minimap.ts, style.css, world/rides/trackDesign.ts(신규)·thunderFalls.ts·tExpressTrack.ts·ridePhysics.ts(holds), shared/messages.ts MAX_SPEED 8",
+        "verify": "client·server build 통과(서버 테스트 30/30), 서버 자동 재시작 확인, 브라우저: 이동 8.0/초, 미니맵 이름 8개·버튼/휠/핀치 확대·확대 중 탭 걷기 좌표 정확, 썬더폴스 턴테이블→백워드→룸→낙하 확인, 콘솔 오류 0",
+        "commit": "미커밋"
+      }
+    },
+    "task-1794458284276-u19ogc": {
+      "taskId": "task-1794458284276-u19ogc",
+      "type": "feature",
+      "description": "효과음 추가(Web Audio 합성): 리프트 체인 착착착, 주행 굉음·바람·목재 덜컹, 브레이크, 출발 벨, 썬더폴스 물폭탄·턴테이블 모터, 범퍼카 충돌, 낙하 시 군중 비명(작게), 진자 바람, 판다 기차, 탑승/하차 차임, 거리 감쇠, 음소거 버튼",
+      "priority": "high",
+      "status": "completed",
+      "progress": 100,
+      "assignedTo": [],
+      "tags": [
+        "amusement-park",
+        "audio",
+        "sfx"
+      ],
+      "createdAt": "2026-11-12T04:38:04.276Z",
+      "startedAt": null,
+      "completedAt": "2026-11-12T04:44:49.527Z",
+      "result": {
+        "evidence": "client/src/audio/audioEngine.ts·sfxLibrary.ts·rideSounds.ts(신규), playSession.ts 연결, bumperCars.ts onAnyHit, style.css .sound-button",
+        "verify": "client build 통과, 브라우저: AudioContext running, 롤링엑스 탑승 중 리프트 체인 약 87회·뜬 순간 비명·브레이크·벨 발생, 음소거 시 8초간 0개·저장 확인, 콘솔 오류 0",
+        "commit": "미커밋"
+      }
+    },
+    "task-1794459438674-8k3rty": {
+      "taskId": "task-1794459438674-8k3rty",
+      "type": "bugfix",
+      "description": "썬더폴스 승강장 앞 물길 꺾임 수정·두 낙하 연장, 사운드 실감 강화(잔향·떨림·끼익·비명 키움·환호·복귀 길 소리 유지·낙하 시작 비명)",
+      "priority": "high",
+      "status": "completed",
+      "progress": 100,
+      "assignedTo": [],
+      "tags": [
+        "thunder-falls",
+        "audio",
+        "feedback"
+      ],
+      "createdAt": "2026-11-12T04:57:18.674Z",
+      "startedAt": null,
+      "completedAt": "2026-11-12T04:57:23.275Z",
+      "result": {
+        "evidence": "thunderFalls.ts(PLAN_POINTS 꼬리·PROFILE 리프트 20.5m·낙하 9.2/9.9m, createThunderFallsTrack 내보냄), audioEngine.ts(잔향), sfxLibrary.ts(cheer·slosh·creak), rideSounds.ts(떨림·환호·복귀 소리·낙하 비명)",
+        "verify": "최소 회전 반지름 1m→3.4m 이상, 구조물 반경 18.8m, G 0.29~3.44, client build 통과, 브라우저: 착수 후 승강장 정차까지 매초 효과음 생성 확인, 콘솔 오류 0",
+        "commit": "미커밋"
+      }
+    },
+    "task-1794461271956-cu80w7": {
+      "taskId": "task-1794461271956-cu80w7",
+      "type": "feature",
+      "description": "콜럼버스 대탐험(스윙 보트) 추가: 매직랜드 배치, 진자 운행(펌핑·최고 75°), 배 양끝 좌석 우선 배정(npc_seats), 매 꼭대기 비명·삐걱·바람 효과음, NPC 대화, 통신 문서·할일목록 갱신",
+      "priority": "high",
+      "status": "completed",
+      "progress": 100,
+      "assignedTo": [],
+      "tags": [
+        "amusement-park",
+        "new-ride",
+        "columbus"
+      ],
+      "createdAt": "2026-11-12T05:27:51.956Z",
+      "startedAt": null,
+      "completedAt": "2026-11-12T05:32:25.743Z",
+      "result": {
+        "evidence": "shared/rides.ts(COLUMBUS_ADVENTURE·npc_seats), server ParkRoom.setupRides npc_seats, server/data/npc_dialogs.json, client world/rides/columbus.ts(신규)·index.ts, audio/rideSounds.ts(swing_ship), ridePhysics 진자 phase 진폭 기준, doc xlsx F11·할일목록",
+        "verify": "서버 테스트 30/30(배치 겹침·길 통과), 통신 문서 대조 일치, client·server build 통과, 서버 자동 재시작(PID 17936), 브라우저 탑승 seat_index 0(양 끝), 끝자리 최고 15.9m·최대 75°·배 최저점 1.27m, 콘솔 오류 0",
+        "commit": "미커밋"
+      }
+    },
+    "task-1794465038845-bujysd": {
+      "taskId": "task-1794465038845-bujysd",
+      "type": "research",
+      "description": "멀티 에이전트 코드 리뷰(읽기 전용): 미커밋 변경 26개 파일 — 기구 물리/트랙, 오디오/진동, 서버·공용·UI 3개 영역 병렬 리뷰",
+      "priority": "normal",
+      "status": "completed",
+      "progress": 100,
+      "assignedTo": [],
+      "tags": [
+        "review",
+        "multi-agent"
+      ],
+      "createdAt": "2026-11-12T06:30:38.845Z",
+      "startedAt": null,
+      "completedAt": "2026-11-12T06:36:41.886Z",
+      "result": {
+        "reviewers": [
+          "physics-reviewer",
+          "audio-reviewer",
+          "server-ui-reviewer"
+        ],
+        "findings": {
+          "high": 4,
+          "medium": 12,
+          "low": 16
+        },
+        "top": [
+          "ridePhysics bankFrames 언덕 꼭대기에서 T익스프레스 108° 뒤집힘",
+          "브레이크·중간 정차 진입 시 한 스텝 급정지(500m/s²+)·u 역행",
+          "ParkRoom npc_seats 검증 없음",
+          "오디오 예외가 렌더 루프·입장을 멈춤(구형 Safari StereoPanner)"
+        ],
+        "code_changed": false
+      }
+    },
+    "task-1794465495251-301j7c": {
+      "taskId": "task-1794465495251-301j7c",
+      "type": "bugfix",
+      "description": "리뷰 수정(높음+중간): 뱅크 뒤집힘·브레이크/정차 급정지·u 역행·후룸 뱅크 제한·lineTo 경사0 방어, npc_seats 검증+테스트, 오디오 예외 격리·엣지 상태·노드 재사용·볼륨 예약 최소화, 통신 문서 옛 값, config 기본 주소, 미니맵-조이스틱·버튼-인셋 겹침",
+      "priority": "high",
+      "status": "completed",
+      "progress": 100,
+      "assignedTo": [],
+      "tags": [
+        "review-fix",
+        "bugfix"
+      ],
+      "createdAt": "2026-11-12T06:38:15.251Z",
+      "startedAt": null,
+      "completedAt": "2026-11-12T06:47:20.613Z",
+      "result": {
+        "fixed": [
+          "뱅크 뒤집힘(수평 곡률 기준·루프만 평행이동) 108°→86°",
+          "브레이크 급정지 565→ 7m/s², 롤링X 587→10, 썬더폴스 정차 766→13 · u 역행 제거",
+          "후룸 뱅크 56°→15°",
+          "lineTo 경사0 방어",
+          "getNpcSeats 검증+테스트(31/31)",
+          "gameAudio 예외 격리·StereoPanner 없으면 소리 끔",
+          "was_* 엣지 상태",
+          "말소리 출구 재사용(터치 5명)",
+          "setLevel 변경 시만(초당 3.6회)",
+          "xlsx move·기구 수 문구",
+          "config 기본 주소 경고·hostname 대체",
+          "가로 폰 미니맵 130px",
+          "인셋 top=버튼 아래",
+          "rideSounds 508→401줄(soundLoops.ts 분리)"
+        ],
+        "verify": "client·server build, server test 31/31, 문서 대조 일치, 서버 자동 재시작 PID 29952, 브라우저 소리 running -39~-62dB·콘솔 오류 0·탑승 seat 0",
+        "commit": "미커밋"
+      }
+    },
+    "task-1794466874912-1r5la4": {
+      "taskId": "task-1794466874912-1r5la4",
+      "type": "research",
+      "description": "문서 누락 검토(읽기 전용): 할일목록.md·실행방법.md·CLAUDE.md·놀이동산_온라인.xlsx 를 현재 코드와 대조",
+      "priority": "normal",
+      "status": "completed",
+      "progress": 100,
+      "assignedTo": [],
+      "tags": [
+        "review",
+        "docs",
+        "multi-agent"
+      ],
+      "createdAt": "2026-11-12T07:01:14.912Z",
+      "startedAt": null,
+      "completedAt": "2026-11-12T07:04:31.517Z",
+      "result": {
+        "reviewers": [
+          "todo-doc-reviewer",
+          "guide-doc-reviewer",
+          "protocol-doc-reviewer"
+        ],
+        "findings": {
+          "todo_md": 15,
+          "guide_md_and_claude_md": 14,
+          "protocol_xlsx": 15
+        },
+        "key_mismatches": [
+          "NPC 총수 16→18 (할일목록 78줄·xlsx 상태동기화 11행)",
+          "할일목록 35줄 서버 주소 기본값 설명",
+          "xlsx 오류 문구 E열이 클라 문구와 다름",
+          "실행방법 점검 명령 PYTHONIOENCODING 누락",
+          "할일목록 '830회/프레임' 오래된 측정치"
+        ],
+        "docs_changed": false
+      }
+    },
+    "task-1794467410588-env64o": {
+      "taskId": "task-1794467410588-env64o",
+      "type": "feature",
+      "description": "문서 누락 반영: 할일목록.md·실행방법.md·CLAUDE.md·놀이동산_온라인.xlsx(셀 갱신·기구 시트 추가)",
+      "priority": "normal",
+      "status": "completed",
+      "progress": 100,
+      "assignedTo": [],
+      "tags": [
+        "docs",
+        "applied"
+      ],
+      "createdAt": "2026-11-12T07:10:10.588Z",
+      "startedAt": null,
+      "completedAt": "2026-11-12T07:10:20.456Z",
+      "result": {
+        "evidence": "doc/놀이동산_할일목록.md, doc/놀이동산_실행방법.md, CLAUDE.md 놀이동산 섹션, doc/놀이동산_온라인.xlsx(메시지 F3·G9·G11·C12·G17·C18·G20, 상태 동기화 G4·G10·G11, 오류 코드 E3~E5·행 17·18, 기구 시트)",
+        "verify": "check_protocol_doc.py 일치, getNpcSeats 계산과 기구 시트 값 일치(총 18), xlsx 백업 scratchpad/놀이동산_온라인_before_docreview.xlsx",
+        "commit": "미커밋"
+      }
+    },
+    "task-1794467715737-tbfw57": {
+      "taskId": "task-1794467715737-tbfw57",
+      "type": "bugfix",
+      "description": "리뷰 낮음 항목 수정: 정차 후 즉시 0.8m/s·턴테이블 뒤 lift 재진입·원판 보간·매 프레임 할당·죽은 코드, 음소거 시 소리 장치 정지·음악 미리 예약·기적 시간 기준·물보라 버퍼·진동 길이, FOV 초기화, 미니맵 우클릭·세 손가락·휠 deltaMode·명명, excitement 한 프레임, style.css 분리",
+      "priority": "normal",
+      "status": "completed",
+      "progress": 100,
+      "assignedTo": [],
+      "tags": [
+        "review-fix",
+        "low"
+      ],
+      "createdAt": "2026-11-12T07:15:15.737Z",
+      "startedAt": null,
+      "completedAt": "2026-11-12T07:20:49.633Z",
+      "result": {
+        "fixed": [
+          "정차 후 서서히 출발(0.03→0.06…)",
+          "턴테이블 뒤 lift 재진입 없음(평평한 정상 시작을 리프트 끝으로)",
+          "원판 보간(144Hz 0.011rad/프레임)",
+          "indexAt·holdStateAt 객체 재사용",
+          "buildLapTimeline·speedAtHeight 제거",
+          "음소거 시 AudioContext suspend",
+          "음악 0.2초 미리 예약·박자 누적",
+          "기적 시간 기준",
+          "소음 버퍼 3초",
+          "진동 최소 20ms·간격 0.1초",
+          "FOV 초기화",
+          "미니맵 우클릭·세 손가락·deltaMode·그리기 제한·명명",
+          "excitement 같은 프레임(갱신 순서)",
+          "style.css → world.css 분리(268/454줄)"
+        ],
+        "not_fixed": [
+          "G 6 상한 근처 — 트랙 설계 사항으로 할일목록에 남김"
+        ],
+        "verify": "client build, 물리 점검 tsx, 브라우저: 음소거 suspended→running, 우클릭 걸기 없음·메뉴 막힘, 콘솔 오류 0",
+        "commit": "미커밋"
+      }
     }
   },
   "version": "3.0.0"

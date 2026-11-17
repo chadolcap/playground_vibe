@@ -9,3 +9,6 @@
 # 빌드 산출물·의존성
 node_modules/
 dist/
+
+# hookify 개인 규칙
+.claude/*.local.md

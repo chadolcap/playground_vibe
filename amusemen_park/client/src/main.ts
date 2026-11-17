@@ -4,6 +4,9 @@ import { startPlaySession, type PlaySession } from "./game/playSession";
 import { createIntroScreen } from "./ui/introScreen";
 import { createParkWorld, type ParkWorld } from "./world/parkWorld";
 import "./style.css";
+// 입장 후 화면 UI (style.css 다음 순서로 적용)
+import "./world.css";
+import "./minimap.css";
 
 // 입장 안내 문구가 화면에 머무는 시간
 const TOAST_DURATION_MS = 4000;
