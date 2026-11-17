@@ -12,3 +12,12 @@ dist/
 
 # hookify 개인 규칙
 .claude/*.local.md
+
+# Blender backup files
+*.blend1
+*.blend1~
+*.blend2
+
+# Temporary files
+*.tmp
+*.bak
