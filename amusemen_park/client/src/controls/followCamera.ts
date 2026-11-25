@@ -7,7 +7,7 @@ export interface FollowCamera {
     readonly yaw: number;
     // 최소 거리 강제 (탑승 중에는 기구 구조물에 가리지 않도록 멀리서 봄), 0 이면 해제
     setMinDistance(value: number): void;
-    // 카메라를 이 방향(yaw) 쪽으로 천천히 돌림 — 범퍼카 운전 중 차 뒤에서 보도록, null 이면 해제
+    // 카메라를 이 방향(yaw) 쪽으로 천천히 돌림 — CRAZY BUMP 운전 중 차 뒤에서 보도록, null 이면 해제
     setYawTarget(target_yaw: number | null): void;
     // 화면 흔들림 (충돌 등), strength 0~1
     shake(strength: number): void;

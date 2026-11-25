@@ -47,7 +47,7 @@ test("회귀: 광장에서 각 게이트로 가는 길이 다른 기구 영역�
 });
 
 test("회귀: 게이트뿐 아니라 기구 바로 옆에서도 '기구 근처'로 판정", () => {
-    const ride = RIDES.lets_twist;
+    const ride = RIDES.duck_twist;
     const gate = getRideGate(ride);
     // 게이트 위
     assert.equal(isNearRide(ride, gate.x, gate.z), true);
@@ -77,7 +77,7 @@ test("NPC 좌석(npc_seats)은 개수가 맞고 좌석 범위 안이며 겹치�
         assert.ok(seats.every((seat) => Number.isInteger(seat) && seat >= 0 && seat < ride.seat_count), ride.id);
     }
     // 잘못된 데이터는 방을 만들기 전에 오류로 알림
-    const base = RIDES.columbus_adventure;
+    const base = RIDES.duck_voyage;
     for (const npc_seats of [[8, 10], [8, -1], [8, 8.5], [8, 8], [8]]) {
         assert.throws(() => getNpcSeats({ ...base, npc_seats }), /npc_seats/, JSON.stringify(npc_seats));
     }
@@ -92,7 +92,7 @@ test("모든 기구 × 선택지에 NPC 대답이 있다", () => {
 });
 
 test("대화 데이터에 빠진 항목이 있으면 시작 시 오류", () => {
-    const broken = { [RIDES.panda_world.id]: { greeting: "안녕" } };
+    const broken = { [RIDES.carousel.id]: { greeting: "안녕" } };
     assert.throws(() => validateNpcDialogs(broken), /빠진 항목/);
     assert.throws(() => validateNpcDialogs(null), /형식/);
 });

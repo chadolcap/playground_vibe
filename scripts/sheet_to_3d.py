@@ -5,7 +5,7 @@
 import bpy, bmesh, math, os
 import numpy as np
 
-SRC = globals().get("SRC", r"D:\work\study\playground_vibe\image\제작\4포즈\sheet_split\man_1")
+SRC = globals().get("SRC", r"D:\work\study\playground_vibe\image\제작\캐릭터\man_1")
 NAME = globals().get("NAME", "man_1")
 OUT = SRC + "_3d"
 HEIGHT = 1.0          # 캐릭터 전체 높이(Blender 단위)

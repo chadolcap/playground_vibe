@@ -22,6 +22,14 @@ export const Player = schema({
     seat_index: t.int8().default(-1),
     // 연결이 잠시 끊겨 재접속을 기다리는 중이면 false
     connected: t.boolean().default(true),
+    // 들고 있는 간식 종류 (cotton_candy / churros, 없음 = "") — shared/snack.ts SNACK_KIND
+    snack_kind: t.string().default(""),
+    // 들고 있는 간식 색 (솜사탕은 4가지 중 무작위, 츄러스는 한 가지, 없음 = "")
+    snack_color: t.string().default(""),
+    // 솜사탕이 사라지는 방 시각(ms) — 클라이언트가 남은 양(크기)을 계산, 0 = 없음
+    snack_until: t.float64().default(0),
+    // 쓰고 있는 머리띠 ID (shared/headband.ts, 없음 = "")
+    headband: t.string().default(""),
 }, "Player");
 export type Player = SchemaType<typeof Player>;
 
@@ -51,14 +59,14 @@ export const Npc = schema({
 }, "Npc");
 export type Npc = SchemaType<typeof Npc>;
 
-// 범퍼카 한 대 (서버 물리 결과) — 좌표는 범퍼카 기구 로컬 좌표, 배열 순서 = 좌석 번호
-export const BumperCar = schema({
+// CRAZY BUMP 한 대 (서버 물리 결과) — 좌표는 CRAZY BUMP 기구 로컬 좌표, 배열 순서 = 좌석 번호
+export const CrazyBumpCar = schema({
     x: t.float32(),
     z: t.float32(),
     // 정면 방향 (라디안, 0 = +z)
     heading: t.float32(),
-}, "BumperCar");
-export type BumperCar = SchemaType<typeof BumperCar>;
+}, "CrazyBumpCar");
+export type CrazyBumpCar = SchemaType<typeof CrazyBumpCar>;
 
 export const ParkState = schema({
     // key = session_id
@@ -67,7 +75,9 @@ export const ParkState = schema({
     rides: t.map(Ride),
     // key = npc_id
     npcs: t.map(Npc),
-    // 범퍼카 위치·방향 (index = 좌석 번호)
-    bumper_cars: t.array(BumperCar),
+    // CRAZY BUMP 위치·방향 (index = 좌석 번호)
+    crazy_bump_cars: t.array(CrazyBumpCar),
+    // 게임장 게임별 참여 인원 (key = game_id, shared/arcade.ts GAME_LIST) — 게임기 이름표에 표시
+    game_counts: t.map("uint16"),
 }, "ParkState");
 export type ParkState = SchemaType<typeof ParkState>;

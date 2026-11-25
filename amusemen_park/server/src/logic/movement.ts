@@ -10,8 +10,8 @@ const MAX_BUDGET_SECONDS = 1;
 // 부동소수점 오차 허용치
 const DISTANCE_EPSILON = 0.05;
 
-// 허용 속도 (월드 단위/초)
-const ALLOWED_SPEED = MOVE_RULE.MAX_SPEED * MOVE_RULE.SPEED_TOLERANCE;
+// 허용 속도 (월드 단위/초) — 달리기 속도 기준
+const ALLOWED_SPEED = MOVE_RULE.RUN_SPEED * MOVE_RULE.SPEED_TOLERANCE;
 const MAX_BUDGET = ALLOWED_SPEED * MAX_BUDGET_SECONDS;
 
 export interface MoveBaseline {
@@ -33,7 +33,15 @@ export function createBaseline(x: number, z: number, time: number): MoveBaseline
     return { x, z, time, budget: MAX_BUDGET };
 }
 
-const MOVE_ANIMS: readonly PlayerAnim[] = [PLAYER_ANIM.IDLE, PLAYER_ANIM.WALK];
+// 서 있을 때 보낼 수 있는 동작 (캐릭터 동작 메뉴의 바닥 앉기·인사·점프·먹기 포함)
+const MOVE_ANIMS: readonly PlayerAnim[] = [
+    PLAYER_ANIM.IDLE,
+    PLAYER_ANIM.WALK,
+    PLAYER_ANIM.SIT_GROUND,
+    PLAYER_ANIM.WAVE,
+    PLAYER_ANIM.JUMP,
+    PLAYER_ANIM.EAT,
+];
 
 function isFiniteNumber(value: unknown): value is number {
     return typeof value === "number" && Number.isFinite(value);

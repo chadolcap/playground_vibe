@@ -1,9 +1,10 @@
 // 아바타 모델 생성 — 도형만 담당 (애니메이션은 duckAnimation.ts)
 // 사람 캐릭터(man_1·man_2·woman_1·woman_2, 이름·색으로 고름) glTF 를 먼저 쓰고, 불러오지 못하면 도형으로 만든 새끼 오리로 대신한다
 import * as THREE from "three";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { createGltfLoader } from "../world/gltfLoader";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import * as SkeletonUtils from "three/addons/utils/SkeletonUtils.js";
+import { FORCED_CHARACTER_MODEL } from "../config";
 import { getMaterial, getToonGradient } from "../world/rides/common";
 
 // 애니메이션이 움직이는 노드 모음
@@ -15,6 +16,10 @@ export interface DuckRig {
     // 날개 또는 팔 (어깨 기준 회전)
     wing_left: THREE.Object3D;
     wing_right: THREE.Object3D;
+    // 오른손 쥐는 자리 (팔·날개의 자식 — 팔을 따라 움직임, 솜사탕 등을 붙임)
+    hand_right: THREE.Object3D;
+    // 정수리 자리 (몸통의 자식 — 머리띠 등을 붙임), userData.head_width = 머리 폭(m)
+    head_top: THREE.Object3D;
     // 다리 (엉덩이 기준 회전)
     leg_left: THREE.Object3D;
     leg_right: THREE.Object3D;
@@ -38,6 +43,11 @@ export interface DuckRig {
     sole_points: SolePoint[];
     // 가장 낮은 발이 땅(0)에 닿도록 모델 전체를 올리고 내리는 노드 (오리는 null)
     ground_lift: THREE.Object3D | null;
+    // 휴머노이드 모델(Blender Action 클립 포함)이면 클립을 재생할 노드와 클립 — 없으면 null·빈 배열(코드로 움직임)
+    model: THREE.Object3D | null;
+    clips: readonly THREE.AnimationClip[];
+    // 간식을 든 자세에서 손이 앞으로 돌아간 각도 — 든 물건을 이만큼 되돌려 세움 (null = 코드 동작의 HOLD_ARM_ANGLE)
+    hold_angle: number | null;
 }
 
 // 발바닥 기준점 하나 — 이 점을 움직이는 뼈와 그 뼈 기준 좌표
@@ -70,13 +80,18 @@ const HUMAN_SIT_LEG_RAISE = 0.08;
 // 이 높이보다 낮은 정점을 발바닥으로 봄 (발바닥 원점 기준)
 const SOLE_VERTEX_HEIGHT = 0.05;
 
-// HUMAN_MODEL_URLS 와 같은 순서 (불러오지 못한 모델은 null)
+// 휴머노이드 모델(scripts/humanoid_rig.py)의 간식 든 자세에서 손이 앞으로 돌아간 각도
+// = humanoid_actions.py holdPose 의 upper_arm 22° + forearm 72° + hand -10°
+const HUMANOID_HOLD_ANGLE = THREE.MathUtils.degToRad(22 + 72 - 10);
+
+// HUMAN_MODEL_URLS 와 같은 순서 (불러오지 못한 모델은 null, 클립이 없는 모델은 빈 배열)
 const human_templates: (THREE.Object3D | null)[] = HUMAN_MODEL_URLS.map(() => null);
+const human_clips: THREE.AnimationClip[][] = HUMAN_MODEL_URLS.map(() => []);
 let human_loading: Promise<void> | null = null;
 
 // 아바타를 만들기 전에 한 번 호출 — 모두 실패하면 오리로 표시되도록 오류를 삼킴
 export function loadCharacterModel(): Promise<void> {
-    const loader = new GLTFLoader();
+    const loader = createGltfLoader();
     human_loading ??= Promise.all(HUMAN_MODEL_URLS.map((url, index) => loader.loadAsync(url).then(
         (gltf) => {
             const toon_materials = new Map<THREE.Material, THREE.MeshToonMaterial>();
@@ -85,10 +100,11 @@ export function loadCharacterModel(): Promise<void> {
                 if (node instanceof THREE.Mesh) {
                     node.castShadow = true;
                     // 공원의 툰 재질과 맞춤 (구운 텍스처는 그대로)
+                    // 양면: AI 생성 메시는 소매 끝·손목 이음매가 열린 껍질이라 앞면만 그리면 손목을 돌릴 때 뚫려 보임
                     const source = node.material as THREE.MeshStandardMaterial;
                     let toon = toon_materials.get(source);
                     if (toon === undefined) {
-                        toon = new THREE.MeshToonMaterial({ map: source.map, gradientMap: getToonGradient() });
+                        toon = new THREE.MeshToonMaterial({ map: source.map, gradientMap: getToonGradient(), side: THREE.DoubleSide });
                         toon_materials.set(source, toon);
                         source.dispose();
                     }
@@ -96,6 +112,7 @@ export function loadCharacterModel(): Promise<void> {
                 }
             });
             human_templates[index] = gltf.scene;
+            human_clips[index] = gltf.animations;
         },
         (error: unknown) => {
             console.warn(`캐릭터 모델(${url})을 불러오지 못했습니다.`, error);
@@ -104,13 +121,16 @@ export function loadCharacterModel(): Promise<void> {
     return human_loading;
 }
 
-// 모든 접속자에게 같은 값(이름·색 등)으로 모델을 고름 — 고른 모델이 없으면 불러온 다른 모델
-function pickHumanTemplate(look_key: string): THREE.Object3D | null {
+// 모든 접속자에게 같은 값(이름·색 등)으로 모델 번호를 고름(없으면 불러온 다른 모델, 하나도 없으면 -1) — config.ts FORCED_CHARACTER_MODEL 이 있으면 그 모델
+// model_order: 해시 대신 쓸 모델 순번 (HUMAN_MODEL_URLS 개수로 나눈 나머지 — 같은 기구 NPC 끼리 다른 캐릭터를 쓰게)
+function pickHumanTemplate(look_key: string, model_order?: number): number {
     let hash = 0;
     for (let index = 0; index < look_key.length; index += 1) {
         hash = (hash * 31 + look_key.charCodeAt(index)) >>> 0;
     }
-    return human_templates[hash % human_templates.length] ?? human_templates.find((template) => template !== null) ?? null;
+    const forced = HUMAN_MODEL_URLS.findIndex((url) => url.endsWith(`/${FORCED_CHARACTER_MODEL}.glb`));
+    const picked = forced >= 0 ? forced : (model_order ?? hash) % human_templates.length;
+    return human_templates[picked] !== null ? picked : human_templates.findIndex((template) => template !== null);
 }
 
 function requireNode(scene: THREE.Object3D, name: string): THREE.Object3D {
@@ -165,6 +185,89 @@ function findSolePoints(model: THREE.Object3D, left_bone: THREE.Object3D, right_
     return points;
 }
 
+// 기본 자세에서 앵커의 축이 모델 축(위 +y, 앞 +z)과 같도록 부모 뼈의 회전을 되돌림
+// (휴머노이드 뼈는 사슬 방향으로 누워 있어 기본 회전이 0 이 아님 — 머리띠·간식은 모델 축 기준으로 만들어짐)
+function alignToWorld(anchor: THREE.Object3D, parent: THREE.Object3D): void {
+    parent.updateWorldMatrix(true, false);
+    anchor.quaternion.copy(parent.getWorldQuaternion(new THREE.Quaternion()).invert());
+}
+
+// 오른손 자리 — 팔 뼈에 주로 묶인 정점 중 가장 낮은 것들(손끝)의 평균을 팔 뼈 기준 좌표로 둠
+// (모델마다 팔 길이가 달라서 상수 대신 메시에서 찾음, 기본 자세는 뼈 회전 0 이라 그대로 계산)
+const HAND_VERTEX_RATIO = 0.08;
+function createHandAnchor(model: THREE.Object3D, arm: THREE.Object3D): THREE.Object3D {
+    model.updateMatrixWorld(true);
+    const points: THREE.Vector3[] = [];
+    model.traverse((node) => {
+        if (!(node instanceof THREE.SkinnedMesh)) {
+            return;
+        }
+        const bone_index = node.skeleton.bones.indexOf(arm as THREE.Bone);
+        if (bone_index < 0) {
+            return;
+        }
+        const positions = node.geometry.getAttribute("position");
+        const indices = node.geometry.getAttribute("skinIndex");
+        const weights = node.geometry.getAttribute("skinWeight");
+        for (let index = 0; index < positions.count; index += 1) {
+            for (let slot = 0; slot < 4; slot += 1) {
+                if (indices.getComponent(index, slot) === bone_index && weights.getComponent(index, slot) > 0.5) {
+                    points.push(new THREE.Vector3().fromBufferAttribute(positions, index).applyMatrix4(node.matrixWorld));
+                    break;
+                }
+            }
+        }
+    });
+    const anchor = new THREE.Object3D();
+    // 뼈 이름(hand_right)과 겹치면 애니메이션 클립이 앵커에 묶일 수 있어 다른 이름
+    anchor.name = "hand_grip";
+    arm.add(anchor);
+    alignToWorld(anchor, arm);
+    if (points.length > 0) {
+        points.sort((a, b) => a.y - b.y);
+        const lowest = points.slice(0, Math.max(1, Math.round(points.length * HAND_VERTEX_RATIO)));
+        const center = lowest.reduce((sum, point) => sum.add(point), new THREE.Vector3()).divideScalar(lowest.length);
+        anchor.position.copy(arm.worldToLocal(center));
+    }
+    return anchor;
+}
+
+// 정수리 자리 — 가장 높은 정점을 정수리로, 그 아래 HEAD_BAND_DEPTH 안 정점의 좌우 폭(양 끝 5% 제외)을 머리 폭으로 둠
+// (묶음 머리처럼 옆으로 삐친 정점이 폭을 부풀리지 않게 양 끝을 잘라냄)
+const HEAD_BAND_DEPTH = 0.22;
+const HEAD_WIDTH_TRIM = 0.05;
+function createHeadAnchor(model: THREE.Object3D, body: THREE.Object3D): THREE.Object3D {
+    model.updateMatrixWorld(true);
+    const points: THREE.Vector3[] = [];
+    model.traverse((node) => {
+        if (!(node instanceof THREE.Mesh)) {
+            return;
+        }
+        const positions = node.geometry.getAttribute("position");
+        for (let index = 0; index < positions.count; index += 1) {
+            points.push(new THREE.Vector3().fromBufferAttribute(positions, index).applyMatrix4(node.matrixWorld));
+        }
+    });
+    const anchor = new THREE.Object3D();
+    anchor.name = "head_top";
+    body.add(anchor);
+    alignToWorld(anchor, body);
+    if (points.length === 0) {
+        anchor.userData.head_width = 0.5;
+        return anchor;
+    }
+    const top = points.reduce((best, point) => (point.y > best.y ? point : best), points[0]);
+    const band = points.filter((point) => point.y > top.y - HEAD_BAND_DEPTH);
+    const xs = band.map((point) => point.x).sort((a, b) => a - b);
+    const zs = band.map((point) => point.z).sort((a, b) => a - b);
+    const trim = Math.floor(xs.length * HEAD_WIDTH_TRIM);
+    const min_x = xs[trim];
+    const max_x = xs[xs.length - 1 - trim];
+    anchor.position.copy(body.worldToLocal(new THREE.Vector3((min_x + max_x) / 2, top.y, zs[Math.floor(zs.length / 2)])));
+    anchor.userData.head_width = max_x - min_x;
+    return anchor;
+}
+
 // 미리 불러 둔 사람 모델을 복제 (도형·재질은 공유, 뼈대는 개체마다 새로 — 일반 clone 은 스킨이 원본 뼈에 묶임)
 function createHumanRig(template: THREE.Object3D): DuckRig {
     const root = new THREE.Group();
@@ -176,11 +279,14 @@ function createHumanRig(template: THREE.Object3D): DuckRig {
     const knee_right = model.getObjectByName("knee_right") ?? null;
     const foot_left = model.getObjectByName("foot_left") ?? null;
     const foot_right = model.getObjectByName("foot_right") ?? null;
+    const arm_right = requireNode(model, "arm_right");
     return {
         root,
         body: requireNode(model, "body"),
         wing_left: requireNode(model, "arm_left"),
-        wing_right: requireNode(model, "arm_right"),
+        wing_right: arm_right,
+        hand_right: createHandAnchor(model, arm_right),
+        head_top: createHeadAnchor(model, requireNode(model, "body")),
         leg_left,
         leg_right,
         knee_left,
@@ -196,6 +302,43 @@ function createHumanRig(template: THREE.Object3D): DuckRig {
         // 발을 움직이는 가장 아래 뼈 — 발목 → 무릎 → 다리 순으로 있는 것
         sole_points: findSolePoints(model, foot_left ?? knee_left ?? leg_left, foot_right ?? knee_right ?? leg_right),
         ground_lift: model,
+        model: null,
+        clips: [],
+        hold_angle: null,
+    };
+}
+
+// 휴머노이드 모델(scripts/humanoid_rig.py — hips·spine·chest·neck·head·jaw, 팔 4·다리 3 마디)을 복제
+// 움직임은 모델에 담긴 Action 클립으로 (humanClips.ts), 코드 동작용 필드는 비슷한 뼈로 채움
+function createHumanoidRig(template: THREE.Object3D, clips: readonly THREE.AnimationClip[]): DuckRig {
+    const root = new THREE.Group();
+    const model = SkeletonUtils.clone(template);
+    root.add(model);
+    const thigh_left = requireNode(model, "thigh_left");
+    root.updateMatrixWorld(true);
+    return {
+        root,
+        body: requireNode(model, "chest"),
+        wing_left: requireNode(model, "upper_arm_left"),
+        wing_right: requireNode(model, "upper_arm_right"),
+        hand_right: createHandAnchor(model, requireNode(model, "hand_right")),
+        head_top: createHeadAnchor(model, requireNode(model, "head")),
+        leg_left: thigh_left,
+        leg_right: requireNode(model, "thigh_right"),
+        knee_left: requireNode(model, "shin_left"),
+        knee_right: requireNode(model, "shin_right"),
+        foot_left: requireNode(model, "foot_left"),
+        foot_right: requireNode(model, "foot_right"),
+        hair: HAIR_BONES.map((name) => model.getObjectByName(name)).filter((node) => node !== undefined),
+        is_human: true,
+        hip_height: thigh_left.getWorldPosition(new THREE.Vector3()).y,
+        sit_drop: HUMAN_SIT_DROP,
+        sit_leg_raise: HUMAN_SIT_LEG_RAISE,
+        sole_points: [],
+        ground_lift: null,
+        model,
+        clips,
+        hold_angle: HUMANOID_HOLD_ANGLE,
     };
 }
 
@@ -287,11 +430,15 @@ function shadowed(mesh: THREE.Mesh): THREE.Mesh {
 }
 
 // 사람 모델을 불러왔으면 사람(몸 색은 쓰지 않음), 아니면 몸 색(#rrggbb) 오리 한 마리 — 메시 6개
-// look_key: 사람 모델을 고르는 값 (모든 접속자에게 같아야 함, 없으면 몸 색)
-export function createDuckRig(body_color: string, look_key: string = body_color): DuckRig {
-    const human_template = pickHumanTemplate(look_key);
+// look_key: 사람 모델을 고르는 값 (모든 접속자에게 같아야 함, 없으면 몸 색), model_order: 해시 대신 쓸 모델 순번 (있으면)
+export function createDuckRig(body_color: string, look_key: string = body_color, model_order?: number): DuckRig {
+    const human_index = pickHumanTemplate(look_key, model_order);
+    const human_template = human_templates[human_index] ?? null;
     if (human_template !== null) {
-        return createHumanRig(human_template);
+        // 엉덩이(hips) 뼈가 있으면 휴머노이드 리그 — 아직 옛 리그(body·arm·leg 뼈)인 모델은 코드로 움직임
+        return human_template.getObjectByName("hips") !== undefined
+            ? createHumanoidRig(human_template, human_clips[human_index])
+            : createHumanRig(human_template);
     }
     const geometries = getSharedGeometries();
     const body_material = getMaterial(body_color);
@@ -310,6 +457,11 @@ export function createDuckRig(body_color: string, look_key: string = body_color)
     const wing_right = shadowed(new THREE.Mesh(geometries.wing, wing_material));
     wing_right.position.set(-0.47, 0.82, -0.02);
     body.add(wing_left, wing_right);
+    // 오리는 날개 끝(아래쪽)을 손으로 씀
+    wing_right.geometry.computeBoundingBox();
+    const hand_right = new THREE.Object3D();
+    hand_right.position.set(0, wing_right.geometry.boundingBox?.min.y ?? 0, 0.05);
+    wing_right.add(hand_right);
 
     const leg_left = shadowed(new THREE.Mesh(geometries.leg, foot_material));
     leg_left.position.set(0.17, HIP_HEIGHT, 0.02);
@@ -318,7 +470,8 @@ export function createDuckRig(body_color: string, look_key: string = body_color)
     root.add(leg_left, leg_right);
 
     return {
-        root, body, wing_left, wing_right, leg_left, leg_right,
+        root, body, wing_left, wing_right, hand_right, leg_left, leg_right,
+        head_top: createHeadAnchor(root, body),
         knee_left: null,
         knee_right: null,
         foot_left: null,
@@ -330,6 +483,9 @@ export function createDuckRig(body_color: string, look_key: string = body_color)
         sit_leg_raise: 0.1,
         sole_points: [],
         ground_lift: null,
+        model: null,
+        clips: [],
+        hold_angle: null,
     };
 }
 

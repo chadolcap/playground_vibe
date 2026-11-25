@@ -90,7 +90,7 @@ export function playSplash(engine: AudioEngine, destination: Destination, volume
     }
 }
 
-// 범퍼카 충돌 '쿵!' — 고무 범퍼의 둔탁한 충격 + 플라스틱 덜그럭 (세게 부딪힐수록 크고 낮게)
+// CRAZY BUMP 충돌 '쿵!' — 고무 범퍼의 둔탁한 충격 + 플라스틱 덜그럭 (세게 부딪힐수록 크고 낮게)
 export function playBump(engine: AudioEngine, destination: Destination, strength: number): void {
     const power = Math.min(strength / 6, 1);
     tone(engine, destination, { type: "sine", from: 150 - power * 50, to: 45, volume: 0.35 + power * 0.55, duration: 0.3 });

@@ -1,7 +1,7 @@
-// 다른 플레이어 표시 — 서버 상태(players)의 추가·삭제·변경을 받아 오리를 만들고 부드럽게 움직임
+// 다른 플레이어 표시 — 서버 상태(players)의 추가·삭제·변경을 받아 오리를 만들고 부드럽게 움직임, 채팅은 머리 위 말풍선
 import * as THREE from "three";
 import { Callbacks, type Room } from "@colyseus/sdk";
-import { PLAYER_ANIM, type PlayerAnim } from "@shared";
+import { PLAYER_ANIM, SERVER_MESSAGE, snackKindLeft, type ChatSay, type PlayerAnim } from "@shared";
 import { createDuckAvatar, type DuckAvatar } from "../character/duckAvatar";
 import type { ParkWorld } from "../world/parkWorld";
 import { placeOnSeat } from "./seatPlacement";
@@ -18,6 +18,12 @@ interface PlayerState {
     ride_id: string;
     seat_index: number;
     connected: boolean;
+    // 들고 있는 간식 종류·색("" = 없음)과 사라지는 방 시각(ms)
+    snack_kind: string;
+    snack_color: string;
+    snack_until: number;
+    // 쓰고 있는 머리띠 ID ("" = 없음)
+    headband: string;
 }
 
 // 클라이언트에는 서버 스키마 클래스가 없어 상태 타입을 추론할 수 없으므로,
@@ -51,7 +57,8 @@ export interface RemotePlayers {
     readonly count: number;
     // 화면에 그려진 다른 오리들의 현재 위치 (미니맵용)
     positions(): { x: number; z: number }[];
-    update(time: number, delta: number): void;
+    // room_time_ms: 방 시각(ms) — 들고 있는 솜사탕의 남은 양 계산용
+    update(time: number, delta: number, room_time_ms: number): void;
     dispose(): void;
 }
 
@@ -59,8 +66,11 @@ function lerpAngle(from: number, to: number, ratio: number): number {
     return from + Math.atan2(Math.sin(to - from), Math.cos(to - from)) * ratio;
 }
 
+const KNOWN_ANIMS: readonly string[] = Object.values(PLAYER_ANIM);
+
+// 모르는 값(새 버전 서버 등)은 서 있기로
 function toAnim(value: string): PlayerAnim {
-    return value === PLAYER_ANIM.WALK || value === PLAYER_ANIM.SIT ? value : PLAYER_ANIM.IDLE;
+    return KNOWN_ANIMS.includes(value) ? (value as PlayerAnim) : PLAYER_ANIM.IDLE;
 }
 
 function pushSnapshot(remote: RemotePlayer): void {
@@ -129,6 +139,7 @@ export function createRemotePlayers(world: ParkWorld, room: Room): RemotePlayers
     // immediate=true: 이미 방에 있던 플레이어도 바로 추가
     const stop_add = callbacks.onAdd("players", (state, session_id) => addPlayer(state, session_id), true);
     const stop_remove = callbacks.onRemove("players", (_state, session_id) => removePlayer(session_id));
+    const stop_chat = room.onMessage(SERVER_MESSAGE.CHAT_SAY, (say: ChatSay) => remotes.get(say.session_id)?.avatar.say(say.text));
 
     return {
         get count() {
@@ -137,10 +148,12 @@ export function createRemotePlayers(world: ParkWorld, room: Room): RemotePlayers
         positions() {
             return [...remotes.values()].map(({ avatar }) => ({ x: avatar.root.position.x, z: avatar.root.position.z }));
         },
-        update(time, delta) {
+        update(time, delta, room_time_ms) {
             const render_time = performance.now() - INTERPOLATION_DELAY_MS;
             for (const remote of remotes.values()) {
                 const { avatar, state } = remote;
+                avatar.setSnack(state.snack_kind ?? "", state.snack_color ?? "", snackKindLeft(state.snack_kind ?? "", state.snack_until ?? 0, room_time_ms));
+                avatar.setHeadband(state.headband ?? "");
                 // 재접속 대기 중(connected=false)인 오리도 자리를 지키고 있으므로 그대로 표시
                 // 탑승 중이면 좌석에 앉힘
                 if (state.ride_id !== "" && placeOnSeat(avatar, world, state.ride_id, state.seat_index)) {
@@ -162,6 +175,7 @@ export function createRemotePlayers(world: ParkWorld, room: Room): RemotePlayers
         dispose() {
             stop_add();
             stop_remove();
+            stop_chat();
             for (const session_id of [...remotes.keys()]) {
                 removePlayer(session_id);
             }

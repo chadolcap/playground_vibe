@@ -113,6 +113,46 @@ export function addMesh(
     return mesh;
 }
 
+// Blender 로 만든 기구 GLB 의 재질을 공원 툰 재질로 바꿈 (scripts/carousel_build.py · duck_voyage_build.py 의 재질 이름 규칙)
+//   toon_<rrggbb> → 공용 툰 단색, glow_<rrggbb> → 스스로 빛나는 툰 단색, glass_<rrggbb> → 반투명 툰 단색,
+//   그 밖에 텍스처가 있는 재질(생성 모델) → 그 텍스처의 툰 재질
+const GLASS_OPACITY = 0.28;
+export function applyGlbToonMaterials(model: THREE.Object3D): void {
+    const textured = new Map<THREE.Material, THREE.MeshToonMaterial>();
+    model.traverse((node) => {
+        if (!(node instanceof THREE.Mesh)) {
+            return;
+        }
+        const material = node.material as THREE.Material;
+        const match = /^(toon|glow|glass)_([0-9a-f]{6})/.exec(material.name);
+        if (match !== null && match[1] === "glass") {
+            // 반투명 차양 — 위에서도 안이 보이게, 그림자는 드리우지 않음
+            material.dispose();
+            const glass = getMaterial(`#${match[2]}`).clone();
+            glass.transparent = true;
+            glass.opacity = GLASS_OPACITY;
+            glass.depthWrite = false;
+            node.material = glass;
+            node.castShadow = false;
+            node.receiveShadow = false;
+            return;
+        } else if (match !== null) {
+            material.dispose();
+            node.material = getMaterial(`#${match[2]}`, match[1] === "glow" ? 0.9 : 0);
+        } else if (material instanceof THREE.MeshStandardMaterial && material.map !== null) {
+            // 같은 재질을 쓰는 메시(복제된 조각상 등)는 툰 재질 하나를 함께 씀
+            let toon = textured.get(material);
+            if (toon === undefined) {
+                toon = new THREE.MeshToonMaterial({ map: material.map, gradientMap: getToonGradient() });
+                textured.set(material, toon);
+            }
+            node.material = toon;
+        }
+        node.castShadow = true;
+        node.receiveShadow = true;
+    });
+}
+
 // ───────── 트랙(경로) 프레임 ─────────
 
 export interface PathFrames {

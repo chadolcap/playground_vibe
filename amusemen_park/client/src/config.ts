@@ -27,3 +27,7 @@ function readServerUrl(raw_value: string | undefined): string {
 }
 
 export const SERVER_URL = readServerUrl(import.meta.env.VITE_SERVER_URL);
+
+// 사람 캐릭터 모델 고정 — 모델 이름(man_1·man_2·woman_1·woman_2)을 주면 모든 플레이어·NPC 가 그 모델로 나옴
+// man_1 동작 작업 중 임시 고정, 작업이 끝나면 null 로 되돌려 이름·색 해시로 배정
+export const FORCED_CHARACTER_MODEL: string | null = null;

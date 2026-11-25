@@ -205,6 +205,7 @@ cd amusemen_park/client && npm run build   # tsc 타입검사 + vite build
 - 요청/응답은 `room.request` + 서버 `onMessage` 반환값, 실패는 `ServerError(4200, ERROR_CODE)`; 통신 필드는 snake_case
 - 놀이기구 자세는 방 시각(`time`)의 순수 함수로만 계산 — delta 누적 금지 (클라이언트 간 위치 불일치 원인)
 - 3D 도형은 `addMesh`/`getMaterial`(rides/common.ts) 사용 — 툰 재질·둥근 상자가 자동 적용
+- GLB 는 Draco 압축(캐릭터 `scripts/humanoid_export.py` 텍스처 1024, 정적 모델 `scripts/compress_glb.py`) → 클라는 `createGltfLoader()`(world/gltfLoader.ts, 디코더 public/draco)로만 불러옴
 - 새 기구: `shared/rides.ts`(필요하면 `npc_seats`)·`server/data/npc_dialogs.json`·`client/src/world/rides/index.ts`·`audio/rideSounds.ts` 의 `RIDE_SOUND_KIND`(빠져도 타입 오류 없이 무음)·xlsx ride_id 목록을 함께 갱신, 좌석 앵커 순서 = 서버 좌석 번호(앞 번호 빈자리부터 배정)
 - 기구 물리(`ridePhysics.ts`): 시간표가 `frames.ups`(뱅크)를 바꾸므로 레일·물길보다 먼저 생성, `trackDesign` fit_ratio 0.9 안팎(1 이상이면 브레이크 구간 사라짐), 물길 회전 반지름 ≥ 폭×1.5, 진자 phase 는 진폭 기준
 - 소리: `audio/gameAudio.ts` 의 guard 안에서만 다룸(예외 나면 소리만 끔), 연속음은 `setLevel`(바뀔 때만 예약), 원샷은 `engine.isRunning()` 일 때만

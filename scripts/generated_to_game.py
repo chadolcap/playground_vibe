@@ -9,7 +9,7 @@
 #        "ARM_MAX_X": 0.25,          # 팔 끝(손)의 |x| 보다 조금 크게 — 바깥의 머리카락은 몸통으로
 #        "SHOULDER_Z": 0.52, "TRI_TARGET": 12000,
 #        "HAIR": [{"name": "hair_left", "side": 1, "x_in": 0.185, "x_full": 0.22,   # 묶음 머리 (없으면 [])
-#                  "z_top": 0.95, "z_full": 0.86}]}   # pivot 을 주지 않으면 머리끈 아래 머리카락 중심
+#                  "z_top": 0.95, "z_full": 0.86, "z_bottom": 0.56}]}   # pivot 을 주지 않으면 머리끈 아래 머리카락 중심, z_bottom = 머리끝(선택)
 # 뼈: root → body(arm_left, arm_right, hair_*), leg_left → knee_left, leg_right → knee_right
 # 크기: 키 1.0 으로 정규화해 계산하고 GAME_SCALE(오리 키 1.55)로 키워 내보냄, 원점 발바닥, 정면 glTF +Z
 import bpy, bmesh, math, os
@@ -24,6 +24,8 @@ ARM_CUT = G.get("ARM_CUT", [(0.42, 0.135), (0.58, 0.10)])
 # 이보다 바깥은 팔이 아님 (어깨까지 내려온 양갈래·포니테일 끝이 팔로 분류되는 것 방지)
 ARM_MAX_X = G.get("ARM_MAX_X", 0.25)
 SHOULDER_Z = G.get("SHOULDER_Z", 0.52)
+# (z, x): 이 높이 아래에서 |x| 가 이보다 안쪽이면 팔이 아님 — 허리가 가늘어 ARM_CUT 선이 엉덩이 폭보다 안쪽일 때 엉덩이 옆이 팔에 묶이지 않게
+ARM_HIP = G.get("ARM_HIP")
 KNEE_Z = G.get("KNEE_Z", LEG_Z * 0.5)
 # 뼈 경계를 섞는 폭 — 좁으면 관절이 꺾여 보이고, 넓으면 몸통까지 끌려감
 BLEND = G.get("BLEND", 0.025)
@@ -179,9 +181,15 @@ def skinWeights(co):
         z1 = ARM_CUT[1][0]
         arm = on * smooth(-BLEND, BLEND, ax - armCutXs(z)) * smooth(z1, z1 - 0.05, z)
         arm *= (ax < ARM_MAX_X) * smooth(LEG_Z, LEG_Z + 0.04, z)
+        if ARM_HIP is not None:
+            hip_z, hip_x = ARM_HIP
+            arm *= 1 - (z < hip_z) * smooth(hip_x + 0.01, hip_x - 0.01, ax)
         w["arm_" + side] = arm
     for h in HAIR:
         hw = smooth(h["x_in"], h["x_full"], h["side"] * x) * smooth(h["z_top"], h["z_full"], z)
+        # 머리끝 높이(z_bottom)를 주면 그 아래는 머리카락이 아님 (A-Pose 처럼 팔이 머리 바깥 x 로 벌어진 경우)
+        if "z_bottom" in h:
+            hw *= smooth(h["z_bottom"] - 0.015, h["z_bottom"] + 0.015, z)
         w[h["name"]] = hw
     total = sum(w.values())
     over = np.maximum(total, 1.0)  # 합이 1 을 넘는 곳(팔·머리 겹침)은 비율대로 줄임

@@ -4,8 +4,9 @@
 # - server/src/schema/ParkState.ts 의 스키마 필드가 '상태 동기화' 시트에 모두 언급되는지
 # - shared/messages.ts 의 payload·응답 인터페이스 필드가 '메시지' 시트 payload 칸에 모두 있는지
 # - shared/rides.ts 의 기구(이름·좌석 수·NPC 수·NPC 좌석)가 '기구' 시트·ride_id 목록·NPC 총수와 같은지
-# - 통신 규칙 상수(이동 속도·방 정원·메시지 제한·재접속 유예·범퍼카 물리 등)가 그 값을 설명하는 셀에 적혀 있는지
+# - 통신 규칙 상수(이동 속도·방 정원·메시지 제한·재접속 유예·CRAZY BUMP 물리 등)가 그 값을 설명하는 셀에 적혀 있는지
 # - 클라이언트가 보여 주는 오류 문구가 '오류 코드' 시트 표시 문구와 같은지
+# - 게임장: server/src/game/common/types.ts 의 MessageType 과 shared/arcade.ts 의 게임방 이름이 'game' 시트에 모두 있는지
 # 사용법: PYTHONIOENCODING=utf-8 python amusemen_park/scripts/check_protocol_doc.py   (불일치가 있으면 종료 코드 1)
 import re
 import sys
@@ -18,10 +19,16 @@ DOC_PATH = ROOT.parent / "doc" / "놀이동산_온라인.xlsx"
 MESSAGES_TS = ROOT / "shared" / "messages.ts"
 RIDES_TS = ROOT / "shared" / "rides.ts"
 ZONES_TS = ROOT / "shared" / "zones.ts"
-BUMPER_TS = ROOT / "shared" / "bumper.ts"
+CRAZY_BUMP_TS = ROOT / "shared" / "crazyBump.ts"
+SNACK_TS = ROOT / "shared" / "snack.ts"
+HEADBAND_TS = ROOT / "shared" / "headband.ts"
+CHAT_TS = ROOT / "shared" / "chat.ts"
 SCHEMA_TS = ROOT / "server" / "src" / "schema" / "ParkState.ts"
 PARK_ROOM_TS = ROOT / "server" / "src" / "rooms" / "ParkRoom.ts"
 CLIENT_SRC = ROOT / "client" / "src"
+ARCADE_TS = ROOT / "shared" / "arcade.ts"
+GAME_TYPES_TS = ROOT / "server" / "src" / "game" / "common" / "types.ts"
+GAME_CONSTANTS_TS = ROOT / "server" / "src" / "game" / "common" / "constants.ts"
 
 # 문서의 type 칸에 쓰지만 메시지 상수가 아닌 항목 (Colyseus 기본 동작)
 DOC_ONLY_TYPES = {'joinOrCreate("park")', "(입장 성공)", "room.leave()", "(연결 종료)"}
@@ -29,32 +36,52 @@ DOC_ONLY_TYPES = {'joinOrCreate("park")', "(입장 성공)", "room.leave()", "(�
 # 통신 규칙 상수 → 그 값을 설명해야 하는 문서 셀 (파일, 상수를 찾는 정규식, 시트, 셀, 이름)
 CONSTANT_CHECKS = [
     (MESSAGES_TS, r"MOVE_RULE = \{.*?MAX_SPEED:\s*([\d.]+)", "메시지", "G9", "MOVE_RULE.MAX_SPEED"),
+    (MESSAGES_TS, r"MOVE_RULE = \{.*?RUN_SPEED:\s*([\d.]+)", "메시지", "G9", "MOVE_RULE.RUN_SPEED"),
     (MESSAGES_TS, r"MOVE_RULE = \{.*?SPEED_TOLERANCE:\s*([\d.]+)", "메시지", "G9", "MOVE_RULE.SPEED_TOLERANCE"),
     (MESSAGES_TS, r"MOVE_RULE = \{.*?SEND_RATE:\s*([\d.]+)", "메시지", "G9", "MOVE_RULE.SEND_RATE"),
     (MESSAGES_TS, r"ROOM_MAX_CLIENTS = ([\d.]+)", "메시지", "G3", "ROOM_MAX_CLIENTS"),
     (PARK_ROOM_TS, r"JOIN_REJECT_CODE = ([\d.]+)", "메시지", "G4", "JOIN_REJECT_CODE"),
     (PARK_ROOM_TS, r"REQUEST_REJECT_CODE = ([\d.]+)", "메시지", "G12", "REQUEST_REJECT_CODE"),
     (PARK_ROOM_TS, r"EXIT_SCATTER_RADIUS = ([\d.]+)", "메시지", "G14", "EXIT_SCATTER_RADIUS"),
-    (PARK_ROOM_TS, r"MAX_MESSAGES_PER_SECOND = ([\d.]+)", "메시지", "G20", "MAX_MESSAGES_PER_SECOND"),
-    (PARK_ROOM_TS, r"RECONNECT_SECONDS = ([\d.]+)", "메시지", "G20", "RECONNECT_SECONDS"),
+    (PARK_ROOM_TS, r"MAX_MESSAGES_PER_SECOND = ([\d.]+)", "메시지", "G29", "MAX_MESSAGES_PER_SECOND"),
+    (PARK_ROOM_TS, r"RECONNECT_SECONDS = ([\d.]+)", "메시지", "G29", "RECONNECT_SECONDS"),
     (PARK_ROOM_TS, r"PATCH_INTERVAL_MS = ([\d.]+)", "상태 동기화", "G3", "PATCH_INTERVAL_MS"),
     (RIDES_TS, r"RIDE_GATE_DISTANCE = ([\d.]+)", "메시지", "G11", "RIDE_GATE_DISTANCE"),
     (RIDES_TS, r"RIDE_NEAR_MARGIN = ([\d.]+)", "메시지", "G11", "RIDE_NEAR_MARGIN"),
     (ZONES_TS, r"SPAWN_RADIUS = ([\d.]+)", "상태 동기화", "G4", "SPAWN_RADIUS"),
     (ZONES_TS, r"SPAWN_POINT = \{.*?z:\s*([\d.]+)", "상태 동기화", "G4", "SPAWN_POINT.z"),
-    (BUMPER_TS, r"ARENA_WIDTH:\s*([\d.]+)", "상태 동기화", "G10", "BUMPER.ARENA_WIDTH"),
-    (BUMPER_TS, r"ARENA_DEPTH:\s*([\d.]+)", "상태 동기화", "G10", "BUMPER.ARENA_DEPTH"),
-    (BUMPER_TS, r"CAR_RADIUS:\s*([\d.]+)", "상태 동기화", "G10", "BUMPER.CAR_RADIUS"),
-    (BUMPER_TS, r"MAX_SPEED:\s*([\d.]+)", "상태 동기화", "G10", "BUMPER.MAX_SPEED"),
-    (BUMPER_TS, r"ACCELERATION:\s*([\d.]+)", "상태 동기화", "G10", "BUMPER.ACCELERATION"),
-    (BUMPER_TS, r"FRICTION:\s*([\d.]+)", "상태 동기화", "G10", "BUMPER.FRICTION"),
-    (BUMPER_TS, r"TURN_RATE:\s*([\d.]+)", "상태 동기화", "G10", "BUMPER.TURN_RATE"),
-    (BUMPER_TS, r"RESTITUTION:\s*([\d.]+)", "상태 동기화", "G10", "BUMPER.RESTITUTION"),
-    (BUMPER_TS, r"SIMULATION_RATE:\s*([\d.]+)", "상태 동기화", "G10", "BUMPER.SIMULATION_RATE"),
-    (BUMPER_TS, r"HIT_MIN_SPEED:\s*([\d.]+)", "메시지", "G18", "BUMPER.HIT_MIN_SPEED"),
-    (BUMPER_TS, r"HIT_COOLDOWN:\s*([\d.]+)", "메시지", "G18", "BUMPER.HIT_COOLDOWN"),
-    (BUMPER_TS, r"INPUT_RATE:\s*([\d.]+)", "메시지", "G17", "BUMPER.INPUT_RATE"),
-    (BUMPER_TS, r"INPUT_TIMEOUT:\s*([\d.]+)", "메시지", "G17", "BUMPER.INPUT_TIMEOUT"),
+    (CRAZY_BUMP_TS, r"ARENA_WIDTH:\s*([\d.]+)", "상태 동기화", "G12", "CRAZY_BUMP.ARENA_WIDTH"),
+    (CRAZY_BUMP_TS, r"ARENA_DEPTH:\s*([\d.]+)", "상태 동기화", "G12", "CRAZY_BUMP.ARENA_DEPTH"),
+    (CRAZY_BUMP_TS, r"CAR_RADIUS:\s*([\d.]+)", "상태 동기화", "G12", "CRAZY_BUMP.CAR_RADIUS"),
+    (CRAZY_BUMP_TS, r"MAX_SPEED:\s*([\d.]+)", "상태 동기화", "G12", "CRAZY_BUMP.MAX_SPEED"),
+    (CRAZY_BUMP_TS, r"ACCELERATION:\s*([\d.]+)", "상태 동기화", "G12", "CRAZY_BUMP.ACCELERATION"),
+    (CRAZY_BUMP_TS, r"FRICTION:\s*([\d.]+)", "상태 동기화", "G12", "CRAZY_BUMP.FRICTION"),
+    (CRAZY_BUMP_TS, r"TURN_RATE:\s*([\d.]+)", "상태 동기화", "G12", "CRAZY_BUMP.TURN_RATE"),
+    (CRAZY_BUMP_TS, r"RESTITUTION:\s*([\d.]+)", "상태 동기화", "G12", "CRAZY_BUMP.RESTITUTION"),
+    (CRAZY_BUMP_TS, r"SIMULATION_RATE:\s*([\d.]+)", "상태 동기화", "G12", "CRAZY_BUMP.SIMULATION_RATE"),
+    (CRAZY_BUMP_TS, r"HIT_MIN_SPEED:\s*([\d.]+)", "메시지", "G24", "CRAZY_BUMP.HIT_MIN_SPEED"),
+    (CRAZY_BUMP_TS, r"HIT_COOLDOWN:\s*([\d.]+)", "메시지", "G24", "CRAZY_BUMP.HIT_COOLDOWN"),
+    (CRAZY_BUMP_TS, r"INPUT_RATE:\s*([\d.]+)", "메시지", "G23", "CRAZY_BUMP.INPUT_RATE"),
+    (CRAZY_BUMP_TS, r"INPUT_TIMEOUT:\s*([\d.]+)", "메시지", "G23", "CRAZY_BUMP.INPUT_TIMEOUT"),
+    (SNACK_TS, r"COTTON_CANDY_CART = \{ x:\s*([\d.]+)", "메시지", "G17", "COTTON_CANDY_CART.x"),
+    (SNACK_TS, r"COTTON_CANDY_CART = \{.*?z:\s*([\d.]+)", "메시지", "G17", "COTTON_CANDY_CART.z"),
+    (SNACK_TS, r"CART_COUNTER_DISTANCE = ([\d.]+)", "메시지", "G17", "CART_COUNTER_DISTANCE"),
+    (SNACK_TS, r"CART_NEAR_RADIUS = ([\d.]+)", "메시지", "G17", "CART_NEAR_RADIUS"),
+    (SNACK_TS, r"COTTON_CANDY_SECONDS = ([\d.]+)", "메시지", "G18", "COTTON_CANDY_SECONDS"),
+    (SNACK_TS, r"CHURROS_CART = \{ x:\s*-?([\d.]+)", "메시지", "G19", "CHURROS_CART.x"),
+    (SNACK_TS, r"CHURROS_CART = \{.*?z:\s*-?([\d.]+)", "메시지", "G19", "CHURROS_CART.z"),
+    (SNACK_TS, r"CHURROS_SECONDS = ([\d.]+)", "메시지", "G20", "CHURROS_SECONDS"),
+    (HEADBAND_TS, r"HEADBAND_SHOP = \{ x:\s*([\d.]+)", "메시지", "G21", "HEADBAND_SHOP.x"),
+    (HEADBAND_TS, r"HEADBAND_SHOP = \{.*?z:\s*-?([\d.]+)", "메시지", "G21", "HEADBAND_SHOP.z"),
+    (HEADBAND_TS, r"SHOP_COUNTER_DISTANCE = ([\d.]+)", "메시지", "G21", "SHOP_COUNTER_DISTANCE"),
+    (HEADBAND_TS, r"SHOP_NEAR_RADIUS = ([\d.]+)", "메시지", "G21", "SHOP_NEAR_RADIUS"),
+    (CHAT_TS, r"MAX_LENGTH:\s*([\d.]+)", "메시지", "F25", "CHAT_RULE.MAX_LENGTH"),
+    (CHAT_TS, r"MIN_INTERVAL_MS:\s*([\d.]+)", "메시지", "G25", "CHAT_RULE.MIN_INTERVAL_MS"),
+    (CHAT_TS, r"SHOW_SECONDS:\s*([\d.]+)", "메시지", "G26", "CHAT_RULE.SHOW_SECONDS"),
+    (ARCADE_TS, r"ARCADE_VIEW_POINT = \{ x:\s*([\d.]+)", "상태 동기화", "G14", "ARCADE_VIEW_POINT.x"),
+    (ARCADE_TS, r"ARCADE_VIEW_POINT = \{.*?z:\s*([\d.]+)", "상태 동기화", "G14", "ARCADE_VIEW_POINT.z"),
+    (ARCADE_TS, r"ARCADE_FORWARD_DISTANCE = ([\d.]+)", "상태 동기화", "G14", "ARCADE_FORWARD_DISTANCE"),
+    (GAME_CONSTANTS_TS, r"RECONNECT_WAIT_SEC = ([\d.]+)", "game", "G14", "RECONNECT_WAIT_SEC"),
 ]
 
 # 오류 코드 중 클라이언트 문구 표가 아니라 별도 상수로 보여 주는 것 (오류 코드 → (파일, 상수 이름))
@@ -171,9 +198,9 @@ def checkRides(workbook, rides: list[dict]) -> list[str]:
     for extra in sorted(doc_rows):
         problems.append(f"[기구] 문서에만 있는 기구: {extra}")
     total = sum(ride["npc_count"] for ride in rides)
-    match = re.search(r"총 (\d+)마리", str(workbook["상태 동기화"]["G11"].value or ""))
+    match = re.search(r"총 (\d+)마리", str(workbook["상태 동기화"]["G13"].value or ""))
     if match is None or int(match.group(1)) != total:
-        problems.append(f"[상태 동기화] G11 NPC 총수가 코드({total}마리)와 다름: {match.group(0) if match else '숫자 없음'}")
+        problems.append(f"[상태 동기화] G13 NPC 총수가 코드({total}마리)와 다름: {match.group(0) if match else '숫자 없음'}")
     return problems
 
 
@@ -215,6 +242,25 @@ def checkErrorTexts(workbook, error_entries: dict[str, str]) -> list[str]:
     return problems
 
 
+# 게임장 'game' 시트 — 게임방 메시지 type 과 게임방 이름이 모두 적혀 있는지
+def checkGameSheet(workbook) -> list[str]:
+    if "game" not in workbook.sheetnames:
+        return ["[game] 'game' 시트가 없음"]
+    sheet_text = "\n".join(sheetValues(workbook["game"], "ABCDEFG"))
+    doc_types = set(sheetValues(workbook["game"], "BE"))
+    problems = []
+    game_source = GAME_TYPES_TS.read_text(encoding="utf-8")
+    message_block = game_source[game_source.index("export const MessageType"):game_source.index("export const ErrorCode")]
+    game_types = set(re.findall(r'^\s*([A-Z_]+): "\1",', message_block, re.M))
+    for value in sorted(game_types):
+        if value not in doc_types:
+            problems.append(f"[game] 문서에 없는 게임방 메시지 type: {value}")
+    for room_name in sorted(set(re.findall(r'room_name: "([^"]+)"', ARCADE_TS.read_text(encoding="utf-8")))):
+        if room_name not in sheet_text:
+            problems.append(f"[game] 문서에 없는 게임방 이름: {room_name}")
+    return problems
+
+
 def main() -> int:
     messages_source = MESSAGES_TS.read_text(encoding="utf-8")
     code_types = readConstObject(messages_source, "CLIENT_MESSAGE") | readConstObject(messages_source, "SERVER_MESSAGE")
@@ -245,6 +291,7 @@ def main() -> int:
     problems += checkRides(workbook, rides)
     problems += checkConstants(workbook)
     problems += checkErrorTexts(workbook, error_entries)
+    problems += checkGameSheet(workbook)
     # 읽기 전용으로 연 파일을 닫음 (Windows 에서 열어 둔 채면 엑셀 저장·삭제가 막힘)
     workbook.close()
 

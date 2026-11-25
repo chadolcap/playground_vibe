@@ -94,10 +94,22 @@ select {
     text-align: center;
 }
 
+.intro-ducks {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 14px;
+}
+
+/* 오리 그림 (높이 기준, 가로는 그림 비율대로) — 둘이 엇갈려 통통 튐 */
 .intro-duck {
-    font-size: 64px;
-    line-height: 1;
+    height: 120px;
+    width: auto;
     animation: duck-bounce 1.6s ease-in-out infinite;
+}
+
+.intro-duck + .intro-duck {
+    animation-delay: -0.8s;
 }
 
 @keyframes duck-bounce {
@@ -229,9 +241,24 @@ select {
 
 .guide-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 12px;
     margin-top: 10px;
+}
+
+/* 기기에 맞는 조작법만: 터치가 주 입력이면 모바일, 아니면 PC */
+.guide-mobile {
+    display: none;
+}
+
+@media (pointer: coarse) {
+    .guide-pc {
+        display: none;
+    }
+
+    .guide-mobile {
+        display: block;
+    }
 }
 
 .guide-col h2 {

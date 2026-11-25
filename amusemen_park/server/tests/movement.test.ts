@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { MAP_EDGE_MARGIN, MAP_HALF, MOVE_RULE } from "@shared";
 import { checkMove, createBaseline, parseMovePayload, type MoveBaseline } from "../src/logic/movement";
 
-const allowed_speed = MOVE_RULE.MAX_SPEED * MOVE_RULE.SPEED_TOLERANCE;
+const allowed_speed = MOVE_RULE.RUN_SPEED * MOVE_RULE.SPEED_TOLERANCE;
 
 function move(x: number, z: number, extra: Record<string, unknown> = {}): unknown {
     return { x, z, rot_y: 0, anim: "walk", ...extra };
@@ -20,6 +20,11 @@ test("정상 속도의 이동은 허용", () => {
     assert.equal(result.ok, true);
 });
 
+test("달리기 속도의 이동도 허용", () => {
+    const result = checkMove(emptyBaseline(), move(MOVE_RULE.RUN_SPEED, 0), 2000);
+    assert.equal(result.ok, true);
+});
+
 test("허용 속도를 넘는 이동(순간이동)은 거부", () => {
     const result = checkMove(emptyBaseline(), move(allowed_speed + 1, 0), 2000);
     assert.equal(result.ok, false);
@@ -32,8 +37,8 @@ test("오래 멈춘 뒤에도 예산은 1초분까지만 쌓인다", () => {
 });
 
 test("회귀: 패킷이 몰려 도착해도 정상 속도 이동은 모두 통과", () => {
-    // 최대 속도보다 조금 빠르게(허용 범위 안) 15Hz 전송, 단 네트워크에서 2개씩 같은 시각에 도착
-    const speed = MOVE_RULE.MAX_SPEED + 0.5;
+    // 달리기 속도보다 조금 빠르게(허용 범위 안) 15Hz 전송, 단 네트워크에서 2개씩 같은 시각에 도착
+    const speed = MOVE_RULE.RUN_SPEED + 0.5;
     const step = speed / MOVE_RULE.SEND_RATE;
     let baseline = createBaseline(0, 0, 0);
     let x = 0;
@@ -80,4 +85,10 @@ test("클라이언트는 sit 애니메이션을 직접 보낼 수 없음", () =>
     assert.equal(parseMovePayload(move(0, 0, { anim: "sit" })), null);
     assert.equal(parseMovePayload(move(0, 0, { anim: "fly" })), null);
     assert.notEqual(parseMovePayload(move(0, 0, { anim: "idle" })), null);
+});
+
+test("캐릭터 동작 메뉴의 동작(바닥 앉기·인사·점프·먹기)은 보낼 수 있음", () => {
+    for (const anim of ["sit_ground", "wave", "jump", "eat"]) {
+        assert.equal(parseMovePayload(move(0, 0, { anim }))?.anim, anim);
+    }
 });

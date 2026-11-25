@@ -1,30 +1,24 @@
-// 놀이기구 8종 생성·배치 — 위치는 shared/rides.ts, 정면(+z)은 게이트(통로) 방향
+// 놀이기구 6종 생성·배치 — 위치는 shared/rides.ts, 정면(+z)은 게이트(통로) 방향
 import * as THREE from "three";
 import { RIDES, RIDE_GATE_DISTANCE, RIDE_LIST, getRideGate, type RideId, type RideInfo } from "@shared";
 import { createSignBoard } from "../labels";
 import { addMesh, type RideModel } from "./common";
-import { createBumperCar } from "./bumperCar";
-import { createColumbus } from "./columbus";
-import { createLetsTwist } from "./letsTwist";
-import { createLostValley } from "./lostValley";
-import { createPandaWorld } from "./pandaWorld";
-import { createRollingXTrain } from "./rollingXTrain";
-import { createSafariWorld } from "./safariWorld";
-import { createTExpress } from "./tExpress";
-import { createThunderFalls } from "./thunderFalls";
+import { createCrazyBump } from "./crazyBump";
+import { createCarousel } from "./carousel";
+import { createDuckVoyage } from "./duckVoyage";
+import { createDuckTwist } from "./duckTwist";
+import { createDuckX } from "./duckX";
+import { createDuckFall } from "./duckFall";
 
 export type { RideModel } from "./common";
 
 const RIDE_BUILDERS: Record<RideId, () => RideModel> = {
-    rolling_x_train: createRollingXTrain,
-    lets_twist: createLetsTwist,
-    thunder_falls: createThunderFalls,
-    bumper_car: createBumperCar,
-    t_express: createTExpress,
-    safari_world: createSafariWorld,
-    lost_valley: createLostValley,
-    panda_world: createPandaWorld,
-    columbus_adventure: createColumbus,
+    duck_twist: createDuckTwist,
+    duck_fall: createDuckFall,
+    crazy_bump: createCrazyBump,
+    duck_x: createDuckX,
+    duck_voyage: createDuckVoyage,
+    carousel: createCarousel,
 };
 
 // 게이트 아치 + 기구 이름 간판 (로컬 +z 쪽 게이트 위치에 세움)

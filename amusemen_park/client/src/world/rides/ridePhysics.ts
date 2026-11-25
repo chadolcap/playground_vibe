@@ -354,7 +354,7 @@ export function findDropBottomU(frames: PathFrames, height_margin: number): numb
     return 1;
 }
 
-// ───────── 진자 기구 (렛츠 트위스트) ─────────
+// ───────── 진자 기구 (DUCK TWIST) ─────────
 
 export interface PendulumOptions {
     // 회전축에서 좌석까지 거리 (m)

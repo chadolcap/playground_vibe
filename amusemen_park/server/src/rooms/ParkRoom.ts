@@ -1,10 +1,20 @@
 // 놀이동산 월드 방
-// 입장(별명 검증·중복 거부·방 번호·색 배정), 이동 검증, 탑승·하차, NPC 대화, 퇴장·재접속 유예
+// 입장(별명 검증·중복 거부·방 번호·색 배정), 이동 검증, 탑승·하차, NPC 대화, 간식(솜사탕·츄러스) 받기, 머리띠 고르기, 채팅, 퇴장·재접속 유예
 import { Room, ServerError, type Client } from "@colyseus/core";
 import {
-    BUMPER,
+    CRAZY_BUMP,
+    CHAT_RULE,
     CLIENT_MESSAGE,
+    GAME_LIST,
+    CHURROS_COLOR,
+    CHURROS_SECONDS,
+    CHURROS_CART,
+    COTTON_CANDY_CART,
+    COTTON_CANDY_COLORS,
+    COTTON_CANDY_SECONDS,
+    SNACK_KIND,
     ERROR_CODE,
+    HEADBAND_NONE,
     NPC_ID_PREFIX,
     RIDE_ID,
     PLAYER_ANIM,
@@ -17,12 +27,22 @@ import {
     SPAWN_RADIUS,
     checkNickname,
     getRideGate,
+    isHeadbandId,
+    isNearCart,
+    isNearShop,
     isNearRide,
     isNpcChoiceId,
     getNpcSeats,
     isRideId,
     nicknameKey,
-    type BumperInputPayload,
+    normalizeChat,
+    type CrazyBumpInputPayload,
+    type ChatResult,
+    type ChatSay,
+    type ChurrosResult,
+    type CottonCandyResult,
+    type SnackCart,
+    type HeadbandSelectResult,
     type ErrorCode,
     type MoveCorrection,
     type NpcTalkResult,
@@ -36,7 +56,8 @@ import { getNpcReply } from "../data/npcDialogs";
 import { hueToHex, pickHue } from "../logic/colors";
 import { checkMove, createBaseline, type MoveBaseline } from "../logic/movement";
 import { Npc, ParkState, Player, Ride, Seat } from "../schema/ParkState";
-import { BumperArena } from "./bumperArena";
+import { CrazyBumpArena } from "./crazyBumpArena";
+import * as gamePresence from "../game/common/gamePresence";
 
 // 입장 거부·요청 실패 시 오류 번호 (메시지에는 ERROR_CODE 문자열을 담음)
 const JOIN_REJECT_CODE = 4100;
@@ -109,8 +130,12 @@ export class ParkRoom extends Room<{ state: ParkState }> {
     private player_hues = new Map<string, number>();
     // session_id → 마지막으로 인정한 이동 (속도 검증 기준)
     private move_baselines = new Map<string, MoveBaseline>();
-    // 범퍼카 경기장 (서버 물리)
-    private bumper_arena: BumperArena | null = null;
+    // session_id → 마지막으로 채팅한 시각 (ms, 도배 방지)
+    private last_chat_at = new Map<string, number>();
+    // CRAZY BUMP 경기장 (서버 물리)
+    private crazy_bump_arena: CrazyBumpArena | null = null;
+    // 게임장 인원 구독 해제
+    private stop_game_counts: (() => void) | null = null;
 
     onCreate(): void {
         this.room_no = acquireRoomNo();
@@ -119,30 +144,38 @@ export class ParkRoom extends Room<{ state: ParkState }> {
         void this.setMetadata({ room_no: this.room_no });
         this.setupRides();
 
-        // 범퍼카: 초당 30회 물리 계산, 세게 부딪히면 방 전체에 알림 (충돌 연출용)
-        this.bumper_arena = new BumperArena(
-            this.state.bumper_cars,
-            RIDES.bumper_car.seat_count,
-            (hit) => this.broadcast(SERVER_MESSAGE.BUMPER_HIT, hit),
+        // CRAZY BUMP: 초당 30회 물리 계산, 세게 부딪히면 방 전체에 알림 (충돌 연출용)
+        this.crazy_bump_arena = new CrazyBumpArena(
+            this.state.crazy_bump_cars,
+            RIDES.crazy_bump.seat_count,
+            (hit) => this.broadcast(SERVER_MESSAGE.CRAZY_BUMP_HIT, hit),
         );
         this.setSimulationInterval((delta_ms) => {
-            const seats = this.state.rides.get(RIDE_ID.BUMPER_CAR)?.seats;
+            const seats = this.state.rides.get(RIDE_ID.CRAZY_BUMP)?.seats;
             if (seats !== undefined) {
-                this.bumper_arena?.step(delta_ms / 1000, [...seats], this.clock.currentTime / 1000);
+                this.crazy_bump_arena?.step(delta_ms / 1000, [...seats], this.clock.currentTime / 1000);
             }
-        }, 1000 / BUMPER.SIMULATION_RATE);
-        this.onMessage(CLIENT_MESSAGE.BUMPER_INPUT, (client, payload: unknown) => this.handleBumperInput(client, payload));
+        }, 1000 / CRAZY_BUMP.SIMULATION_RATE);
+        this.onMessage(CLIENT_MESSAGE.CRAZY_BUMP_INPUT, (client, payload: unknown) => this.handleCrazyBumpInput(client, payload));
 
         this.onMessage(CLIENT_MESSAGE.ROOM_INFO, (): RoomInfo => ({
             room_no: this.room_no,
             player_count: this.clients.length,
             max_players: this.maxClients,
         }));
-        this.onMessage(CLIENT_MESSAGE.TIME_SYNC, (): TimeSyncResult => ({ room_time: Date.now() - this.created_at }));
+        this.onMessage(CLIENT_MESSAGE.TIME_SYNC, (): TimeSyncResult => ({ room_time: this.roomTime() }));
         this.onMessage(CLIENT_MESSAGE.MOVE, (client, payload: unknown) => this.handleMove(client, payload));
         this.onMessage(CLIENT_MESSAGE.RIDE_BOARD, (client, payload: unknown) => this.handleRideBoard(client, payload));
         this.onMessage(CLIENT_MESSAGE.RIDE_LEAVE, (client) => this.handleRideLeave(client));
         this.onMessage(CLIENT_MESSAGE.NPC_TALK, (client, payload: unknown) => this.handleNpcTalk(client, payload));
+        this.onMessage(CLIENT_MESSAGE.COTTON_CANDY_TAKE, (client) => this.handleCottonCandyTake(client));
+        this.onMessage(CLIENT_MESSAGE.CHURROS_TAKE, (client) => this.handleChurrosTake(client));
+        this.onMessage(CLIENT_MESSAGE.HEADBAND_SELECT, (client, payload: unknown) => this.handleHeadbandSelect(client, payload));
+        this.onMessage(CLIENT_MESSAGE.CHAT, (client, payload: unknown) => this.handleChat(client, payload));
+
+        // 게임장 게임별 인원 — 게임방 입장·퇴장 때마다 상태에 반영 (게임기 이름표)
+        this.applyGameCounts(gamePresence.GetGameCounts());
+        this.stop_game_counts = gamePresence.Subscribe((counts) => this.applyGameCounts(counts));
 
         console.log(`[ParkRoom] ${this.room_no}번 방 생성 (${this.roomId})`);
     }
@@ -213,12 +246,24 @@ export class ParkRoom extends Room<{ state: ParkState }> {
         this.name_keys.delete(client.sessionId);
         this.player_hues.delete(client.sessionId);
         this.move_baselines.delete(client.sessionId);
+        this.last_chat_at.delete(client.sessionId);
         console.log(`[ParkRoom] ${this.room_no}번 방 퇴장 ${client.sessionId}`);
     }
 
     onDispose(): void {
+        this.stop_game_counts?.();
         releaseRoomNo(this.room_no);
         console.log(`[ParkRoom] ${this.room_no}번 방 제거`);
+    }
+
+    // 게임별 인원을 상태에 반영 (모든 게임을 0 부터 채워 클라이언트가 항상 값을 읽을 수 있게)
+    private applyGameCounts(counts: ReadonlyMap<string, number>): void {
+        for (const game of GAME_LIST) {
+            const count = counts.get(game.id) ?? 0;
+            if (this.state.game_counts.get(game.id) !== count) {
+                this.state.game_counts.set(game.id, count);
+            }
+        }
     }
 
     // 기구 좌석 생성 + 일부 좌석에 NPC 배치 (npc_1, npc_2, … 방마다 1부터)
@@ -326,17 +371,81 @@ export class ParkRoom extends Room<{ state: ParkState }> {
         return { npc_id: npc.id, choice_id, text: getNpcReply(npc.ride_id, choice_id) };
     }
 
-    // 범퍼카 조종 입력 — 범퍼카에 타고 있는 사람의 것만 받음 (응답 없음)
-    private handleBumperInput(client: Client, payload: unknown): void {
+    // 솜사탕 받기 — 걸어서 수레 창구 앞에 있고, 들고 있던 간식을 다 먹었을 때만 (탑승 중에도 계속 들고 있음)
+    private handleCottonCandyTake(client: Client): CottonCandyResult {
+        const color = COTTON_CANDY_COLORS[Math.floor(Math.random() * COTTON_CANDY_COLORS.length)];
+        const player = this.giveSnack(client, COTTON_CANDY_CART, SNACK_KIND.COTTON_CANDY, color, COTTON_CANDY_SECONDS);
+        return { color: player.snack_color, until: player.snack_until };
+    }
+
+    // 츄러스 받기 — 솜사탕과 같은 규칙 (간식은 한 번에 하나)
+    private handleChurrosTake(client: Client): ChurrosResult {
+        const player = this.giveSnack(client, CHURROS_CART, SNACK_KIND.CHURROS, CHURROS_COLOR, CHURROS_SECONDS);
+        return { until: player.snack_until };
+    }
+
+    // 간식 주기 공통 검사: 걸어서 그 수레 창구 앞 → 들고 있던 간식을 다 먹었는지
+    private giveSnack(client: Client, cart: SnackCart, kind: string, color: string, seconds: number): Player {
+        const player = this.getPlayerOrReject(client);
+        if (player.ride_id !== "" || !isNearCart(player.x, player.z, 0, cart)) {
+            rejectRequest(ERROR_CODE.CART_TOO_FAR);
+        }
+        const now = this.roomTime();
+        if (player.snack_until > now) {
+            rejectRequest(ERROR_CODE.ALREADY_HAS_SNACK);
+        }
+        player.snack_kind = kind;
+        player.snack_color = color;
+        player.snack_until = now + seconds * 1000;
+        return player;
+    }
+
+    // 머리띠 고르기·벗기 — 걸어서 판매점 창구 앞에 있을 때만 (쓴 머리띠는 퇴장할 때까지 유지)
+    private handleHeadbandSelect(client: Client, payload: unknown): HeadbandSelectResult {
+        const player = this.getPlayerOrReject(client);
+        const requested = (payload as { headband_id?: unknown } | null)?.headband_id;
+        const headband_id = requested === HEADBAND_NONE ? HEADBAND_NONE : isHeadbandId(requested) ? requested : rejectRequest(ERROR_CODE.UNKNOWN_HEADBAND);
+        if (player.ride_id !== "" || !isNearShop(player.x, player.z)) {
+            rejectRequest(ERROR_CODE.SHOP_TOO_FAR);
+        }
+        player.headband = headband_id;
+        return { headband_id };
+    }
+
+    // 채팅 — 글을 정리해 보낸 사람을 뺀 방 전체에 말풍선으로 알림 (너무 자주 보내면 거부)
+    private handleChat(client: Client, payload: unknown): ChatResult {
+        this.getPlayerOrReject(client);
+        const text = normalizeChat(typeof payload === "object" && payload !== null ? (payload as { text?: unknown }).text : undefined);
+        if (text === null) {
+            rejectRequest(ERROR_CODE.INVALID_CHAT);
+        }
+        const now = this.clock.currentTime;
+        const last = this.last_chat_at.get(client.sessionId);
+        if (last !== undefined && now - last < CHAT_RULE.MIN_INTERVAL_MS) {
+            rejectRequest(ERROR_CODE.CHAT_TOO_FAST);
+        }
+        this.last_chat_at.set(client.sessionId, now);
+        const say: ChatSay = { session_id: client.sessionId, text };
+        this.broadcast(SERVER_MESSAGE.CHAT_SAY, say, { except: client });
+        return { text };
+    }
+
+    // CRAZY BUMP 조종 입력 — CRAZY BUMP에 타고 있는 사람의 것만 받음 (응답 없음)
+    private handleCrazyBumpInput(client: Client, payload: unknown): void {
         const player = this.state.players.get(client.sessionId);
-        if (player === undefined || player.ride_id !== RIDE_ID.BUMPER_CAR || typeof payload !== "object" || payload === null) {
+        if (player === undefined || player.ride_id !== RIDE_ID.CRAZY_BUMP || typeof payload !== "object" || payload === null) {
             return;
         }
-        const { throttle, steer } = payload as Partial<BumperInputPayload>;
+        const { throttle, steer } = payload as Partial<CrazyBumpInputPayload>;
         if (typeof throttle !== "number" || typeof steer !== "number") {
             return;
         }
-        this.bumper_arena?.setInput(player.seat_index, throttle, steer, this.clock.currentTime / 1000);
+        this.crazy_bump_arena?.setInput(player.seat_index, throttle, steer, this.clock.currentTime / 1000);
+    }
+
+    // 방 시각(ms) — 클라이언트가 TIME_SYNC 로 맞추는 기준 시각
+    private roomTime(): number {
+        return Date.now() - this.created_at;
     }
 
     private getPlayerOrReject(client: Client): Player {
@@ -354,9 +463,9 @@ export class ParkRoom extends Room<{ state: ParkState }> {
 
     // 플레이어가 앉아 있던 좌석을 비우고 탑승 정보 초기화
     private vacateSeat(player: Player): void {
-        if (player.ride_id === RIDE_ID.BUMPER_CAR) {
+        if (player.ride_id === RIDE_ID.CRAZY_BUMP) {
             // 내린 뒤에는 그 차가 다시 자동 주행
-            this.bumper_arena?.clearInput(player.seat_index);
+            this.crazy_bump_arena?.clearInput(player.seat_index);
         }
         const seat = this.state.rides.get(player.ride_id)?.seats[player.seat_index];
         if (seat !== undefined && seat.occupant_id === player.session_id) {

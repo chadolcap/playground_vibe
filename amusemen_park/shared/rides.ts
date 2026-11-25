@@ -1,16 +1,13 @@
 // 놀이기구 ID, 좌석 수, 배치 좌표
-import { ZONE_ID, type ZoneId } from "./zones";
+import { PARK_HUB } from "./zones";
 
 export const RIDE_ID = {
-    ROLLING_X_TRAIN: "rolling_x_train",
-    LETS_TWIST: "lets_twist",
-    THUNDER_FALLS: "thunder_falls",
-    BUMPER_CAR: "bumper_car",
-    T_EXPRESS: "t_express",
-    SAFARI_WORLD: "safari_world",
-    LOST_VALLEY: "lost_valley",
-    PANDA_WORLD: "panda_world",
-    COLUMBUS_ADVENTURE: "columbus_adventure",
+    DUCK_TWIST: "duck_twist",
+    DUCK_FALL: "duck_fall",
+    CRAZY_BUMP: "crazy_bump",
+    DUCK_X: "duck_x",
+    DUCK_VOYAGE: "duck_voyage",
+    CAROUSEL: "carousel",
 } as const;
 
 export type RideId = (typeof RIDE_ID)[keyof typeof RIDE_ID];
@@ -18,7 +15,6 @@ export type RideId = (typeof RIDE_ID)[keyof typeof RIDE_ID];
 export interface RideInfo {
     id: RideId;
     name: string;
-    zone_id: ZoneId;
     // 좌석 수 (NPC + 플레이어 합산 최대 인원)
     seat_count: number;
     // NPC 가 미리 앉아 있는 좌석 수
@@ -34,18 +30,15 @@ export interface RideInfo {
     npc_seats?: readonly number[];
 }
 
+// 배치: 분수대 광장(PARK_HUB) 둘레에 안쪽 기구(DUCK VOYAGE·CRAZY BUMP·회전목마), 바깥쪽 기구(DUCK-X·DUCK FALL·DUCK TWIST)
 export const RIDES: Record<RideId, RideInfo> = {
-    rolling_x_train: { id: "rolling_x_train", name: "롤링 엑스 트레인", zone_id: ZONE_ID.AMERICAN_ADVENTURE, seat_count: 12, npc_count: 3, x: 75, z: -5, board_radius: 8, footprint_radius: 25 },
-    lets_twist: { id: "lets_twist", name: "렛츠 트위스트", zone_id: ZONE_ID.AMERICAN_ADVENTURE, seat_count: 8, npc_count: 2, x: 45, z: 30, board_radius: 8, footprint_radius: 11 },
-    thunder_falls: { id: "thunder_falls", name: "썬더폴스", zone_id: ZONE_ID.MAGIC_LAND, seat_count: 4, npc_count: 1, x: 80, z: -85, board_radius: 8, footprint_radius: 22 },
-    bumper_car: { id: "bumper_car", name: "범퍼카", zone_id: ZONE_ID.MAGIC_LAND, seat_count: 8, npc_count: 2, x: 40, z: -70, board_radius: 8, footprint_radius: 12 },
-    t_express: { id: "t_express", name: "T익스프레스", zone_id: ZONE_ID.EUROPEAN_ADVENTURE, seat_count: 12, npc_count: 3, x: -60, z: -85, board_radius: 8, footprint_radius: 33 },
-    safari_world: { id: "safari_world", name: "사파리월드", zone_id: ZONE_ID.ZOOTOPIA, seat_count: 10, npc_count: 2, x: -80, z: 0, board_radius: 8, footprint_radius: 13.5 },
-    // 판다월드로 가는 길과 겹치지 않도록 광장 쪽 대각선에서 비켜 배치
-    lost_valley: { id: "lost_valley", name: "로스트밸리", zone_id: ZONE_ID.ZOOTOPIA, seat_count: 8, npc_count: 2, x: -48, z: 20, board_radius: 8, footprint_radius: 13.5 },
-    panda_world: { id: "panda_world", name: "판다월드", zone_id: ZONE_ID.ZOOTOPIA, seat_count: 6, npc_count: 1, x: -80, z: 70, board_radius: 8, footprint_radius: 12.5 },
+    duck_twist: { id: "duck_twist", name: "DUCK TWIST", seat_count: 8, npc_count: 2, x: 44, z: 32, board_radius: 8, footprint_radius: 11 },
+    duck_fall: { id: "duck_fall", name: "DUCK FALL", seat_count: 4, npc_count: 1, x: 42, z: -46, board_radius: 8, footprint_radius: 22 },
+    crazy_bump: { id: "crazy_bump", name: "CRAZY BUMP", seat_count: 8, npc_count: 2, x: 38, z: -2, board_radius: 8, footprint_radius: 12 },
+    duck_x: { id: "duck_x", name: "DUCK-X", seat_count: 12, npc_count: 3, x: -37, z: -8, board_radius: 8, footprint_radius: 33 },
     // 스윙 보트 — 좌석 번호는 배의 양 끝 줄부터(0~3), 가운데 줄이 마지막(8·9). NPC 는 가운데에 앉혀 플레이어가 양 끝(가장 높이 올라가는 자리)부터 앉게 함
-    columbus_adventure: { id: "columbus_adventure", name: "콜럼버스 대탐험", zone_id: ZONE_ID.MAGIC_LAND, seat_count: 10, npc_count: 2, x: 30, z: -100, board_radius: 8, footprint_radius: 13, npc_seats: [8, 9] },
+    duck_voyage: { id: "duck_voyage", name: "DUCK VOYAGE", seat_count: 10, npc_count: 2, x: 6, z: -36, board_radius: 8, footprint_radius: 13, npc_seats: [8, 9] },
+    carousel: { id: "carousel", name: "회전목마", seat_count: 12, npc_count: 3, x: -4, z: 24, board_radius: 8, footprint_radius: 8 },
 };
 
 export const RIDE_LIST: readonly RideInfo[] = Object.values(RIDES);
@@ -86,15 +79,17 @@ export function isNearRide(ride: RideInfo, x: number, z: number, shrink = 0): bo
     return near_gate || near_body;
 }
 
-// 탑승·하차 게이트 좌표 — 기구 중심에서 맵 중앙(통로) 쪽으로 RIDE_GATE_DISTANCE 만큼 떨어진 지점
+// 탑승·하차 게이트 좌표 — 기구 중심에서 분수대 광장(PARK_HUB) 쪽으로 RIDE_GATE_DISTANCE 만큼 떨어진 지점
 // 4단계 기구 모델의 입구도 이 좌표에 맞춰 배치할 것
 export function getRideGate(ride: RideInfo): { x: number; z: number } {
-    const length = Math.hypot(ride.x, ride.z);
+    const dx = ride.x - PARK_HUB.x;
+    const dz = ride.z - PARK_HUB.z;
+    const length = Math.hypot(dx, dz);
     if (length === 0) {
         return { x: ride.x, z: ride.z + RIDE_GATE_DISTANCE };
     }
     return {
-        x: ride.x - (ride.x / length) * RIDE_GATE_DISTANCE,
-        z: ride.z - (ride.z / length) * RIDE_GATE_DISTANCE,
+        x: ride.x - (dx / length) * RIDE_GATE_DISTANCE,
+        z: ride.z - (dz / length) * RIDE_GATE_DISTANCE,
     };
 }

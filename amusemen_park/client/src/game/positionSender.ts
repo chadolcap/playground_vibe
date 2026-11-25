@@ -37,7 +37,8 @@ export function createPositionSender(room: Room, local_player: LocalPlayer): Pos
             }
             elapsed = 0;
             const root = local_player.avatar.root;
-            const anim = local_player.avatar.anim === PLAYER_ANIM.WALK ? PLAYER_ANIM.WALK : PLAYER_ANIM.IDLE;
+            // 기구 좌석 앉기(SIT)는 서버가 정하므로 보내지 않음 — 걷기·바닥 앉기·인사·점프·먹기는 그대로
+            const anim = local_player.avatar.anim === PLAYER_ANIM.SIT ? PLAYER_ANIM.IDLE : local_player.avatar.anim;
             const next: MovePayload = { x: root.position.x, z: root.position.z, rot_y: root.rotation.y, anim };
             if (hasChanged(next)) {
                 room.send(CLIENT_MESSAGE.MOVE, next);

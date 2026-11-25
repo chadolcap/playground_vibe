@@ -37,9 +37,12 @@ description: 놀이동산 프로젝트의 3D 모델 제작 절차. 캐릭터 시
    - 묶음 머리: `HAIR` 에 `{"name", "side", "x_in", "x_full", "z_top", "z_full"}` (양갈래 = `hair_left`·`hair_right`, 포니테일 = `hair`). 회전 중심은 머리끈 아래 머리카락 중심으로 자동
    - 머리카락이 어깨까지 내려오면 `ARM_CUT` 상한을 어깨 높이로 낮추고 `ARM_MAX_X` 를 손 끝 |x| 보다 조금 크게 둔다. 가로 원점은 발 기준이라 한쪽으로 뻗은 머리가 있어도 맞음.
    - 저장해 둔 원본으로 다시 만들 때: `bpy.data.libraries.load` 로 `<이름>_hy` 오브젝트만 불러오고, 저장 전에 `bpy.data.libraries` 를 지운다(불러온 파일을 덮어쓸 수 없음). 생성 횟수는 쓰지 않음.
+   - 휴머노이드 리그: `humanoid_rig.py`(관절 J) → (손가락이 떨어진 메시면) `finger_bones.py`(GAPS = 고폴리 손가락 구간 w 분포의 골짜기) → `humanoid_actions.py`(SIT_DROP·CHAIR_DROP 은 엉덩이 최저점이 원점 −0.1 이 되도록 변형 메시로 보정, 내보내기는 `humanoid_export.py`). 손·소매가 떨어진 덩어리인 생성 메시(Tripo·Meshy)에는 `arm_islands.py` 를 쓰지 않음
+   - 손가락이 붙어 나온 메시(Tripo 등)는 같은 그림으로 Meshy standard 를 한 번 더 만들어 `transplant_hands.py`(소매 끝 CUFF_Z 평면으로 자르고 손목 단면 중심·팔 방향을 맞춰 손 이식) 후 generated_to_game 부터 다시. 손가락 경계 GAPS·THUMB 는 이식한 고해상도 손을 hand 뼈 좌표계로 옮겨 w 분포 골짜기로 잼(좌우 따로), 엄지가 손 방향으로 누운 모델은 FINGER_SPREAD 의 thumb 를 줄임
+   - Premium 의 Meshy 는 standard 만 지원(high 는 Hunyuan3D·Tripo·Rodin), Meshy 결과는 이미 정면 −Y·고폴리(약 80만 면) → TRI_TARGET 2만
    - 새 캐릭터를 게임에 넣을 때는 `client/public/models/<이름>.glb` 로 내보내고 `duckModel.ts` 의 `HUMAN_MODEL_URLS` **끝에** 이름을 추가한다(이름·색 해시로 배정, 순서 변경 금지).
    - 클라이언트: `SkeletonUtils.clone` 으로 복제, 엉덩이 높이 = `leg_left` 뼈 위치, 무릎·머리 뼈는 있으면 사용. 걷기 동작은 `duckAnimation.ts` 의 `updateHuman`.
-   - 결과는 `image/제작/4포즈/sheet_split/<이름>_hy/` (원본 고폴리 GLB·blend·albedo), 게임 GLB는 `client/public/models/`
+   - 결과는 `image/제작/캐릭터/<이름>_v<번호>/` (blend·albedo·parts GLB), 게임 GLB는 `client/public/models/`
 5. **검증**
    - Blender: 포즈 뼈를 돌려(다리 ±0.45, 뒷다리 무릎 0.6, 팔, 머리) 4방향 전신과 엉덩이·무릎 확대. 확대할 때 크기 0 인 empty 를 대상으로 잡으면 보이는 깊이가 좁아 메시가 잘려 보이므로 메시를 대상으로 하고 `distance` 로 조절
    - 게임: `__park_world.scene` 의 SkinnedMesh 수·키(1.55)·발바닥(0), 걷는 동안 뼈 회전값 표본, 콘솔 오류
@@ -48,7 +51,7 @@ description: 놀이동산 프로젝트의 3D 모델 제작 절차. 캐릭터 시
 
 ## 2B. 캐릭터 — 로컬 파이프라인 (생성 횟수가 없을 때)
 
-1. **분할**: 고정 중앙선이 아니라 줄마다 흰 여백(밝기 0.92 미만=잉크)의 최장 빈 구간 중앙에서 자른다 → `image/제작/4포즈/sheet_split/<이름>/` 에 `front`·`back`·`side_left`·`side_right`.png. 잘린 곳이 없는지 모두 열어 확인한다.
+1. **분할**: 고정 중앙선이 아니라 줄마다 흰 여백(밝기 0.92 미만=잉크)의 최장 빈 구간 중앙에서 자른다 → `image/제작/캐릭터/<이름>/` 에 `front`·`back`·`side_left`·`side_right`.png. 잘린 곳이 없는지 모두 열어 확인한다.
    - 시트 배치: 좌상=side_right, 우상=side_left, 좌하=front, 우하=back (캐릭터 기준 이름)
 2. **3D 생성**: Blender에서 같은 전역으로 두 스크립트를 순서대로 exec 한다.
    ```python
@@ -81,7 +84,7 @@ description: 놀이동산 프로젝트의 3D 모델 제작 절차. 캐릭터 시
 1. 필요하면 경로를 JSON(positions·tangents·ups)으로 내보내 Blender에 곡선으로 불러온다. 건물이 레일과 겹치지 않는지 확인하는 데만 쓴다.
 2. bpy 스크립트로 모델링한다. 셰이더 노드는 이름 대신 type으로 찾고, enum 값은 하드코딩하지 않는다.
 3. 공원과 스타일을 맞춘다. 둥근 툰 형태와 단색 위주로 만들고, 디테일은 형태(부재 수·굵기)로 더한다.
-4. 내보내기 규칙: 원점=바닥 중심, 정면 glTF +Z, 단위 m, 색 속성(`color_attributes`) 제거, 면 수 최소화.
+4. 내보내기 규칙: 원점=바닥 중심, 정면 glTF +Z, 단위 m, 색 속성(`color_attributes`) 제거, 면 수 최소화. 내보낸 GLB 는 `blender --background --python scripts/compress_glb.py -- <입력> <출력>` 으로 Draco 압축(게임은 `createGltfLoader()` 로만 불러옴)
 5. `look`으로 확인하고, 게임에 배치해서 스크린샷과 `frame_ms`를 확인한다.
 
 ## 5. 보고

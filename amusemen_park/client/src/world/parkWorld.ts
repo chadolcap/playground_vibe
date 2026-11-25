@@ -3,6 +3,13 @@
 import * as THREE from "three";
 import { MAP_SIZE, SPAWN_POINT, type RideId } from "@shared";
 import { disposeDuckGeometries } from "../character/duckModel";
+import { disposeChurrosGeometries } from "../character/churros";
+import { disposeCottonCandyGeometries } from "../character/cottonCandy";
+import { createChurrosCart, createCottonCandyCart } from "./cottonCandyCart";
+import { createHeadbandStand } from "./headbandStand";
+import { createArcade, type ArcadeModel } from "./arcade";
+import { createDuckFountain } from "./duckFountain";
+import { CART_VENDOR_POSITION, STAND_VENDOR_POSITION, createShopVendors } from "./snackVendor";
 import { createClouds, createDecor } from "./decor";
 import { loadWorldFonts } from "./labels";
 import { createRideModels, type RideModel } from "./rides";
@@ -13,6 +20,8 @@ export interface ParkWorld {
     readonly scene: THREE.Scene;
     readonly camera: THREE.PerspectiveCamera;
     readonly rides: ReadonlyMap<RideId, RideModel>;
+    // 게임장 (게임기 클릭·이름표 인원)
+    readonly arcade: ArcadeModel;
     // 3D 화면 캔버스 (카메라 드래그 입력을 받는 면)
     readonly canvas: HTMLCanvasElement;
     // 매 프레임 호출할 함수 등록 (기구 갱신 후, 그리기 전) — 반환 함수로 해제
@@ -164,7 +173,18 @@ export async function createParkWorld(container: HTMLElement): Promise<ParkWorld
     scene.add(sun, sun.target);
 
     const paths = getPathSegments();
-    scene.add(createTerrain(), createDecor(paths));
+    const snack_carts = [createCottonCandyCart(), createChurrosCart()];
+    const headband_stand = createHeadbandStand();
+    const arcade = createArcade();
+    scene.add(createTerrain(), createDecor(paths), ...snack_carts, headband_stand, arcade.root);
+    // 가게 판매원 오리 (모델은 따로 불러와 준비되면 판매대 뒤에 섬) — 간식 수레 duck_1, 머리띠 판매점 duck_2
+    const shop_vendors = createShopVendors([
+        ...snack_carts.map((shop) => ({ shop, model: "duck_1", position: CART_VENDOR_POSITION })),
+        { shop: headband_stand, model: "duck_2", position: STAND_VENDOR_POSITION },
+    ]);
+    // 분수대 오리 동상 + 부리에서 나오는 물줄기
+    const duck_fountain = createDuckFountain();
+    scene.add(duck_fountain.group);
     const clouds = createClouds();
     scene.add(clouds.group);
     const rides = createRideModels();
@@ -205,6 +225,8 @@ export async function createParkWorld(container: HTMLElement): Promise<ParkWorld
             model.update(ride_time, delta);
         }
         clouds.update(time);
+        duck_fountain.update(time);
+        shop_vendors.update(delta);
         for (const callback of frame_callbacks) {
             callback(time, delta);
         }
@@ -237,6 +259,7 @@ export async function createParkWorld(container: HTMLElement): Promise<ParkWorld
         scene,
         camera,
         rides,
+        arcade,
         canvas: renderer.domElement,
         onFrame(callback) {
             frame_callbacks.add(callback);
@@ -265,6 +288,8 @@ export async function createParkWorld(container: HTMLElement): Promise<ParkWorld
             disposeScene(scene);
             disposeMaterialCache();
             disposeDuckGeometries();
+            disposeCottonCandyGeometries();
+            disposeChurrosGeometries();
             renderer.dispose();
             renderer.domElement.remove();
             inset_frame.remove();

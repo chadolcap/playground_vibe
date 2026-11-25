@@ -10,7 +10,7 @@ import { createRideSounds, type RideSounds } from "./rideSounds";
 export interface GameAudio {
     // 매 프레임: 듣는 위치(내 오리), 지금 타고 있는 기구
     update(listener: THREE.Vector3, riding: RideId | null): void;
-    // 범퍼카 충돌
+    // CRAZY BUMP 충돌
     bump(strength: number, point: THREE.Vector3, is_mine: boolean): void;
     dispose(): void;
 }

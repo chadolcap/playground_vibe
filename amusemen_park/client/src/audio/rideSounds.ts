@@ -26,18 +26,16 @@ import {
 type SoundKind = "steel_coaster" | "wood_coaster" | "flume" | "pendulum" | "swing_ship" | "train";
 
 const RIDE_SOUND_KIND: Partial<Record<RideId, SoundKind>> = {
-    [RIDE_ID.ROLLING_X_TRAIN]: "steel_coaster",
-    [RIDE_ID.T_EXPRESS]: "wood_coaster",
-    [RIDE_ID.THUNDER_FALLS]: "flume",
-    [RIDE_ID.LETS_TWIST]: "pendulum",
-    [RIDE_ID.COLUMBUS_ADVENTURE]: "swing_ship",
-    [RIDE_ID.PANDA_WORLD]: "train",
+    [RIDE_ID.DUCK_X]: "wood_coaster",
+    [RIDE_ID.DUCK_FALL]: "flume",
+    [RIDE_ID.DUCK_TWIST]: "pendulum",
+    [RIDE_ID.DUCK_VOYAGE]: "swing_ship",
 };
 
 // 걸어 다닐 때 기구 소리가 들리는 거리와 최대 음량 (타고 있을 때 1)
 const HEAR_RANGE = 70;
 const SPECTATOR_VOLUME = 0.6;
-const BUMPER_HEAR_RANGE = 40;
+const CRAZY_BUMP_HEAR_RANGE = 40;
 // 공간 울림으로 보내는 양 (가까운 소리도 야외에서 퍼지는 느낌)
 const REVERB_SEND = 0.45;
 // 체인 '착착착' 박자 (초) — 코스터 체인은 빠르게, 후룸 컨베이어는 느긋하게
@@ -71,7 +69,7 @@ const WHISTLE_INTERVAL = 22;
 export interface RideSounds {
     // 매 프레임: 듣는 위치(내 오리), 지금 타고 있는 기구
     update(listener: THREE.Vector3, riding: RideId | null): void;
-    // 범퍼카 충돌 (point = 월드 좌표, is_mine = 내 차가 부딪힘)
+    // CRAZY BUMP 충돌 (point = 월드 좌표, is_mine = 내 차가 부딪힘)
     bump(strength: number, point: THREE.Vector3, is_mine: boolean): void;
     dispose(): void;
 }
@@ -321,7 +319,7 @@ export function createRideSounds(engine: AudioEngine, rides: ReadonlyMap<RideId,
     }
 
     let last_riding: RideId | null = null;
-    // 마지막으로 들은 위치 (범퍼카 충돌처럼 이벤트로 오는 소리의 거리 계산용)
+    // 마지막으로 들은 위치 (CRAZY BUMP 충돌처럼 이벤트로 오는 소리의 거리 계산용)
     const last_listener = new THREE.Vector3();
 
     return {
@@ -375,7 +373,7 @@ export function createRideSounds(engine: AudioEngine, rides: ReadonlyMap<RideId,
             if (!engine.isRunning()) {
                 return;
             }
-            const level = is_mine ? 1 : clamp01(1 - point.distanceTo(last_listener) / BUMPER_HEAR_RANGE);
+            const level = is_mine ? 1 : clamp01(1 - point.distanceTo(last_listener) / CRAZY_BUMP_HEAR_RANGE);
             if (level < 0.01) {
                 return;
             }

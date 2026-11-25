@@ -1,7 +1,7 @@
 // NPC 오리 — 서버 상태(npcs)를 받아 기구 좌석에 앉혀 표시 (기구와 함께 움직임, 방 시각 동기화)
 import * as THREE from "three";
 import { Callbacks, type Room } from "@colyseus/sdk";
-import { PLAYER_ANIM, isRideId, type RideId } from "@shared";
+import { PLAYER_ANIM, RIDES, RIDE_LIST, getNpcSeats, isRideId, type RideId } from "@shared";
 import { createDuckAvatar, type DuckAvatar } from "../character/duckAvatar";
 import type { NameTagStyle } from "../character/nameTag";
 import type { ParkWorld } from "../world/parkWorld";
@@ -18,6 +18,14 @@ interface NpcState {
 interface StateCallbacks {
     onAdd(property: string, handler: (value: NpcState, key: string) => void, immediate?: boolean): () => void;
     onRemove(property: string, handler: (value: NpcState, key: string) => void): () => void;
+}
+
+// NPC 캐릭터 순번 — 같은 기구 NPC 는 좌석 순서대로 서로 다른 캐릭터, 기구마다 시작 캐릭터를 하나씩 밀어 옆 기구와도 덜 겹치게
+// (서버가 정한 NPC 좌석 목록 순서라 모든 접속자에게 같은 캐릭터로 보임, 기구당 NPC 최대 3명 < 캐릭터 4종)
+function npcModelOrder(ride_id: RideId, seat_index: number): number {
+    const ride_order = RIDE_LIST.findIndex((ride) => ride.id === ride_id);
+    const seat_rank = getNpcSeats(RIDES[ride_id]).indexOf(seat_index);
+    return ride_order + (seat_rank >= 0 ? seat_rank : seat_index);
 }
 
 // 플레이어 이름표(흰색)와 구분되는 NPC 이름표
@@ -45,7 +53,7 @@ export function createNpcDucks(world: ParkWorld, room: Room): NpcDucks {
         if (npcs.has(state.id) || !isRideId(state.ride_id)) {
             return;
         }
-        const avatar = createDuckAvatar({ name: state.id, color: state.color, tag_style: NPC_TAG_STYLE });
+        const avatar = createDuckAvatar({ name: state.id, color: state.color, tag_style: NPC_TAG_STYLE, model_order: npcModelOrder(state.ride_id, state.seat_index) });
         avatar.anim = PLAYER_ANIM.SIT;
         world.scene.add(avatar.root);
         npcs.set(state.id, { id: state.id, ride_id: state.ride_id, seat_index: state.seat_index, avatar });

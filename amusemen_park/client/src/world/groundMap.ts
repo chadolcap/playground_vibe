@@ -1,8 +1,11 @@
 // 캐릭터가 서는 바닥 높이와 지나갈 수 없는 바위 — 장면의 실제 도형에서 자동으로 구함
 // 바닥: 위에서 아래로 광선을 쏴서 STEP_MAX 이하의 가장 높은 윗면 (기구 바닥 원판·승강장·광장·길 등 모든 지면 물체)
-// 바위: DodecahedronGeometry(addRock·썬더폴스 바위산) — 몸통 높이에서 자른 단면을 원으로 막음
+// 바위: DodecahedronGeometry(addRock·DUCK FALL 바위산) — 몸통 높이에서 자른 단면을 원으로 막음
+// 단단한 소품: userData.solid_radius 가 있는 묶음(솜사탕 수레 등) — 그 반지름 원으로 막고, 그 안의 도형은 바닥으로 쓰지 않음
+// 놀이기구: 벽·기둥·울타리를 칸 지도(navGrid.ts)로 막음 — 직접 이동은 벽을 따라 미끄러지고, 자동 이동은 그 지도로 길을 찾음
 import * as THREE from "three";
 import type { RideId } from "@shared";
+import { createNavGrid, type NavGrid } from "./navGrid";
 import type { RideModel } from "./rides";
 
 // 이 높이 이하의 윗면은 올라설 수 있는 바닥 (더 높은 물체는 지금처럼 지나감, 바위만 막힘)
@@ -31,6 +34,8 @@ export interface GroundMap {
     // 바위 사이 오목한 틈처럼 밀어내도 빠져나오지 못하면 이동 전 위치(from)로 되돌림
     pushOut(position: THREE.Vector3, from_x: number, from_z: number): boolean;
     readonly colliders: readonly Collider[];
+    // 지나갈 수 없는 칸 지도 (기구 + 막는 원) — 자동 이동 길찾기
+    readonly nav: NavGrid;
 }
 
 function isRock(mesh: THREE.Mesh): boolean {
@@ -46,8 +51,8 @@ function isUnder(node: THREE.Object3D, roots: ReadonlySet<THREE.Object3D>): bool
     return false;
 }
 
-// 좌석이 달린 묶음(열차·보트·흔들리는 팔·범퍼카)은 움직이는 탑승물 → 바닥이 아님
-// (범퍼카처럼 서버가 위치를 정하는 기구는 운행 시각을 바꿔도 움직이지 않으므로 좌석으로 판별)
+// 좌석이 달린 묶음(열차·보트·흔들리는 팔·CRAZY BUMP)은 움직이는 탑승물 → 바닥이 아님
+// (CRAZY BUMP처럼 서버가 위치를 정하는 기구는 운행 시각을 바꿔도 움직이지 않으므로 좌석으로 판별)
 function collectVehicles(rides: ReadonlyMap<RideId, RideModel>): Set<THREE.Object3D> {
     const vehicles = new Set<THREE.Object3D>();
     for (const model of rides.values()) {
@@ -126,6 +131,14 @@ export function createGroundMap(scene: THREE.Scene, rides: ReadonlyMap<RideId, R
     const surfaces: THREE.Object3D[] = [];
     const colliders: Collider[] = [];
     const bounds = new THREE.Box3();
+    const solids = new Set<THREE.Object3D>();
+    scene.traverse((node) => {
+        if (typeof node.userData.solid_radius === "number") {
+            const center = node.getWorldPosition(new THREE.Vector3());
+            colliders.push({ x: center.x, z: center.z, radius: node.userData.solid_radius + BODY_RADIUS });
+            solids.add(node);
+        }
+    });
     scene.traverse((node) => {
         if (!(node instanceof THREE.Mesh) || node instanceof THREE.SkinnedMesh || !node.visible) {
             return;
@@ -138,7 +151,7 @@ export function createGroundMap(scene: THREE.Scene, rides: ReadonlyMap<RideId, R
             return;
         }
         // 꽃처럼 밟고 지나가는 장식, 탑승물, 움직이는 부분, 전부 STEP_MAX 위에 떠 있는 것은 바닥이 아님
-        if (node.userData.walk_through === true || moving.has(node) || isUnder(node, vehicles)) {
+        if (node.userData.walk_through === true || moving.has(node) || isUnder(node, vehicles) || isUnder(node, solids)) {
             return;
         }
         bounds.setFromObject(node);
@@ -146,6 +159,9 @@ export function createGroundMap(scene: THREE.Scene, rides: ReadonlyMap<RideId, R
             surfaces.push(node);
         }
     });
+
+    // 기구 벽·기둥 + 막는 원 칸 지도 (움직이는 부분은 운행 시각을 바꿔 가며 모음 — 다음 프레임에 원래 시각으로 돌아감)
+    const nav = createNavGrid(rides, vehicles, moving, colliders);
 
     const heights = new Map<number, number>();
     const raycaster = new THREE.Raycaster();
@@ -163,6 +179,7 @@ export function createGroundMap(scene: THREE.Scene, rides: ReadonlyMap<RideId, R
 
     return {
         colliders,
+        nav,
         heightAt(x, z) {
             const cell_x = Math.round(x / CELL_SIZE);
             const cell_z = Math.round(z / CELL_SIZE);
@@ -201,6 +218,18 @@ export function createGroundMap(scene: THREE.Scene, rides: ReadonlyMap<RideId, R
                 }
                 if (!pushed_this_pass) {
                     break;
+                }
+                pushed = true;
+            }
+            // 기구 벽·기둥에 막히면 벽을 따라 미끄러짐 (한 축씩 되돌려 봄) — 이미 막힌 자리에 서 있으면(하차 직후 등) 빠져나가게 그대로 둠
+            if (nav.isBlocked(position.x, position.z) && !nav.isBlocked(from_x, from_z)) {
+                if (!nav.isBlocked(position.x, from_z)) {
+                    position.z = from_z;
+                } else if (!nav.isBlocked(from_x, position.z)) {
+                    position.x = from_x;
+                } else {
+                    position.x = from_x;
+                    position.z = from_z;
                 }
                 pushed = true;
             }

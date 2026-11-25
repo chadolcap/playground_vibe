@@ -1,9 +1,9 @@
-// 미니맵 — 화면 좌측 상단, 북쪽(-z)이 위. 구역·길·놀이기구는 한 번만 그려 두고, 매 갱신마다 오리 위치만 덧그림
+// 미니맵 — 화면 좌측 상단, 북쪽(-z)이 위. 길·광장·놀이기구는 한 번만 그려 두고, 매 갱신마다 오리 위치만 덧그림
 // 확대: +/− 버튼, 마우스 휠, 두 손가락 벌리기(모바일). 확대 중에는 내 위치를 가운데에 두고 따라감
 // 기구 이름은 확대해도 같은 글자 크기로 또렷하게 보이도록 매번 화면 좌표에 따로 그림
 // 모바일(터치)은 화면을 덜 가리게 작게 두고, '크게보기' 버튼으로 화면 가운데 팝업으로 띄움 (크기는 minimap.css)
-import { MAP_HALF, RIDE_LIST, ZONES, type ZoneId } from "@shared";
-import { getPathSegments } from "../world/terrain";
+import { ARCADE, MAP_HALF, RIDE_LIST } from "@shared";
+import { HUB_CENTER, HUB_RADIUS, getPathSegments } from "../world/terrain";
 
 export interface MinimapDot {
     x: number;
@@ -31,19 +31,31 @@ const WHEEL_LINE_PX = 16;
 const BACKGROUND_DETAIL = 3;
 // 이보다 적게 움직이고 뗀 터치만 "누른 곳으로 걷기"로 봄 (핀치·흔들림과 구분)
 const TAP_MOVE_LIMIT = 8;
+// 두 번 누름(달리기)으로 보는 간격(ms)·거리(px) — 땅 클릭(controls/clickToMove.ts)과 같은 값
+const DOUBLE_TAP_MS = 320;
+const DOUBLE_TAP_DISTANCE = 40;
 // 기구 이름 글자 크기 (CSS px) — 확대할수록 조금 크게
 const LABEL_FONT_PX = 10;
 const LABEL_FONT_ZOOMED_PX = 12;
 // 미니맵이 이보다 작게 보이면(모바일 축소 상태) 기구 이름은 글자가 겹쳐 읽을 수 없으므로 그리지 않음
 const LABEL_MIN_MAP_PX = 120;
 
-const ZONE_COLORS: Record<ZoneId, string> = {
-    global_fair: "#f6e6c4",
-    american_adventure: "#f3d3a4",
-    magic_land: "#e3d4f5",
-    european_adventure: "#cfe8b8",
-    zootopia: "#dcedb2",
-};
+// 미니맵에 동그라미·이름으로 표시할 장소 — 놀이기구 + 게임장 (반지름은 영역 크기, 표시할 때 0.6배)
+interface MapSpot {
+    name: string;
+    x: number;
+    z: number;
+    radius: number;
+    color: string;
+}
+
+// 게임장 영역 반지름 (게임기 5대가 좌우 약 9m 로 늘어섬)
+const ARCADE_MAP_RADIUS = 7;
+
+const MAP_SPOTS: readonly MapSpot[] = [
+    ...RIDE_LIST.map((ride) => ({ name: ride.name, x: ride.x, z: ride.z, radius: ride.footprint_radius, color: "rgba(255, 140, 120, 0.85)" })),
+    { name: "게임장", x: ARCADE.x, z: ARCADE.z, radius: ARCADE_MAP_RADIUS, color: "rgba(167, 128, 255, 0.85)" },
+];
 
 function createLayer(size_px: number): [HTMLCanvasElement, CanvasRenderingContext2D] {
     const canvas = document.createElement("canvas");
@@ -60,7 +72,7 @@ function clamp(value: number, min: number, max: number): number {
     return Math.min(Math.max(value, min), max);
 }
 
-// 고정 배경: 잔디 → 구역 → 길 → 놀이기구 (detail_px 크기, 맵 전체)
+// 고정 배경: 잔디 → 길 → 분수대 광장 → 놀이기구 (detail_px 크기, 맵 전체)
 function drawBackground(detail_px: number, ratio: number): HTMLCanvasElement {
     const [background, bg] = createLayer(detail_px);
     const scale = detail_px / (MAP_HALF * 2);
@@ -68,12 +80,6 @@ function drawBackground(detail_px: number, ratio: number): HTMLCanvasElement {
     const unit = ratio * BACKGROUND_DETAIL;
     bg.fillStyle = "#bfe6a6";
     bg.fillRect(0, 0, detail_px, detail_px);
-    for (const zone of Object.values(ZONES)) {
-        bg.fillStyle = ZONE_COLORS[zone.id];
-        bg.beginPath();
-        bg.roundRect(toPx(zone.x - zone.width / 2), toPx(zone.z - zone.depth / 2), zone.width * scale, zone.depth * scale, 8 * unit);
-        bg.fill();
-    }
     bg.strokeStyle = "#fffaf0";
     bg.lineCap = "round";
     for (const segment of getPathSegments()) {
@@ -83,14 +89,22 @@ function drawBackground(detail_px: number, ratio: number): HTMLCanvasElement {
         bg.lineTo(toPx(segment.bx), toPx(segment.bz));
         bg.stroke();
     }
-    for (const ride of RIDE_LIST) {
-        bg.fillStyle = "rgba(255, 140, 120, 0.85)";
+    bg.fillStyle = "#fff6e3";
+    bg.beginPath();
+    bg.arc(toPx(HUB_CENTER.x), toPx(HUB_CENTER.z), HUB_RADIUS * scale, 0, Math.PI * 2);
+    bg.fill();
+    bg.fillStyle = "#48cae4";
+    bg.beginPath();
+    bg.arc(toPx(HUB_CENTER.x), toPx(HUB_CENTER.z), Math.max(3 * scale, 1.5 * unit), 0, Math.PI * 2);
+    bg.fill();
+    for (const spot of MAP_SPOTS) {
+        bg.fillStyle = spot.color;
         bg.beginPath();
-        bg.arc(toPx(ride.x), toPx(ride.z), Math.max(ride.footprint_radius * scale * 0.6, 4 * unit), 0, Math.PI * 2);
+        bg.arc(toPx(spot.x), toPx(spot.z), Math.max(spot.radius * scale * 0.6, 4 * unit), 0, Math.PI * 2);
         bg.fill();
         bg.fillStyle = "#ffffff";
         bg.beginPath();
-        bg.arc(toPx(ride.x), toPx(ride.z), 1.8 * unit, 0, Math.PI * 2);
+        bg.arc(toPx(spot.x), toPx(spot.z), 1.8 * unit, 0, Math.PI * 2);
         bg.fill();
     }
     return background;
@@ -106,8 +120,8 @@ function createZoomButton(label: string, title: string): HTMLButtonElement {
     return button;
 }
 
-// on_pick: 미니맵을 누른 지점의 월드 좌표 (그곳까지 자동 걷기)
-export function createMinimap(container: HTMLElement, on_pick: (x: number, z: number) => void): Minimap {
+// on_pick: 미니맵을 누른 지점의 월드 좌표 (그곳까지 자동 이동 — 한 번 누름 = 걷기, 빠르게 두 번 = 달리기)
+export function createMinimap(container: HTMLElement, on_pick: (x: number, z: number, run: boolean) => void): Minimap {
     const ratio = Math.min(window.devicePixelRatio || 1, 2);
     // 캔버스 실제 픽셀 크기 — 보이는 크기(모바일 축소·팝업)가 바뀌면 그에 맞춰 다시 잡음 (draw 참고)
     let size_px = Math.round(SIZE * ratio);
@@ -197,7 +211,7 @@ export function createMinimap(container: HTMLElement, on_pick: (x: number, z: nu
         drawMe();
     }
 
-    // 기구 이름 (흰 테두리 글씨, 기구 원 위쪽 — 미니맵 위 가장자리에 걸리면 원 아래쪽, 좌우 가장자리에서는 안쪽으로 밀어 넣음)
+    // 기구·게임장 이름 (흰 테두리 글씨, 원 위쪽 — 미니맵 위 가장자리에 걸리면 원 아래쪽, 좌우 가장자리에서는 안쪽으로 밀어 넣음)
     function drawLabels(): void {
         if (size_px < LABEL_MIN_MAP_PX * ratio) {
             return;
@@ -211,10 +225,10 @@ export function createMinimap(container: HTMLElement, on_pick: (x: number, z: nu
         context.strokeStyle = "rgba(255, 255, 255, 0.95)";
         context.fillStyle = "#4a3426";
         const edge = 3 * ratio;
-        for (const ride of RIDE_LIST) {
-            const ride_px_x = toPxX(ride.x);
-            const ride_px_y = toPxY(ride.z);
-            const radius = Math.max(ride.footprint_radius * pixelsPerUnit() * 0.6, 4 * ratio);
+        for (const spot of MAP_SPOTS) {
+            const ride_px_x = toPxX(spot.x);
+            const ride_px_y = toPxY(spot.z);
+            const radius = Math.max(spot.radius * pixelsPerUnit() * 0.6, 4 * ratio);
             if (ride_px_x < -radius || ride_px_x > size_px + radius || ride_px_y < -radius || ride_px_y > size_px + radius) {
                 continue;
             }
@@ -222,10 +236,10 @@ export function createMinimap(container: HTMLElement, on_pick: (x: number, z: nu
             if (y - font_px < edge) {
                 y = ride_px_y + radius + font_px + ratio;
             }
-            const half_text = context.measureText(ride.name).width / 2;
+            const half_text = context.measureText(spot.name).width / 2;
             const x = Math.min(Math.max(ride_px_x, half_text + edge), size_px - half_text - edge);
-            context.strokeText(ride.name, x, y);
-            context.fillText(ride.name, x, y);
+            context.strokeText(spot.name, x, y);
+            context.fillText(spot.name, x, y);
         }
     }
 
@@ -262,8 +276,12 @@ export function createMinimap(container: HTMLElement, on_pick: (x: number, z: nu
     }
     zoom_out.disabled = true;
 
-    // ───────── 입력: 탭 = 걷기, 두 손가락 = 확대, 휠 = 확대 ─────────
+    // ───────── 입력: 탭 = 걷기, 두 번 탭 = 달리기, 두 손가락 = 확대, 휠 = 확대 ─────────
     const pointers = new Map<number, { x: number; y: number }>();
+    // 앞 탭 (두 번 누름 판정 — 두 번째 탭은 첫 탭이 고른 지점으로 달려감)
+    let last_tap = { time: -Infinity, client_x: 0, client_y: 0, x: 0, z: 0 };
+    // 펼친 미니맵을 닫는 예약 — 두 번째 탭을 기다리는 동안은 펼친 채로 둠 (바로 닫으면 두 번째 탭이 작은 미니맵의 다른 곳을 누름)
+    let collapse_timer: number | undefined;
     let tap: { id: number; x: number; y: number } | null = null;
     let pinch: { distance: number; zoom: number } | null = null;
 
@@ -321,14 +339,25 @@ export function createMinimap(container: HTMLElement, on_pick: (x: number, z: nu
     const onPointerUp = (event: PointerEvent): void => {
         swallow(event);
         if (tap !== null && tap.id === event.pointerId && pinch === null) {
-            // 누른 위치(화면 크기와 무관하게 비율로) → 보이는 영역 안의 월드 좌표
-            const rect = canvas.getBoundingClientRect();
-            const half_view = MAP_HALF / zoom;
-            const ratio_x = (event.clientX - rect.left) / rect.width;
-            const ratio_z = (event.clientY - rect.top) / rect.height;
-            on_pick(center_x + (ratio_x * 2 - 1) * half_view, center_z + (ratio_z * 2 - 1) * half_view);
-            // 팝업에서 갈 곳을 골랐으면 닫아서 걸어가는 모습이 보이게
-            setExpanded(false);
+            const now = performance.now();
+            const is_double = now - last_tap.time <= DOUBLE_TAP_MS && Math.hypot(event.clientX - last_tap.client_x, event.clientY - last_tap.client_y) <= DOUBLE_TAP_DISTANCE;
+            window.clearTimeout(collapse_timer);
+            if (is_double) {
+                // 두 번 누름: 첫 탭 지점으로 달려감, 펼친 미니맵은 바로 닫음
+                on_pick(last_tap.x, last_tap.z, true);
+                last_tap = { ...last_tap, time: -Infinity };
+                setExpanded(false);
+            } else {
+                // 누른 위치(화면 크기와 무관하게 비율로) → 보이는 영역 안의 월드 좌표
+                const rect = canvas.getBoundingClientRect();
+                const half_view = MAP_HALF / zoom;
+                const x = center_x + ((event.clientX - rect.left) / rect.width * 2 - 1) * half_view;
+                const z = center_z + ((event.clientY - rect.top) / rect.height * 2 - 1) * half_view;
+                on_pick(x, z, false);
+                last_tap = { time: now, client_x: event.clientX, client_y: event.clientY, x, z };
+                // 팝업에서 갈 곳을 골랐으면 (두 번째 탭을 기다린 뒤) 닫아서 걸어가는 모습이 보이게
+                collapse_timer = window.setTimeout(() => setExpanded(false), DOUBLE_TAP_MS);
+            }
         }
         const was_pinching = pinch !== null;
         pointers.delete(event.pointerId);
@@ -419,6 +448,7 @@ export function createMinimap(container: HTMLElement, on_pick: (x: number, z: nu
             draw();
         },
         dispose() {
+            window.clearTimeout(collapse_timer);
             canvas.removeEventListener("pointerdown", onPointerDown);
             canvas.removeEventListener("pointermove", onPointerMove);
             canvas.removeEventListener("pointerup", onPointerUp);

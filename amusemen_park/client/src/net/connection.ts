@@ -38,3 +38,9 @@ export function toJoinErrorText(error: unknown): string {
     }
     return CONNECT_FAIL_TEXT;
 }
+
+// 게임장 게임방 입장 — 빈자리가 있는 방(상대를 기다리는 방)에 들어가고, 없으면 서버가 새 방을 만듦
+// avatar: 놀이동산 캐릭터 look_key ("별명|#rrggbb") — 상대 화면에도 같은 캐릭터로 보임
+export function joinGameRoom(room_name: string, name: string, avatar: string): Promise<Room> {
+    return colyseus_client.joinOrCreate(room_name, { name, avatar });
+}

@@ -10,12 +10,13 @@
         <!-- 첫 페이지: 소개 + 입장 -->
         <main id="intro-screen" class="screen intro">
             <section class="intro-card">
-                <div class="intro-duck" aria-hidden="true">🐥</div>
+                <!-- 놀이동산 판매원 오리 둘 (duck_1·duck_2 정면 그림) -->
+                <div class="intro-ducks" aria-hidden="true">
+                    <img class="intro-duck" src="/images/duck_1.png" alt="" width="83" height="120" />
+                    <img class="intro-duck" src="/images/duck_2.png" alt="" width="79" height="120" />
+                </div>
                 <h1 class="intro-title">오리 놀이동산</h1>
-                <p class="intro-desc">
-                    새끼 오리가 되어 친구들과 함께 놀이동산을 걸어 다니고,<br />
-                    롤러코스터부터 사파리까지 놀이기구 8종을 타 보세요!
-                </p>
+                <p class="intro-desc">친구들과 함께 놀이기구 타러 가요!</p>
 
                 <form id="join-form" class="join-form" novalidate>
                     <label class="join-label" for="nickname-input">별명</label>
@@ -38,23 +39,28 @@
 
                 <details class="guide" open>
                     <summary>조작법</summary>
+                    <!-- 기기에 맞는 조작법 하나만 보임 (마우스 = PC, 터치 = 모바일 — style.css) -->
                     <div class="guide-grid">
-                        <div class="guide-col">
+                        <div class="guide-col guide-pc">
                             <h2>💻 PC</h2>
                             <ul>
                                 <li><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / 방향키 — 이동</li>
+                                <li><kbd>Shift</kbd> + 이동 — 달리기</li>
+                                <li>땅·미니맵 클릭 — 걸어서 이동, 두 번 클릭 — 달려서 이동</li>
                                 <li>마우스 드래그 — 시점 회전</li>
                             </ul>
                         </div>
-                        <div class="guide-col">
+                        <div class="guide-col guide-mobile">
                             <h2>📱 모바일</h2>
                             <ul>
                                 <li>왼쪽 아래 조이스틱 — 이동</li>
+                                <li>조이스틱 끝까지 밀기 — 달리기</li>
+                                <li>땅·미니맵 탭 — 걸어서 이동, 두 번 탭 — 달려서 이동</li>
                                 <li>화면 드래그 — 시점 회전</li>
                             </ul>
                         </div>
                     </div>
-                    <p class="guide-common">놀이기구 앞에서 <b>타기</b>, 오리 친구 옆에서 <b>말 걸기</b> 버튼을 눌러 보세요.</p>
+                    <p class="guide-common">놀이기구 앞에서 <b>타기</b>, 내 캐릭터를 누르면 <b>인사·채팅</b> 버튼이 나와요.</p>
                 </details>
             </section>
         </main>

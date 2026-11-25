@@ -8,6 +8,8 @@ export interface Joystick {
 
 // 이 비율 이하로 살짝 민 것은 무시 (손가락 떨림)
 const DEAD_ZONE = 0.12;
+// 끝까지(이 비율 이상) 밀면 달리기
+const RUN_STRENGTH = 0.95;
 
 // 포인터 캡처 — 아주 짧은 탭처럼 포인터가 이미 사라진 경우 브라우저가 예외를 던지므로 무시
 export function capturePointer(element: Element, pointer_id: number): void {
@@ -43,7 +45,7 @@ export function createJoystick(container: HTMLElement): Joystick {
         knob.style.transform = `translate(${dx}px, ${dy}px)`;
         const strength = Math.min(length / radius, 1);
         // 화면 위쪽(-y)이 앞으로
-        value = strength < DEAD_ZONE ? { x: 0, y: 0 } : { x: dx / radius, y: -dy / radius };
+        value = strength < DEAD_ZONE ? { x: 0, y: 0 } : { x: dx / radius, y: -dy / radius, run: strength >= RUN_STRENGTH };
     }
 
     function release(): void {

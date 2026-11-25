@@ -5,8 +5,8 @@ import * as THREE from "three";
 const FONT = '44px "ONE-Mobile-POP", system-ui, sans-serif';
 const CANVAS_HEIGHT = 72;
 const PADDING_X = 22;
-// 월드 단위 높이
-const TAG_HEIGHT = 0.21;
+// 월드 단위 높이 (바꾸면 duckAvatar 의 TAG_GAP 도 함께 조정)
+export const TAG_HEIGHT = 0.14;
 
 export interface NameTagStyle {
     background: string;

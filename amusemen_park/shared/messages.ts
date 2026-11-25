@@ -22,16 +22,26 @@ export const CLIENT_MESSAGE = {
     RIDE_LEAVE: "ride_leave",
     // [요청] NPC 대화 — NpcTalkPayload → NpcTalkResult
     NPC_TALK: "npc_talk",
-    // 범퍼카 조종 입력 (응답 없음, 범퍼카 탑승 중에만) — BumperInputPayload
-    BUMPER_INPUT: "bumper_input",
+    // CRAZY BUMP 조종 입력 (응답 없음, CRAZY BUMP 탑승 중에만) — CrazyBumpInputPayload
+    CRAZY_BUMP_INPUT: "crazy_bump_input",
+    // [요청] 솜사탕 수레에서 솜사탕 받기 — (payload 없음) → CottonCandyResult
+    COTTON_CANDY_TAKE: "cotton_candy_take",
+    // [요청] 츄러스 수레에서 츄러스 받기 — (payload 없음) → ChurrosResult
+    CHURROS_TAKE: "churros_take",
+    // [요청] 머리띠 판매점에서 머리띠 고르기·벗기 — HeadbandSelectPayload → HeadbandSelectResult
+    HEADBAND_SELECT: "headband_select",
+    // [요청] 채팅 — 머리 위 말풍선으로 다른 사람에게 보임 (규칙 shared/chat.ts) — ChatPayload → ChatResult
+    CHAT: "chat",
 } as const;
 
 // 서버 → 클라이언트 메시지 type
 export const SERVER_MESSAGE = {
     // 이동이 거부되었을 때 서버가 인정한 위치로 되돌림 — MoveCorrection
     MOVE_CORRECTION: "move_correction",
-    // 범퍼카끼리(또는 벽과) 세게 부딪힘 — 방 전체에 알림 (충돌 효과·흔들림 연출) — BumperHit
-    BUMPER_HIT: "bumper_hit",
+    // CRAZY BUMP끼리(또는 벽과) 세게 부딪힘 — 방 전체에 알림 (충돌 효과·흔들림 연출) — CrazyBumpHit
+    CRAZY_BUMP_HIT: "crazy_bump_hit",
+    // 다른 플레이어가 채팅함 — 보낸 사람을 뺀 방 전체에 알림 (머리 위 말풍선) — ChatSay
+    CHAT_SAY: "chat_say",
 } as const;
 
 // 오류 코드 (입장 거부 사유, 요청 실패 사유)
@@ -49,13 +59,26 @@ export const ERROR_CODE = {
     UNKNOWN_NPC: "unknown_npc",
     NPC_TOO_FAR: "npc_too_far",
     UNKNOWN_CHOICE: "unknown_choice",
+    CART_TOO_FAR: "cart_too_far",
+    ALREADY_HAS_SNACK: "already_has_snack",
+    SHOP_TOO_FAR: "shop_too_far",
+    UNKNOWN_HEADBAND: "unknown_headband",
+    INVALID_CHAT: "invalid_chat",
+    CHAT_TOO_FAST: "chat_too_fast",
 } as const;
 
 // 플레이어 애니메이션 상태
+// SIT = 기구 좌석에 앉음(서버가 정함), 나머지 동작은 캐릭터 동작 메뉴에서 골라 MOVE 로 보냄
 export const PLAYER_ANIM = {
     IDLE: "idle",
     WALK: "walk",
     SIT: "sit",
+    // 바닥에 앉기 (일어서거나 움직일 때까지 유지)
+    SIT_GROUND: "sit_ground",
+    // 손 흔들어 인사·점프·간식 먹기 (한 번 하고 idle 로 돌아감)
+    WAVE: "wave",
+    JUMP: "jump",
+    EAT: "eat",
 } as const;
 
 // 좌석 점유 종류
@@ -67,8 +90,10 @@ export const SEAT_KIND = {
 
 // 이동 규칙 (서버 검증과 클라이언트 이동 속도가 같은 값을 사용)
 export const MOVE_RULE = {
-    // 최대 이동 속도 (월드 단위/초) — 다리 길이(엉덩이 0.31)로 디딤발이 미끄러지지 않고 걸을 수 있는 빠르기
-    MAX_SPEED: 3,
+    // 걷기 최대 속도 (월드 단위/초) — 다리 길이(엉덩이 0.31)로 걷기 동작의 디딤발이 미끄러지지 않는 빠르기
+    MAX_SPEED: 1.8,
+    // 달리기 속도 (Shift·조이스틱 끝까지) — 서버 이동 검증은 이 속도 기준
+    RUN_SPEED: 3.6,
     // 네트워크 지연·프레임 흔들림을 감안한 서버 허용 배율
     SPEED_TOLERANCE: 1.5,
     // 클라이언트 위치 전송 주기 (Hz)
@@ -135,22 +160,61 @@ export interface NpcTalkResult {
     text: string;
 }
 
-// BUMPER_INPUT
-export interface BumperInputPayload {
+// COTTON_CANDY_TAKE — 받은 솜사탕 (플레이어 상태의 snack_color·snack_until 과 같은 값)
+export interface CottonCandyResult {
+    color: string;
+    // 솜사탕이 사라지는 방 시각(ms)
+    until: number;
+}
+
+// HEADBAND_SELECT — headband_id: 머리띠 ID (shared/headband.ts HEADBAND_LIST), "" = 벗기
+export interface HeadbandSelectPayload {
+    headband_id: string;
+}
+
+// 쓰고 있는 머리띠 (플레이어 상태의 headband 와 같은 값)
+export interface HeadbandSelectResult {
+    headband_id: string;
+}
+
+// CHURROS_TAKE — 받은 츄러스 (플레이어 상태의 snack_kind·snack_until 과 같은 값)
+export interface ChurrosResult {
+    // 츄러스가 사라지는 방 시각(ms)
+    until: number;
+}
+
+// CHAT — text: 보낼 글 (서버가 normalizeChat 으로 정리한 값을 돌려줌)
+export interface ChatPayload {
+    text: string;
+}
+
+export interface ChatResult {
+    text: string;
+}
+
+// CHAT_SAY
+export interface ChatSay {
+    // 말한 플레이어 (players 맵의 키)
+    session_id: string;
+    text: string;
+}
+
+// CRAZY_BUMP_INPUT
+export interface CrazyBumpInputPayload {
     // 앞(+1) / 뒤(-1)
     throttle: number;
     // 오른쪽(+1) / 왼쪽(-1)
     steer: number;
 }
 
-// BUMPER_HIT
-export interface BumperHit {
+// CRAZY_BUMP_HIT
+export interface CrazyBumpHit {
     // 부딪힌 차 번호 (= 좌석 번호), car_b 가 -1 이면 벽
     car_a: number;
     car_b: number;
     // 부딪힌 세기 (상대 속도)
     strength: number;
-    // 부딪힌 지점 (범퍼카 로컬 좌표)
+    // 부딪힌 지점 (CRAZY BUMP 로컬 좌표)
     x: number;
     z: number;
 }

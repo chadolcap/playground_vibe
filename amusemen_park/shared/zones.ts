@@ -1,49 +1,20 @@
-// 구역 좌표 (가이드맵 기준 배치)
+// 맵 크기·광장·입장 지점 (전체배치도 기준 배치)
 // 좌표계: 월드 원점(0,0)이 맵 중앙, +x = 오른쪽(동), +z = 아래쪽(남, 입구 방향)
 
 // 맵 전체 크기 (정사각형 한 변 길이)
-export const MAP_SIZE = 240;
+export const MAP_SIZE = 160;
 export const MAP_HALF = MAP_SIZE / 2;
 
 // 맵 가장자리에서 이동 가능 영역까지의 여백 (울타리 두께)
 export const MAP_EDGE_MARGIN = 2;
 
-export const ZONE_ID = {
-    GLOBAL_FAIR: "global_fair",
-    AMERICAN_ADVENTURE: "american_adventure",
-    MAGIC_LAND: "magic_land",
-    EUROPEAN_ADVENTURE: "european_adventure",
-    ZOOTOPIA: "zootopia",
-} as const;
+// 분수대 광장 중심 — 모든 기구의 입구가 이쪽을 바라봄
+// (서쪽의 DUCK-X가 가장 커서 맵 중앙보다 동쪽·북쪽으로 조금 옮김)
+export const PARK_HUB = { x: 8, z: -4 } as const;
 
-export type ZoneId = (typeof ZONE_ID)[keyof typeof ZONE_ID];
-
-export interface ZoneInfo {
-    id: ZoneId;
-    name: string;
-    // 구역 중심 좌표
-    x: number;
-    z: number;
-    // 구역 크기 (x축 폭, z축 깊이)
-    width: number;
-    depth: number;
-}
-
-export const ZONES: Record<ZoneId, ZoneInfo> = {
-    // 하단 중앙: 입구·스폰 지점
-    global_fair: { id: "global_fair", name: "글로벌페어", x: 0, z: 90, width: 80, depth: 50 },
-    // 중앙 우측
-    american_adventure: { id: "american_adventure", name: "아메리칸 어드벤처", x: 60, z: 10, width: 90, depth: 80 },
-    // 우측 상단
-    magic_land: { id: "magic_land", name: "매직랜드", x: 60, z: -80, width: 90, depth: 70 },
-    // 좌측 상단
-    european_adventure: { id: "european_adventure", name: "유러피안 어드벤처", x: -60, z: -80, width: 90, depth: 70 },
-    // 좌측 ~ 하단 좌측
-    zootopia: { id: "zootopia", name: "주토피아", x: -65, z: 30, width: 100, depth: 110 },
-};
-
-// 입장 시 스폰 지점 (글로벌페어 입구)
-export const SPAWN_POINT = { x: 0, z: 100 } as const;
+// 입장 시 스폰 지점 (매표소를 지나온 공원 안쪽, 바깥 순환길 북쪽)
+// 등 뒤 따라오는 카메라(약 6.4m 뒤)가 매표소 건물(북쪽 벽 z 56.6) 안에 들어가지 않도록 스폰 반경까지 감안해 안쪽에 둠
+export const SPAWN_POINT = { x: 8, z: 45 } as const;
 
 // 스폰 시 겹치지 않도록 흩뿌리는 반경
 export const SPAWN_RADIUS = 4;

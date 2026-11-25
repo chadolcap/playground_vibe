@@ -161,6 +161,153 @@
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
+/* 캐릭터 동작 메뉴: 내 캐릭터 머리 위 반원 모양 동그라미 버튼 (원점 = 반원 중심, 버튼은 JS 가 배치) */
+.emote-menu {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    will-change: transform;
+}
+
+.emote-menu[hidden] {
+    display: none;
+}
+
+.emote-button {
+    position: absolute;
+    /* 버튼 색 (버튼마다 data-id 로 바꿈): 바탕 위·아래, 아래 두께(입체감) */
+    --button-top: #ffffff;
+    --button-bottom: #e8e8e8;
+    --button-edge: #b9b9b9;
+    height: 34px;
+    padding: 0 10px;
+    /* 버튼 가운데가 배치 좌표에 오게 (등장 효과의 transform 과 겹치지 않도록 translate 속성 사용) */
+    translate: -50% -50%;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: var(--color-text);
+    white-space: nowrap;
+    /* 위가 밝은 그라데이션 + 위쪽 안 광택 + 아래 두께 + 바닥 그림자 = 살짝 튀어나온 알약 */
+    background: linear-gradient(180deg, var(--button-top) 0%, var(--button-bottom) 100%);
+    border: none;
+    border-radius: 999px;
+    box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 0.7),
+        0 3px 0 var(--button-edge),
+        0 5px 8px rgba(0, 0, 0, 0.22);
+    cursor: pointer;
+    touch-action: manipulation;
+    animation: emote-pop 0.18s ease-out both;
+}
+
+.emote-button[data-id="wave"] {
+    --button-top: #c9ecff;
+    --button-bottom: #8fd3ff;
+    --button-edge: #4ea6dc;
+}
+
+.emote-button[data-id="sit"],
+.emote-button[data-id="stand"] {
+    --button-top: #c8f5df;
+    --button-bottom: #86e2b6;
+    --button-edge: #3fb383;
+}
+
+.emote-button[data-id="jump"] {
+    --button-top: #ffe0c2;
+    --button-bottom: #ffb67a;
+    --button-edge: #e0843d;
+}
+
+.emote-button[data-id="eat"] {
+    --button-top: #ffd6e6;
+    --button-bottom: #ffa3c6;
+    --button-edge: #e0699a;
+}
+
+.emote-button[data-id="chat"] {
+    --button-top: #e6dbff;
+    --button-bottom: #bea6ff;
+    --button-edge: #8b6ce0;
+}
+
+/* 누르면 아래 두께만큼 내려앉음 */
+.emote-button:active:not(:disabled) {
+    margin-top: 2px;
+    box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 0.5),
+        0 1px 0 var(--button-edge),
+        0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.emote-button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+@keyframes emote-pop {
+    from {
+        transform: scale(0.4);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* 채팅 입력창 (화면 아래 가운데, 동작 메뉴의 '채팅'으로 열림) */
+.chat-input {
+    position: fixed;
+    left: 50%;
+    bottom: max(20px, env(safe-area-inset-bottom));
+    display: flex;
+    gap: 8px;
+    width: min(460px, calc(100% - 32px));
+    padding: 8px;
+    background: var(--color-card);
+    border-radius: var(--radius-card);
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.25);
+    transform: translateX(-50%);
+    animation: dialog-rise 0.2s ease-out;
+    /* 조이스틱·버튼보다 위 */
+    z-index: 5;
+}
+
+.chat-input[hidden] {
+    display: none;
+}
+
+.chat-input input {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 14px;
+    /* 16px 미만이면 iOS 가 입력할 때 화면을 확대함 */
+    font: inherit;
+    font-size: 16px;
+    color: var(--color-text);
+    background: #fff;
+    border: 2px solid var(--color-duck-dark);
+    border-radius: 999px;
+    outline: none;
+}
+
+.chat-input button {
+    flex: none;
+    padding: 0 18px;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--color-text);
+    background: var(--color-duck);
+    border: 2px solid var(--color-duck-dark);
+    border-radius: 999px;
+    cursor: pointer;
+}
+
 /* NPC 대화창 (화면 아래 가운데) */
 .npc-dialog {
     position: fixed;
@@ -353,9 +500,6 @@
         font-size: 24px;
     }
 
-    .guide-grid {
-        grid-template-columns: 1fr;
-    }
 }
 
 /* 낮은 화면 (모바일 가로) — 위쪽부터 배치해 스크롤 가능하게 */
@@ -365,10 +509,85 @@
     }
 
     .intro-duck {
-        font-size: 44px;
+        height: 80px;
     }
 
     .intro-desc {
         margin-bottom: 14px;
     }
+}
+
+/* 머리띠 판매점 팝업 — NPC 대화창 스타일 + 쓰고 있는 머리띠 강조 */
+.headband-choices {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* 머리띠 버튼: 그림 문자는 글자(14px)의 2배로 크게, 이름은 옆에 */
+.headband-choice {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.headband-choice-icon {
+    font-size: 28px;
+    line-height: 1;
+}
+
+.npc-dialog-choice.is-selected {
+    background: #f3e8ff;
+    border-color: #9d4edd;
+    font-weight: 700;
+}
+
+@media (max-width: 420px) {
+    .headband-choices {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* 게임장 — 게임 화면 (놀이동산 위를 덮고, 720x1280 캔버스를 가운데에) */
+.arcade-screen {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1a1a2e;
+    /* 모든 놀이동산 UI(대화창·버튼·미니맵)보다 위 */
+    z-index: 20;
+    touch-action: none;
+}
+
+.arcade-screen[hidden] {
+    display: none;
+}
+
+.arcade-screen canvas {
+    display: block;
+}
+
+/* 게임장 대기중 팝업 — 화면 가운데 */
+.arcade-popup {
+    top: 50%;
+    bottom: auto;
+    width: min(420px, calc(100% - 32px));
+    transform: translate(-50%, -50%);
+    animation: none;
+    text-align: center;
+    z-index: 21;
+}
+
+.arcade-popup .npc-dialog-header {
+    justify-content: center;
+}
+
+.arcade-popup-text {
+    white-space: pre-line;
+}
+
+.arcade-popup-cancel {
+    width: 100%;
+    margin-top: 8px;
 }
