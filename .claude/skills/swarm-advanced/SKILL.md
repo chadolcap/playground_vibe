@@ -1,16 +1,16 @@
 ---
 name: swarm-advanced
 description: |
-  Advanced swarm orchestration patterns for research, development, testing, and complex distributed workflows
+  research, development, testing, 복잡한 분산 워크플로를 위한 고급 swarm 오케스트레이션(orchestration) 패턴이다
 ---
 
-# Advanced Swarm Orchestration
+# 고급 스웜 오케스트레이션
 
-Master advanced swarm patterns for distributed research, development, and testing workflows. This skill covers comprehensive orchestration strategies using both MCP tools and CLI commands.
+분산 조사·개발·테스트 워크플로를 위한 고급 스웜 패턴을 익힌다. 이 스킬은 MCP 도구와 CLI 명령을 모두 사용하는 포괄적인 오케스트레이션 전략을 다룬다.
 
-## Quick Start
+## 빠른 시작
 
-### Prerequisites
+### 사전 준비
 ```bash
 # Ensure Claude Flow is installed
 npm install -g claude-flow@alpha
@@ -19,7 +19,7 @@ npm install -g claude-flow@alpha
 claude mcp add claude-flow npx claude-flow@alpha mcp start
 ```
 
-### Basic Pattern
+### 기본 패턴
 ```javascript
 // 1. Initialize swarm topology
 mcp__claude-flow__swarm_init({ topology: "mesh", maxAgents: 6 })
@@ -31,43 +31,43 @@ mcp__claude-flow__agent_spawn({ agentType: "researcher", name: "Agent 1" })
 mcp__claude-flow__task_orchestrate({ task: "...", strategy: "parallel" })
 ```
 
-## Core Concepts
+## 핵심 개념
 
-### Swarm Topologies
+### 스웜 토폴로지
 
-**Mesh Topology** - Peer-to-peer communication, best for research and analysis
-- All agents communicate directly
-- High flexibility and resilience
-- Use for: Research, analysis, brainstorming
+**Mesh 토폴로지** - 피어 투 피어 통신이며, 조사와 분석에 가장 알맞다
+- 모든 에이전트가 직접 통신한다
+- 유연성과 복원력이 높다
+- 사용처: 조사, 분석, 브레인스토밍
 
-**Hierarchical Topology** - Coordinator with subordinates, best for development
-- Clear command structure
-- Sequential workflow support
-- Use for: Development, structured workflows
+**Hierarchical 토폴로지** - 코디네이터와 하위 에이전트로 구성되며, 개발에 가장 알맞다
+- 명령 체계가 명확하다
+- 순차 워크플로를 지원한다
+- 사용처: 개발, 구조화된 워크플로
 
-**Star Topology** - Central coordinator, best for testing
-- Centralized control and monitoring
-- Parallel execution with coordination
-- Use for: Testing, validation, quality assurance
+**Star 토폴로지** - 중앙 코디네이터를 두며, 테스트에 가장 알맞다
+- 중앙에서 제어하고 모니터링한다
+- 조정 아래 병렬로 실행한다
+- 사용처: 테스트, 검증, 품질 보증
 
-**Ring Topology** - Sequential processing chain
-- Step-by-step processing
-- Pipeline workflows
-- Use for: Multi-stage processing, data pipelines
+**Ring 토폴로지** - 순차 처리 체인이다
+- 단계별로 처리한다
+- 파이프라인 워크플로
+- 사용처: 다단계 처리, 데이터 파이프라인
 
-### Agent Strategies
+### 에이전트 전략
 
-**Adaptive** - Dynamic adjustment based on task complexity
-**Balanced** - Equal distribution of work across agents
-**Specialized** - Task-specific agent assignment
-**Parallel** - Maximum concurrent execution
+**Adaptive** - 작업 복잡도에 따라 동적으로 조정한다
+**Balanced** - 에이전트에 작업을 고르게 분배한다
+**Specialized** - 작업별로 전문 에이전트를 배정한다
+**Parallel** - 동시 실행을 최대화한다
 
-## Pattern 1: Research Swarm
+## 패턴 1: 조사 스웜
 
-### Purpose
-Deep research through parallel information gathering, analysis, and synthesis.
+### 목적
+병렬 정보 수집, 분석, 종합을 통해 깊이 있는 조사를 수행한다.
 
-### Architecture
+### 아키텍처
 ```javascript
 // Initialize research swarm
 mcp__claude-flow__swarm_init({
@@ -115,9 +115,9 @@ researchAgents.forEach(agent => {
 })
 ```
 
-### Research Workflow
+### 조사 워크플로
 
-#### Phase 1: Information Gathering
+#### 1단계: 정보 수집
 ```javascript
 // Parallel information collection
 mcp__claude-flow__parallel_execute({
@@ -151,7 +151,7 @@ mcp__claude-flow__memory_usage({
 })
 ```
 
-#### Phase 2: Analysis and Validation
+#### 2단계: 분석과 검증
 ```javascript
 // Pattern recognition in findings
 mcp__claude-flow__pattern_recognize({
@@ -178,7 +178,7 @@ mcp__claude-flow__neural_patterns({
 })
 ```
 
-#### Phase 3: Knowledge Management
+#### 3단계: 지식 관리
 ```javascript
 // Search existing knowledge base
 mcp__claude-flow__memory_search({
@@ -208,7 +208,7 @@ mcp__claude-flow__memory_usage({
 })
 ```
 
-#### Phase 4: Report Generation
+#### 4단계: 보고서 생성
 ```javascript
 // Orchestrate report generation
 mcp__claude-flow__task_orchestrate({
@@ -234,7 +234,7 @@ mcp__claude-flow__workflow_execute({
 })
 ```
 
-### CLI Fallback
+### CLI 대체 방법
 ```bash
 # Quick research swarm
 npx @claude-flow/cli@latest swarm "research AI trends in 2025" \
@@ -245,12 +245,12 @@ npx @claude-flow/cli@latest swarm "research AI trends in 2025" \
   --output research-report.md
 ```
 
-## Pattern 2: Development Swarm
+## 패턴 2: 개발 스웜
 
-### Purpose
-Full-stack development through coordinated specialist agents.
+### 목적
+전문 에이전트들의 조정을 통해 풀스택 개발을 수행한다.
 
-### Architecture
+### 아키텍처
 ```javascript
 // Initialize development swarm with hierarchy
 mcp__claude-flow__swarm_init({
@@ -282,9 +282,9 @@ devTeam.forEach(member => {
 })
 ```
 
-### Development Workflow
+### 개발 워크플로
 
-#### Phase 1: Architecture and Design
+#### 1단계: 아키텍처와 설계
 ```javascript
 // System architecture design
 mcp__claude-flow__task_orchestrate({
@@ -303,7 +303,7 @@ mcp__claude-flow__memory_usage({
 })
 ```
 
-#### Phase 2: Parallel Implementation
+#### 2단계: 병렬 구현
 ```javascript
 // Parallel development tasks
 mcp__claude-flow__parallel_execute({
@@ -338,7 +338,7 @@ mcp__claude-flow__swarm_monitor({
 })
 ```
 
-#### Phase 3: Testing and Validation
+#### 3단계: 테스트와 검증
 ```javascript
 // Comprehensive testing
 mcp__claude-flow__batch_process({
@@ -358,7 +358,7 @@ mcp__claude-flow__quality_assess({
 })
 ```
 
-#### Phase 4: Review and Deployment
+#### 4단계: 리뷰와 배포
 ```javascript
 // Code review workflow
 mcp__claude-flow__workflow_execute({
@@ -378,7 +378,7 @@ mcp__claude-flow__pipeline_create({
 })
 ```
 
-### CLI Fallback
+### CLI 대체 방법
 ```bash
 # Quick development swarm
 npx @claude-flow/cli@latest swarm "build REST API with authentication" \
@@ -388,12 +388,12 @@ npx @claude-flow/cli@latest swarm "build REST API with authentication" \
   --output sqlite
 ```
 
-## Pattern 3: Testing Swarm
+## 패턴 3: 테스트 스웜
 
-### Purpose
-Comprehensive quality assurance through distributed testing.
+### 목적
+분산 테스트를 통해 포괄적인 품질 보증을 수행한다.
 
-### Architecture
+### 아키텍처
 ```javascript
 // Initialize testing swarm with star topology
 mcp__claude-flow__swarm_init({
@@ -452,9 +452,9 @@ testingTeam.forEach(tester => {
 })
 ```
 
-### Testing Workflow
+### 테스트 워크플로
 
-#### Phase 1: Test Planning
+#### 1단계: 테스트 계획
 ```javascript
 // Analyze test coverage requirements
 mcp__claude-flow__quality_assess({
@@ -487,7 +487,7 @@ mcp__claude-flow__memory_usage({
 })
 ```
 
-#### Phase 2: Parallel Test Execution
+#### 2단계: 병렬 테스트 실행
 ```javascript
 // Execute all test suites in parallel
 mcp__claude-flow__parallel_execute({
@@ -527,7 +527,7 @@ mcp__claude-flow__batch_process({
 })
 ```
 
-#### Phase 3: Performance and Security
+#### 3단계: 성능과 보안
 ```javascript
 // Run performance benchmarks
 mcp__claude-flow__benchmark_run({
@@ -552,7 +552,7 @@ mcp__claude-flow__error_analysis({
 })
 ```
 
-#### Phase 4: Monitoring and Reporting
+#### 4단계: 모니터링과 보고
 ```javascript
 // Real-time test monitoring
 mcp__claude-flow__swarm_monitor({
@@ -578,7 +578,7 @@ mcp__claude-flow__trend_analysis({
 })
 ```
 
-### CLI Fallback
+### CLI 대체 방법
 ```bash
 # Quick testing swarm
 npx @claude-flow/cli@latest swarm "test application comprehensively" \
@@ -588,12 +588,12 @@ npx @claude-flow/cli@latest swarm "test application comprehensively" \
   --timeout 600
 ```
 
-## Pattern 4: Analysis Swarm
+## 패턴 4: 분석 스웜
 
-### Purpose
-Deep code and system analysis through specialized analyzers.
+### 목적
+전문 분석기를 통해 코드와 시스템을 깊이 분석한다.
 
-### Architecture
+### 아키텍처
 ```javascript
 // Initialize analysis swarm
 mcp__claude-flow__swarm_init({
@@ -641,7 +641,7 @@ analysisTeam.forEach(analyst => {
 })
 ```
 
-### Analysis Workflow
+### 분석 워크플로
 ```javascript
 // Parallel analysis execution
 mcp__claude-flow__parallel_execute({
@@ -665,9 +665,9 @@ mcp__claude-flow__cost_analysis({
 })
 ```
 
-## Advanced Techniques
+## 고급 기법
 
-### Error Handling and Fault Tolerance
+### 오류 처리와 장애 허용
 
 ```javascript
 // Setup fault tolerance for all agents
@@ -702,7 +702,7 @@ try {
 }
 ```
 
-### Memory and State Management
+### 메모리와 상태 관리
 
 ```javascript
 // Cross-session persistence
@@ -732,7 +732,7 @@ mcp__claude-flow__memory_backup({
 })
 ```
 
-### Neural Pattern Learning
+### 뉴럴 패턴 학습
 
 ```javascript
 // Train neural patterns from successful workflows
@@ -759,7 +759,7 @@ mcp__claude-flow__pattern_recognize({
 })
 ```
 
-### Workflow Automation
+### 워크플로 자동화
 
 ```javascript
 // Create reusable workflow
@@ -797,7 +797,7 @@ mcp__claude-flow__trigger_setup({
 })
 ```
 
-### Performance Optimization
+### 성능 최적화
 
 ```javascript
 // Topology optimization
@@ -823,7 +823,7 @@ mcp__claude-flow__swarm_scale({
 })
 ```
 
-### Monitoring and Metrics
+### 모니터링과 지표
 
 ```javascript
 // Real-time swarm monitoring
@@ -854,53 +854,53 @@ mcp__claude-flow__trend_analysis({
 })
 ```
 
-## Best Practices
+## 모범 사례
 
-### 1. Choosing the Right Topology
+### 1. 알맞은 토폴로지 고르기
 
-- **Mesh**: Research, brainstorming, collaborative analysis
-- **Hierarchical**: Structured development, sequential workflows
-- **Star**: Testing, validation, centralized coordination
-- **Ring**: Pipeline processing, staged workflows
+- **Mesh**: 조사, 브레인스토밍, 협업 분석
+- **Hierarchical**: 구조화된 개발, 순차 워크플로
+- **Star**: 테스트, 검증, 중앙 집중 조정
+- **Ring**: 파이프라인 처리, 단계별 워크플로
 
-### 2. Agent Specialization
+### 2. 에이전트 전문화
 
-- Assign specific capabilities to each agent
-- Avoid overlapping responsibilities
-- Use coordination agents for complex workflows
-- Leverage memory for agent communication
+- 에이전트마다 구체적인 역량을 부여한다
+- 책임이 겹치지 않게 한다
+- 복잡한 워크플로에는 조정 에이전트를 사용한다
+- 에이전트 간 통신에 메모리를 활용한다
 
-### 3. Parallel Execution
+### 3. 병렬 실행
 
-- Identify independent tasks for parallelization
-- Use sequential execution for dependent tasks
-- Monitor resource usage during parallel execution
-- Implement proper error handling
+- 병렬화할 수 있는 독립 작업을 찾는다
+- 의존성이 있는 작업은 순차로 실행한다
+- 병렬 실행 중 자원 사용량을 모니터링한다
+- 적절한 오류 처리를 구현한다
 
-### 4. Memory Management
+### 4. 메모리 관리
 
-- Use namespaces to organize memory
-- Set appropriate TTL values
-- Create regular backups
-- Implement state snapshots for checkpoints
+- 네임스페이스로 메모리를 정리한다
+- 알맞은 TTL 값을 설정한다
+- 정기적으로 백업한다
+- 체크포인트용 상태 스냅샷을 구현한다
 
-### 5. Monitoring and Optimization
+### 5. 모니터링과 최적화
 
-- Monitor swarm health regularly
-- Collect and analyze metrics
-- Optimize topology based on performance
-- Use neural patterns to learn from success
+- 스웜 상태를 정기적으로 모니터링한다
+- 지표를 수집하고 분석한다
+- 성능에 따라 토폴로지를 최적화한다
+- 뉴럴 패턴으로 성공 사례를 학습한다
 
-### 6. Error Recovery
+### 6. 오류 복구
 
-- Implement fault tolerance strategies
-- Use auto-recovery mechanisms
-- Analyze error patterns
-- Create fallback workflows
+- 장애 허용 전략을 구현한다
+- 자동 복구 메커니즘을 사용한다
+- 오류 패턴을 분석한다
+- 대체(fallback) 워크플로를 만든다
 
-## Real-World Examples
+## 실제 예시
 
-### Example 1: AI Research Project
+### 예시 1: AI 조사 프로젝트
 ```javascript
 // Research AI trends, analyze findings, generate report
 mcp__claude-flow__swarm_init({ topology: "mesh", maxAgents: 6 })
@@ -908,7 +908,7 @@ mcp__claude-flow__swarm_init({ topology: "mesh", maxAgents: 6 })
 // Parallel gather → Analyze patterns → Synthesize → Report
 ```
 
-### Example 2: Full-Stack Application
+### 예시 2: 풀스택 애플리케이션
 ```javascript
 // Build complete web application with testing
 mcp__claude-flow__swarm_init({ topology: "hierarchical", maxAgents: 8 })
@@ -916,7 +916,7 @@ mcp__claude-flow__swarm_init({ topology: "hierarchical", maxAgents: 8 })
 // Design → Parallel implement → Test → Review → Deploy
 ```
 
-### Example 3: Security Audit
+### 예시 3: 보안 감사
 ```javascript
 // Comprehensive security analysis
 mcp__claude-flow__swarm_init({ topology: "star", maxAgents: 5 })
@@ -924,7 +924,7 @@ mcp__claude-flow__swarm_init({ topology: "star", maxAgents: 5 })
 // Parallel scan → Vulnerability analysis → Penetration test → Report
 ```
 
-### Example 4: Performance Optimization
+### 예시 4: 성능 최적화
 ```javascript
 // Identify and fix performance bottlenecks
 mcp__claude-flow__swarm_init({ topology: "mesh", maxAgents: 4 })
@@ -932,39 +932,39 @@ mcp__claude-flow__swarm_init({ topology: "mesh", maxAgents: 4 })
 // Profile → Identify bottlenecks → Optimize → Validate
 ```
 
-## Troubleshooting
+## 문제 해결
 
-### Common Issues
+### 자주 발생하는 문제
 
-**Issue**: Swarm agents not coordinating properly
-**Solution**: Check topology selection, verify memory usage, enable monitoring
+**문제**: 스웜 에이전트들이 제대로 조정되지 않는다
+**해결**: 토폴로지 선택을 점검하고, 메모리 사용을 확인하고, 모니터링을 켠다
 
-**Issue**: Parallel execution failing
-**Solution**: Verify task dependencies, check resource limits, implement error handling
+**문제**: 병렬 실행이 실패한다
+**해결**: 작업 의존성을 확인하고, 자원 한도를 점검하고, 오류 처리를 구현한다
 
-**Issue**: Memory persistence not working
-**Solution**: Verify namespaces, check TTL settings, ensure backup configuration
+**문제**: 메모리 영속화가 동작하지 않는다
+**해결**: 네임스페이스를 확인하고, TTL 설정을 점검하고, 백업 설정을 확인한다
 
-**Issue**: Performance degradation
-**Solution**: Optimize topology, reduce agent count, analyze bottlenecks
+**문제**: 성능이 떨어진다
+**해결**: 토폴로지를 최적화하고, 에이전트 수를 줄이고, 병목을 분석한다
 
-## Related Skills
+## 관련 스킬
 
-- `sparc-methodology` - Systematic development workflow
-- `github-integration` - Repository management and automation
-- `neural-patterns` - AI-powered coordination optimization
-- `memory-management` - Cross-session state persistence
+- `sparc-methodology` - 체계적인 개발 워크플로
+- `github-integration` - 저장소 관리와 자동화
+- `neural-patterns` - AI 기반 조정 최적화
+- `memory-management` - 세션 간 상태 영속화
 
-## References
+## 참고 자료
 
-- [Claude Flow Documentation](https://github.com/ruvnet/claude-flow)
-- [Swarm Orchestration Guide](https://github.com/ruvnet/claude-flow/wiki/swarm)
-- [MCP Tools Reference](https://github.com/ruvnet/claude-flow/wiki/mcp)
-- [Performance Optimization](https://github.com/ruvnet/claude-flow/wiki/performance)
+- [Claude Flow 문서](https://github.com/ruvnet/claude-flow)
+- [스웜 오케스트레이션 가이드](https://github.com/ruvnet/claude-flow/wiki/swarm)
+- [MCP 도구 참조](https://github.com/ruvnet/claude-flow/wiki/mcp)
+- [성능 최적화](https://github.com/ruvnet/claude-flow/wiki/performance)
 
 ---
 
-**Version**: 2.0.0
-**Last Updated**: 2025-10-19
-**Skill Level**: Advanced
-**Estimated Learning Time**: 2-3 hours
+**버전**: 2.0.0
+**최종 수정일**: 2025-10-19
+**스킬 수준**: 고급
+**예상 학습 시간**: 2~3시간

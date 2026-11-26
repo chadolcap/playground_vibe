@@ -26,7 +26,7 @@ export interface ParkWorld {
     readonly canvas: HTMLCanvasElement;
     // 매 프레임 호출할 함수 등록 (기구 갱신 후, 그리기 전) — 반환 함수로 해제
     onFrame(callback: FrameCallback): () => void;
-    // 우측 상단 작은 화면(인셋)에 그릴 두 번째 카메라 — null 이면 인셋을 숨김 (탑승 시점 뷰)
+    // 우측 상단 작은 화면(인셋)에 그릴 두 번째 카메라 — null 이면 인셋을 숨김 (탑승 시점 뷰, 누르면 전체 화면)
     setInsetCamera(camera: THREE.PerspectiveCamera | null): void;
     // 인셋 화면 아래쪽 계기 문구 (속도·G 등) — null 이면 숨김
     setInsetCaption(text: string | null): void;
@@ -162,7 +162,27 @@ export async function createParkWorld(container: HTMLElement): Promise<ParkWorld
     inset_caption.className = "inset-meter";
     inset_caption.hidden = true;
     inset_frame.appendChild(inset_caption);
+    // 작은 화면을 누르면 탑승 시점이 전체 화면으로, 전체 화면의 [작게 보기] 버튼으로 되돌아감 (모바일에서 잘 보이게)
+    const inset_shrink = document.createElement("button");
+    inset_shrink.type = "button";
+    inset_shrink.className = "inset-shrink";
+    inset_shrink.textContent = "↙ 작게 보기";
+    inset_frame.appendChild(inset_shrink);
     let inset_camera: THREE.PerspectiveCamera | null = null;
+    let inset_full = false;
+    const setInsetFull = (full: boolean): void => {
+        inset_full = full;
+        inset_frame.classList.toggle("is-full", full);
+    };
+    inset_frame.addEventListener("click", () => {
+        if (!inset_full) {
+            setInsetFull(true);
+        }
+    });
+    inset_shrink.addEventListener("click", (event) => {
+        event.stopPropagation();
+        setInsetFull(false);
+    });
 
     const scene = new THREE.Scene();
     scene.background = createSkyTexture();
@@ -235,8 +255,16 @@ export async function createParkWorld(container: HTMLElement): Promise<ParkWorld
         const view_width = container.clientWidth;
         const view_height = container.clientHeight;
         renderer.setViewport(0, 0, view_width, view_height);
-        renderer.render(scene, camera);
-        if (inset_camera !== null) {
+        if (inset_camera !== null && inset_full) {
+            // 전체 화면 탑승 시점: 본 화면 대신 탑승 카메라로 한 번만 그림
+            inset_camera.aspect = view_width / Math.max(view_height, 1);
+            inset_camera.updateProjectionMatrix();
+            renderer.render(scene, inset_camera);
+            Object.assign(inset_frame.style, { left: "0px", top: "0px", width: `${view_width}px`, height: `${view_height}px` });
+        } else {
+            renderer.render(scene, camera);
+        }
+        if (inset_camera !== null && !inset_full) {
             const rect = computeInsetRect(view_width, inset_top);
             // WebGL 뷰포트는 왼쪽 아래가 원점
             const bottom = view_height - rect.top - rect.height;
@@ -271,6 +299,10 @@ export async function createParkWorld(container: HTMLElement): Promise<ParkWorld
         setInsetCamera(next_camera) {
             inset_camera = next_camera;
             inset_frame.hidden = next_camera === null;
+            // 내리면 다음 탑승은 다시 작은 화면부터
+            if (next_camera === null) {
+                setInsetFull(false);
+            }
         },
         setInsetCaption(text) {
             // 매 프레임 불려도 글자가 바뀔 때만 DOM 갱신

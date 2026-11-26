@@ -1,27 +1,27 @@
 ---
 name: agentdb-optimization
-description: "Optimize AgentDB performance with quantization (4-32x memory reduction), HNSW indexing (150x faster search), caching, and batch operations. Use when optimizing memory usage, improving search speed, or scaling to millions of vectors."
+description: "AgentDB 성능을 quantization(메모리 4~32배 절감), HNSW 인덱싱(검색 150배 고속화), caching, batch operations로 최적화한다. 메모리 사용량을 최적화하거나, 검색 속도를 높이거나, 수백만 개의 벡터(millions of vectors)로 확장할 때 사용한다."
 ---
 
-# AgentDB Performance Optimization
+# AgentDB 성능 최적화
 
-## What This Skill Does
+## 이 스킬이 하는 일
 
-Provides comprehensive performance optimization techniques for AgentDB vector databases. Achieve 150x-12,500x performance improvements through quantization, HNSW indexing, caching strategies, and batch operations. Reduce memory usage by 4-32x while maintaining accuracy.
+AgentDB 벡터 데이터베이스를 위한 종합적인 성능 최적화 기법을 제공한다. quantization, HNSW 인덱싱, 캐싱 전략, 배치 연산으로 150배~12,500배의 성능 향상을 얻는다. 정확도를 유지하면서 메모리 사용량을 4~32배 줄인다.
 
-**Performance**: <100µs vector search, <1ms pattern retrieval, 2ms batch insert for 100 vectors.
+**성능**: 벡터 검색 <100µs, 패턴 조회 <1ms, 벡터 100개 배치 삽입 2ms.
 
-## Prerequisites
+## 사전 요구 사항
 
 - Node.js 18+
-- AgentDB v1.0.7+ (via agentic-flow)
-- Existing AgentDB database or application
+- AgentDB v1.0.7+ (agentic-flow 경유)
+- 기존 AgentDB 데이터베이스 또는 애플리케이션
 
 ---
 
-## Quick Start
+## 빠른 시작
 
-### Run Performance Benchmarks
+### 성능 벤치마크 실행
 
 ```bash
 # Comprehensive performance benchmarking
@@ -34,7 +34,7 @@ npx agentdb@latest benchmark
 # ✅ Memory Efficiency: 4-32x reduction with quantization
 ```
 
-### Enable Optimizations
+### 최적화 켜기
 
 ```typescript
 import { createAgentDBAdapter } from 'agentic-flow/reasoningbank';
@@ -51,12 +51,12 @@ const adapter = await createAgentDBAdapter({
 
 ---
 
-## Quantization Strategies
+## Quantization 전략
 
-### 1. Binary Quantization (32x Reduction)
+### 1. Binary Quantization (32배 절감)
 
-**Best For**: Large-scale deployments (1M+ vectors), memory-constrained environments
-**Trade-off**: ~2-5% accuracy loss, 32x memory reduction, 10x faster
+**적합한 경우**: 대규모 배포(벡터 1M개 이상), 메모리가 제한된 환경
+**절충점**: 정확도 약 2~5% 손실, 메모리 32배 절감, 10배 빠름
 
 ```typescript
 const adapter = await createAgentDBAdapter({
@@ -66,20 +66,20 @@ const adapter = await createAgentDBAdapter({
 });
 ```
 
-**Use Cases**:
-- Mobile/edge deployment
-- Large-scale vector storage (millions of vectors)
-- Real-time search with memory constraints
+**사용 사례**:
+- 모바일/엣지 배포
+- 대규모 벡터 저장(수백만 개)
+- 메모리 제약이 있는 실시간 검색
 
-**Performance**:
-- Memory: 32x smaller
-- Search Speed: 10x faster (bit operations)
-- Accuracy: 95-98% of original
+**성능**:
+- 메모리: 32배 작음
+- 검색 속도: 10배 빠름(비트 연산)
+- 정확도: 원본의 95~98%
 
-### 2. Scalar Quantization (4x Reduction)
+### 2. Scalar Quantization (4배 절감)
 
-**Best For**: Balanced performance/accuracy, moderate datasets
-**Trade-off**: ~1-2% accuracy loss, 4x memory reduction, 3x faster
+**적합한 경우**: 성능과 정확도의 균형, 중간 규모 데이터셋
+**절충점**: 정확도 약 1~2% 손실, 메모리 4배 절감, 3배 빠름
 
 ```typescript
 const adapter = await createAgentDBAdapter({
@@ -89,20 +89,20 @@ const adapter = await createAgentDBAdapter({
 });
 ```
 
-**Use Cases**:
-- Production applications requiring high accuracy
-- Medium-scale deployments (10K-1M vectors)
-- General-purpose optimization
+**사용 사례**:
+- 높은 정확도가 필요한 프로덕션 애플리케이션
+- 중간 규모 배포(벡터 10K~1M개)
+- 범용 최적화
 
-**Performance**:
-- Memory: 4x smaller
-- Search Speed: 3x faster
-- Accuracy: 98-99% of original
+**성능**:
+- 메모리: 4배 작음
+- 검색 속도: 3배 빠름
+- 정확도: 원본의 98~99%
 
-### 3. Product Quantization (8-16x Reduction)
+### 3. Product Quantization (8~16배 절감)
 
-**Best For**: High-dimensional vectors, balanced compression
-**Trade-off**: ~3-7% accuracy loss, 8-16x memory reduction, 5x faster
+**적합한 경우**: 고차원 벡터, 균형 잡힌 압축
+**절충점**: 정확도 약 3~7% 손실, 메모리 8~16배 절감, 5배 빠름
 
 ```typescript
 const adapter = await createAgentDBAdapter({
@@ -112,20 +112,20 @@ const adapter = await createAgentDBAdapter({
 });
 ```
 
-**Use Cases**:
-- High-dimensional embeddings (>512 dims)
-- Image/video embeddings
-- Large-scale similarity search
+**사용 사례**:
+- 고차원 임베딩(512차원 초과)
+- 이미지/비디오 임베딩
+- 대규모 유사도 검색
 
-**Performance**:
-- Memory: 8-16x smaller
-- Search Speed: 5x faster
-- Accuracy: 93-97% of original
+**성능**:
+- 메모리: 8~16배 작음
+- 검색 속도: 5배 빠름
+- 정확도: 원본의 93~97%
 
-### 4. No Quantization (Full Precision)
+### 4. Quantization 없음 (Full Precision)
 
-**Best For**: Maximum accuracy, small datasets
-**Trade-off**: No accuracy loss, full memory usage
+**적합한 경우**: 최대 정확도, 작은 데이터셋
+**절충점**: 정확도 손실 없음, 메모리 전체 사용
 
 ```typescript
 const adapter = await createAgentDBAdapter({
@@ -136,13 +136,13 @@ const adapter = await createAgentDBAdapter({
 
 ---
 
-## HNSW Indexing
+## HNSW 인덱싱
 
-**Hierarchical Navigable Small World** - O(log n) search complexity
+**Hierarchical Navigable Small World** - 검색 복잡도 O(log n)
 
-### Automatic HNSW
+### 자동 HNSW
 
-AgentDB automatically builds HNSW indices:
+AgentDB는 HNSW 인덱스를 자동으로 만든다.
 
 ```typescript
 const adapter = await createAgentDBAdapter({
@@ -156,7 +156,7 @@ const results = await adapter.retrieveWithReasoning(queryEmbedding, {
 });
 ```
 
-### HNSW Parameters
+### HNSW 파라미터
 
 ```typescript
 // Advanced HNSW configuration
@@ -168,25 +168,25 @@ const adapter = await createAgentDBAdapter({
 });
 ```
 
-**Parameter Tuning**:
-- **M** (connections): Higher = better recall, more memory
-  - Small datasets (<10K): M = 8
-  - Medium datasets (10K-100K): M = 16
-  - Large datasets (>100K): M = 32
-- **efConstruction**: Higher = better index quality, slower build
-  - Fast build: 100
-  - Balanced: 200 (default)
-  - High quality: 400
-- **efSearch**: Higher = better recall, slower search
-  - Fast search: 50
-  - Balanced: 100 (default)
-  - High recall: 200
+**파라미터 튜닝**:
+- **M** (연결 수): 높을수록 recall이 좋아지고 메모리를 더 쓴다
+  - 작은 데이터셋(<10K): M = 8
+  - 중간 데이터셋(10K~100K): M = 16
+  - 큰 데이터셋(>100K): M = 32
+- **efConstruction**: 높을수록 인덱스 품질이 좋아지고 빌드가 느려진다
+  - 빠른 빌드: 100
+  - 균형: 200 (기본값)
+  - 고품질: 400
+- **efSearch**: 높을수록 recall이 좋아지고 검색이 느려진다
+  - 빠른 검색: 50
+  - 균형: 100 (기본값)
+  - 높은 recall: 200
 
 ---
 
-## Caching Strategies
+## 캐싱 전략
 
-### In-Memory Pattern Cache
+### 인메모리 패턴 캐시
 
 ```typescript
 const adapter = await createAgentDBAdapter({
@@ -200,12 +200,12 @@ const result = await adapter.retrieveWithReasoning(queryEmbedding, {
 });
 ```
 
-**Cache Tuning**:
-- Small applications: 100-500 patterns
-- Medium applications: 500-2000 patterns
-- Large applications: 2000-5000 patterns
+**캐시 튜닝**:
+- 작은 애플리케이션: 패턴 100~500개
+- 중간 애플리케이션: 패턴 500~2000개
+- 큰 애플리케이션: 패턴 2000~5000개
 
-### LRU Cache Behavior
+### LRU 캐시 동작
 
 ```typescript
 // Cache automatically evicts least-recently-used patterns
@@ -219,9 +219,9 @@ console.log('Cache Hit Rate:', stats.cacheHitRate);
 
 ---
 
-## Batch Operations
+## 배치 연산
 
-### Batch Insert (500x Faster)
+### 배치 삽입 (500배 빠름)
 
 ```typescript
 // ❌ SLOW: Individual inserts
@@ -251,7 +251,7 @@ for (const pattern of patterns) {
 }
 ```
 
-### Batch Retrieval
+### 배치 조회
 
 ```typescript
 // Retrieve multiple queries efficiently
@@ -265,9 +265,9 @@ const results = await Promise.all(
 
 ---
 
-## Memory Optimization
+## 메모리 최적화
 
-### Automatic Consolidation
+### 자동 통합(Consolidation)
 
 ```typescript
 // Enable automatic pattern consolidation
@@ -285,7 +285,7 @@ console.log('Optimizations:', result.optimizations);
 // }
 ```
 
-### Manual Optimization
+### 수동 최적화
 
 ```typescript
 // Manually trigger optimization
@@ -297,7 +297,7 @@ console.log('Before:', stats.totalPatterns);
 console.log('After:', stats.totalPatterns);  // Reduced by ~10-30%
 ```
 
-### Pruning Strategies
+### 가지치기(Pruning) 전략
 
 ```typescript
 // Prune low-confidence patterns
@@ -310,9 +310,9 @@ await adapter.prune({
 
 ---
 
-## Performance Monitoring
+## 성능 모니터링
 
-### Database Statistics
+### 데이터베이스 통계
 
 ```bash
 # Get comprehensive stats
@@ -327,7 +327,7 @@ npx agentdb@latest stats .agentdb/vectors.db
 # Index Type: HNSW
 ```
 
-### Runtime Metrics
+### 런타임 지표
 
 ```typescript
 const stats = await adapter.getStats();
@@ -343,9 +343,9 @@ console.log('Insert Latency (avg):', stats.avgInsertLatency);
 
 ---
 
-## Optimization Recipes
+## 최적화 레시피
 
-### Recipe 1: Maximum Speed (Sacrifice Accuracy)
+### 레시피 1: 최대 속도 (정확도 희생)
 
 ```typescript
 const adapter = await createAgentDBAdapter({
@@ -358,7 +358,7 @@ const adapter = await createAgentDBAdapter({
 // Expected: <50µs search, 90-95% accuracy
 ```
 
-### Recipe 2: Balanced Performance
+### 레시피 2: 균형 잡힌 성능
 
 ```typescript
 const adapter = await createAgentDBAdapter({
@@ -371,7 +371,7 @@ const adapter = await createAgentDBAdapter({
 // Expected: <100µs search, 98-99% accuracy
 ```
 
-### Recipe 3: Maximum Accuracy
+### 레시피 3: 최대 정확도
 
 ```typescript
 const adapter = await createAgentDBAdapter({
@@ -384,7 +384,7 @@ const adapter = await createAgentDBAdapter({
 // Expected: <200µs search, 100% accuracy
 ```
 
-### Recipe 4: Memory-Constrained (Mobile/Edge)
+### 레시피 4: 메모리 제약 환경 (모바일/엣지)
 
 ```typescript
 const adapter = await createAgentDBAdapter({
@@ -398,9 +398,9 @@ const adapter = await createAgentDBAdapter({
 
 ---
 
-## Scaling Strategies
+## 확장 전략
 
-### Small Scale (<10K vectors)
+### 소규모 (벡터 <10K개)
 
 ```typescript
 const adapter = await createAgentDBAdapter({
@@ -410,7 +410,7 @@ const adapter = await createAgentDBAdapter({
 });
 ```
 
-### Medium Scale (10K-100K vectors)
+### 중간 규모 (벡터 10K~100K개)
 
 ```typescript
 const adapter = await createAgentDBAdapter({
@@ -420,7 +420,7 @@ const adapter = await createAgentDBAdapter({
 });
 ```
 
-### Large Scale (100K-1M vectors)
+### 대규모 (벡터 100K~1M개)
 
 ```typescript
 const adapter = await createAgentDBAdapter({
@@ -430,7 +430,7 @@ const adapter = await createAgentDBAdapter({
 });
 ```
 
-### Massive Scale (>1M vectors)
+### 초대규모 (벡터 >1M개)
 
 ```typescript
 const adapter = await createAgentDBAdapter({
@@ -443,9 +443,9 @@ const adapter = await createAgentDBAdapter({
 
 ---
 
-## Troubleshooting
+## 문제 해결
 
-### Issue: High memory usage
+### 문제: 메모리 사용량이 높다
 
 ```bash
 # Check database size
@@ -455,7 +455,7 @@ npx agentdb@latest stats .agentdb/vectors.db
 # Use 'binary' for 32x reduction
 ```
 
-### Issue: Slow search performance
+### 문제: 검색 성능이 느리다
 
 ```typescript
 // Increase cache size
@@ -469,7 +469,7 @@ const result = await adapter.retrieveWithReasoning(queryEmbedding, {
 });
 ```
 
-### Issue: Low accuracy
+### 문제: 정확도가 낮다
 
 ```typescript
 // Disable or use lighter quantization
@@ -481,29 +481,29 @@ const adapter = await createAgentDBAdapter({
 
 ---
 
-## Performance Benchmarks
+## 성능 벤치마크
 
-**Test System**: AMD Ryzen 9 5950X, 64GB RAM
+**테스트 시스템**: AMD Ryzen 9 5950X, 64GB RAM
 
-| Operation | Vector Count | No Optimization | Optimized | Improvement |
+| 연산 | 벡터 수 | 최적화 없음 | 최적화 후 | 향상 |
 |-----------|-------------|-----------------|-----------|-------------|
-| Search | 10K | 15ms | 100µs | 150x |
-| Search | 100K | 150ms | 120µs | 1,250x |
-| Search | 1M | 100s | 8ms | 12,500x |
-| Batch Insert (100) | - | 1s | 2ms | 500x |
-| Memory Usage | 1M | 3GB | 96MB | 32x (binary) |
+| 검색 | 10K | 15ms | 100µs | 150x |
+| 검색 | 100K | 150ms | 120µs | 1,250x |
+| 검색 | 1M | 100s | 8ms | 12,500x |
+| 배치 삽입 (100) | - | 1s | 2ms | 500x |
+| 메모리 사용량 | 1M | 3GB | 96MB | 32x (binary) |
 
 ---
 
-## Learn More
+## 더 알아보기
 
-- **Quantization Paper**: docs/quantization-techniques.pdf
-- **HNSW Algorithm**: docs/hnsw-index.pdf
+- **Quantization 논문**: docs/quantization-techniques.pdf
+- **HNSW 알고리즘**: docs/hnsw-index.pdf
 - **GitHub**: https://github.com/ruvnet/agentic-flow/tree/main/packages/agentdb
-- **Website**: https://agentdb.ruv.io
+- **웹사이트**: https://agentdb.ruv.io
 
 ---
 
-**Category**: Performance / Optimization
-**Difficulty**: Intermediate
-**Estimated Time**: 20-30 minutes
+**분류**: 성능 / 최적화
+**난이도**: 중급
+**예상 소요 시간**: 20~30분

@@ -1,25 +1,25 @@
 ---
 name: agentdb-memory-patterns
-description: "Implement persistent memory patterns for AI agents using AgentDB. Includes session memory, long-term storage, pattern learning, and context management. Use when building stateful agents, chat systems, or intelligent assistants."
+description: "AgentDB로 AI 에이전트의 persistent memory(영속 메모리) 패턴을 구현한다. session memory(세션 메모리), long-term storage(장기 저장), pattern learning(패턴 학습), context management(맥락 관리)를 포함한다. stateful agent, chat system, intelligent assistant를 만들 때 사용한다."
 ---
 
-# AgentDB Memory Patterns
+# AgentDB 메모리 패턴
 
-## What This Skill Does
+## 이 스킬이 하는 일
 
-Provides memory management patterns for AI agents using AgentDB's persistent storage and ReasoningBank integration. Enables agents to remember conversations, learn from interactions, and maintain context across sessions.
+AgentDB의 영속 저장소와 ReasoningBank 연동을 이용해 AI 에이전트용 메모리 관리 패턴을 제공한다. 에이전트가 대화를 기억하고, 상호작용에서 배우고, 세션이 바뀌어도 맥락을 유지하게 한다.
 
-**Performance**: 150x-12,500x faster than traditional solutions with 100% backward compatibility.
+**성능**: 기존 방식보다 150배~12,500배 빠르며 하위 호환성은 100%다.
 
-## Prerequisites
+## 사전 요구 사항
 
 - Node.js 18+
-- AgentDB v1.0.7+ (via agentic-flow or standalone)
-- Understanding of agent architectures
+- AgentDB v1.0.7+ (agentic-flow 경유 또는 단독 설치)
+- 에이전트 아키텍처에 대한 이해
 
-## Quick Start with CLI
+## CLI로 빠르게 시작하기
 
-### Initialize AgentDB
+### AgentDB 초기화
 
 ```bash
 # Initialize vector database
@@ -35,7 +35,7 @@ npx agentdb@latest init ./agents.db --preset large
 npx agentdb@latest init ./memory.db --in-memory
 ```
 
-### Start MCP Server for Claude Code
+### Claude Code용 MCP 서버 시작
 
 ```bash
 # Start MCP server (integrates with Claude Code)
@@ -45,7 +45,7 @@ npx agentdb@latest mcp
 claude mcp add agentdb npx agentdb@latest mcp
 ```
 
-### Create Learning Plugin
+### 학습 플러그인 만들기
 
 ```bash
 # Interactive plugin wizard
@@ -62,7 +62,7 @@ npx agentdb@latest create-plugin -t decision-transformer -n my-agent
 # - curiosity-driven (exploration-based)
 ```
 
-## Quick Start with API
+## API로 빠르게 시작하기
 
 ```typescript
 import { createAgentDBAdapter } from 'agentic-flow/reasoningbank';
@@ -105,9 +105,9 @@ const context = await adapter.retrieveWithReasoning(queryEmbedding, {
 });
 ```
 
-## Memory Patterns
+## 메모리 패턴
 
-### 1. Session Memory
+### 1. 세션 메모리
 ```typescript
 class SessionMemory {
   async storeMessage(role: string, content: string) {
@@ -129,7 +129,7 @@ class SessionMemory {
 }
 ```
 
-### 2. Long-Term Memory
+### 2. 장기 메모리
 ```typescript
 // Store important facts
 await db.storeFact({
@@ -146,7 +146,7 @@ const prefs = await db.getFacts({
 });
 ```
 
-### 3. Pattern Learning
+### 3. 패턴 학습
 ```typescript
 // Learn from successful interactions
 await db.storePattern({
@@ -160,9 +160,9 @@ await db.storePattern({
 const pattern = await db.matchPattern(currentContext);
 ```
 
-## Advanced Patterns
+## 고급 패턴
 
-### Hierarchical Memory
+### 계층형 메모리
 ```typescript
 // Organize memory in hierarchy
 await memory.organize({
@@ -173,7 +173,7 @@ await memory.organize({
 });
 ```
 
-### Memory Consolidation
+### 메모리 통합
 ```typescript
 // Periodically consolidate memories
 await memory.consolidate({
@@ -183,9 +183,9 @@ await memory.consolidate({
 });
 ```
 
-## CLI Operations
+## CLI 작업
 
-### Query Database
+### 데이터베이스 조회
 
 ```bash
 # Query with vector embedding
@@ -201,7 +201,7 @@ npx agentdb@latest query ./agents.db "0.1 0.2 0.3" -t 0.75
 npx agentdb@latest query ./agents.db "[...]" -f json
 ```
 
-### Import/Export Data
+### 데이터 가져오기/내보내기
 
 ```bash
 # Export vectors to file
@@ -214,7 +214,7 @@ npx agentdb@latest import ./backup.json
 npx agentdb@latest stats ./agents.db
 ```
 
-### Performance Benchmarks
+### 성능 벤치마크
 
 ```bash
 # Run performance benchmarks
@@ -226,7 +226,7 @@ npx agentdb@latest benchmark
 # - Large-scale Query: 12,500x faster (8ms vs 100s)
 ```
 
-## Integration with ReasoningBank
+## ReasoningBank 연동
 
 ```typescript
 import { createAgentDBAdapter, migrateToAgentDB } from 'agentic-flow/reasoningbank';
@@ -257,21 +257,21 @@ const result = await adapter.retrieveWithReasoning(queryEmbedding, {
 });
 ```
 
-## Learning Plugins
+## 학습 플러그인
 
-### Available Algorithms (9 Total)
+### 사용 가능한 알고리즘 (총 9개)
 
-1. **Decision Transformer** - Sequence modeling RL (recommended)
-2. **Q-Learning** - Value-based learning
-3. **SARSA** - On-policy TD learning
-4. **Actor-Critic** - Policy gradient with baseline
-5. **Active Learning** - Query selection
-6. **Adversarial Training** - Robustness
-7. **Curriculum Learning** - Progressive difficulty
-8. **Federated Learning** - Distributed learning
-9. **Multi-task Learning** - Transfer learning
+1. **Decision Transformer** - 시퀀스 모델링 강화학습 (권장)
+2. **Q-Learning** - 가치 기반 학습
+3. **SARSA** - On-policy TD 학습
+4. **Actor-Critic** - 베이스라인을 쓰는 정책 경사
+5. **Active Learning** - 질의 선택
+6. **Adversarial Training** - 견고성
+7. **Curriculum Learning** - 점진적 난이도
+8. **Federated Learning** - 분산 학습
+9. **Multi-task Learning** - 전이 학습
 
-### List and Manage Plugins
+### 플러그인 목록 보기와 관리
 
 ```bash
 # List available plugins
@@ -284,25 +284,25 @@ npx agentdb@latest list-templates
 npx agentdb@latest plugin-info <name>
 ```
 
-## Reasoning Agents (4 Modules)
+## 추론 에이전트 (모듈 4개)
 
-1. **PatternMatcher** - Find similar patterns with HNSW indexing
-2. **ContextSynthesizer** - Generate rich context from multiple sources
-3. **MemoryOptimizer** - Consolidate similar patterns, prune low-quality
-4. **ExperienceCurator** - Quality-based experience filtering
+1. **PatternMatcher** - HNSW 인덱싱으로 비슷한 패턴을 찾는다
+2. **ContextSynthesizer** - 여러 출처에서 풍부한 맥락을 만든다
+3. **MemoryOptimizer** - 비슷한 패턴을 통합하고 품질이 낮은 것을 가지치기한다
+4. **ExperienceCurator** - 품질 기준으로 경험을 걸러 낸다
 
-## Best Practices
+## 모범 사례
 
-1. **Enable quantization**: Use scalar/binary for 4-32x memory reduction
-2. **Use caching**: 1000 pattern cache for <1ms retrieval
-3. **Batch operations**: 500x faster than individual inserts
-4. **Train regularly**: Update learning models with new experiences
-5. **Enable reasoning**: Automatic context synthesis and optimization
-6. **Monitor metrics**: Use `stats` command to track performance
+1. **양자화를 켠다**: scalar/binary를 쓰면 메모리가 4~32배 줄어든다
+2. **캐시를 쓴다**: 패턴 1000개 캐시로 1ms 미만에 조회한다
+3. **배치 작업을 쓴다**: 개별 삽입보다 500배 빠르다
+4. **정기적으로 학습시킨다**: 새 경험으로 학습 모델을 갱신한다
+5. **추론을 켠다**: 맥락 합성과 최적화가 자동으로 이루어진다
+6. **지표를 모니터링한다**: `stats` 명령으로 성능을 추적한다
 
-## Troubleshooting
+## 문제 해결
 
-### Issue: Memory growing too large
+### 문제: 메모리가 너무 커진다
 ```bash
 # Check database size
 npx agentdb@latest stats ./agents.db
@@ -311,29 +311,29 @@ npx agentdb@latest stats ./agents.db
 # Use 'binary' (32x smaller) or 'scalar' (4x smaller)
 ```
 
-### Issue: Slow search performance
+### 문제: 검색 성능이 느리다
 ```bash
 # Enable HNSW indexing and caching
 # Results: <100µs search time
 ```
 
-### Issue: Migration from legacy ReasoningBank
+### 문제: 기존 ReasoningBank에서 마이그레이션해야 한다
 ```bash
 # Automatic migration with validation
 npx agentdb@latest migrate --source .swarm/memory.db
 ```
 
-## Performance Characteristics
+## 성능 특성
 
-- **Vector Search**: <100µs (HNSW indexing)
-- **Pattern Retrieval**: <1ms (with cache)
-- **Batch Insert**: 2ms for 100 patterns
-- **Memory Efficiency**: 4-32x reduction with quantization
-- **Backward Compatibility**: 100% compatible with ReasoningBank API
+- **벡터 검색**: <100µs (HNSW 인덱싱)
+- **패턴 조회**: <1ms (캐시 사용 시)
+- **배치 삽입**: 패턴 100개에 2ms
+- **메모리 효율**: 양자화로 4~32배 감소
+- **하위 호환성**: ReasoningBank API와 100% 호환
 
-## Learn More
+## 더 알아보기
 
 - GitHub: https://github.com/ruvnet/agentic-flow/tree/main/packages/agentdb
-- Documentation: node_modules/agentic-flow/docs/AGENTDB_INTEGRATION.md
-- MCP Integration: `npx agentdb@latest mcp` for Claude Code
-- Website: https://agentdb.ruv.io
+- 문서: node_modules/agentic-flow/docs/AGENTDB_INTEGRATION.md
+- MCP 연동: Claude Code용 `npx agentdb@latest mcp`
+- 웹사이트: https://agentdb.ruv.io

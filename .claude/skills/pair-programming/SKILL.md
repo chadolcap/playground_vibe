@@ -1,55 +1,55 @@
 ---
 name: pair-programming
-description: AI-assisted pair programming with multiple modes (driver/navigator/switch), real-time verification, quality monitoring, and comprehensive testing. Supports TDD, debugging, refactoring, and learning sessions. Features automatic role switching, continuous code review, security scanning, and performance optimization with truth-score verification.
+description: 여러 모드(driver/navigator/switch)를 갖춘 AI 보조 pair programming. 실시간 검증, 품질 모니터링, 종합 테스트를 제공한다. TDD, debugging, refactoring, 학습 세션을 지원하며, 자동 역할 전환, 지속적 code review, security scanning, truth-score 검증 기반 performance optimization 기능을 갖춘다.
 ---
 
-# Pair Programming
+# 페어 프로그래밍 (Pair Programming)
 
-Collaborative AI pair programming with intelligent role management, real-time quality monitoring, and comprehensive development workflows.
+지능형 역할 관리, 실시간 품질 모니터링, 종합적인 개발 워크플로를 갖춘 협업형 AI 페어 프로그래밍이다.
 
-## What This Skill Does
+## 이 스킬이 하는 일
 
-This skill provides professional pair programming capabilities with AI assistance, supporting multiple collaboration modes, continuous verification, and integrated testing. It manages driver/navigator roles, performs real-time code review, tracks quality metrics, and ensures high standards through truth-score verification.
+이 스킬은 AI 지원을 받는 전문적인 페어 프로그래밍 기능을 제공하며, 여러 협업 모드와 지속적 검증, 통합 테스트를 지원한다. driver/navigator 역할을 관리하고, 실시간 코드 리뷰를 수행하며, 품질 지표를 추적하고, truth-score 검증으로 높은 기준을 보장한다.
 
-**Key Capabilities:**
-- **Multiple Modes**: Driver, Navigator, Switch, TDD, Review, Mentor, Debug
-- **Real-Time Verification**: Automatic quality scoring with rollback on failures
-- **Role Management**: Seamless switching between driver/navigator roles
-- **Testing Integration**: Auto-generate tests, track coverage, continuous testing
-- **Code Review**: Security scanning, performance analysis, best practice enforcement
-- **Session Persistence**: Auto-save, recovery, export, and sharing
+**핵심 기능:**
+- **다양한 모드**: Driver, Navigator, Switch, TDD, Review, Mentor, Debug
+- **실시간 검증**: 실패 시 롤백을 포함한 자동 품질 점수 산정
+- **역할 관리**: driver/navigator 역할 간 매끄러운 전환
+- **테스트 연동**: 테스트 자동 생성, 커버리지 추적, 지속적 테스트
+- **코드 리뷰**: 보안 스캔, 성능 분석, 모범 사례 적용
+- **세션 유지**: 자동 저장, 복구, 내보내기, 공유
 
-## How Claude Code Uses This
+## Claude Code가 이 스킬을 쓰는 방식
 
-The CLI holds the session state; Claude Code reads it. There is no REPL to type into.
+세션 상태는 CLI가 보관하고 Claude Code는 그것을 읽는다. 입력할 REPL은 없다.
 
-1. At the start of every turn run `ruflo pair status --json`. If `active` is `false`, this skill is dormant.
-2. Follow `mode` and `aiRole`. As **driver** you write the code and the human reviews. As **navigator** you review and suggest and never edit unless asked. `tdd`, `review`, `mentor` and `debug` refine that behaviour as described below.
-3. When `switchDue` is `true`, run `ruflo pair switch`, announce the swap, and continue in the new role.
-4. Change mode mid-session with `ruflo pair mode <mode>`. The human can run the same commands from their shell.
+1. 매 턴 시작 시 `ruflo pair status --json`을 실행한다. `active`가 `false`이면 이 스킬은 휴면 상태다.
+2. `mode`와 `aiRole`을 따른다. **driver**일 때는 직접 코드를 작성하고 사람이 리뷰한다. **navigator**일 때는 리뷰하고 제안하며, 요청받지 않으면 절대 편집하지 않는다. `tdd`, `review`, `mentor`, `debug`는 아래 설명처럼 이 동작을 세분화한다.
+3. `switchDue`가 `true`이면 `ruflo pair switch`를 실행하고, 역할 교대를 알린 뒤 새 역할로 계속한다.
+4. 세션 도중 모드를 바꾸려면 `ruflo pair mode <mode>`를 쓴다. 사람도 자신의 셸에서 같은 명령을 실행할 수 있다.
 
-State lives in `.claude-flow/sessions/pair/current.json`. `ruflo pair end` archives it to `history.jsonl` next to it.
+상태는 `.claude-flow/sessions/pair/current.json`에 저장된다. `ruflo pair end`는 이를 같은 위치의 `history.jsonl`에 보관한다.
 
-## Prerequisites
+## 사전 요구 사항
 
-**Required:**
-- Ruflo CLI installed (`npm install -g ruflo`), which provides the `ruflo pair` command
-- Git repository (optional but recommended)
+**필수:**
+- `ruflo pair` 명령을 제공하는 Ruflo CLI 설치 (`npm install -g ruflo`)
+- Git 저장소 (선택이지만 권장)
 
-**Recommended:**
-- Testing framework (Jest, pytest, etc.)
-- Linter configured (ESLint, pylint, etc.)
-- Code formatter (Prettier, Black, etc.)
+**권장:**
+- 테스트 프레임워크 (Jest, pytest 등)
+- 린터 설정 (ESLint, pylint 등)
+- 코드 포매터 (Prettier, Black 등)
 
-## Quick Start
+## 빠른 시작
 
-### Basic Session
+### 기본 세션
 ```bash
 # Start simple pair programming
 ruflo pair start
 ```
 
-### TDD Session
+### TDD 세션
 ```bash
 # Test-driven development
 ruflo pair start \
@@ -60,11 +60,11 @@ ruflo pair start \
 
 ---
 
-## Complete Guide
+## 전체 가이드
 
-### Session Control Commands
+### 세션 제어 명령
 
-#### Starting Sessions
+#### 세션 시작
 ```bash
 # Basic start
 ruflo pair start
@@ -89,7 +89,7 @@ ruflo pair start \
   --examples
 ```
 
-#### Session Management
+#### 세션 관리
 ```bash
 # Check status
 ruflo pair status
@@ -107,35 +107,35 @@ ruflo pair history
 ruflo pair end [--save] [--report]
 ```
 
-### Available Modes
+### 사용 가능한 모드
 
-#### Driver Mode
-You write code while AI provides guidance.
+#### Driver 모드
+사용자가 코드를 작성하고 AI가 방향을 안내한다.
 
 ```bash
 ruflo pair start --mode driver
 ```
 
-**Your Responsibilities:**
-- Write actual code
-- Implement solutions
-- Make immediate decisions
-- Handle syntax and structure
+**사용자의 역할:**
+- 실제 코드 작성
+- 해결책 구현
+- 즉각적인 결정
+- 문법과 구조 처리
 
-**AI Navigator:**
-- Strategic guidance
-- Spot potential issues
-- Suggest improvements
-- Real-time review
-- Track overall direction
+**AI Navigator의 역할:**
+- 전략적 안내
+- 잠재적 문제 발견
+- 개선점 제안
+- 실시간 리뷰
+- 전체 방향 추적
 
-**Best For:**
-- Learning new patterns
-- Implementing familiar features
-- Quick iterations
-- Hands-on debugging
+**적합한 경우:**
+- 새로운 패턴 학습
+- 익숙한 기능 구현
+- 빠른 반복 작업
+- 직접 하는 디버깅
 
-**Commands:**
+**명령:**
 ```
 /suggest     - Get implementation suggestions
 /review      - Request code review
@@ -144,33 +144,33 @@ ruflo pair start --mode driver
 /patterns    - Get pattern recommendations
 ```
 
-#### Navigator Mode
-AI writes code while you provide direction.
+#### Navigator 모드
+AI가 코드를 작성하고 사용자가 방향을 제시한다.
 
 ```bash
 ruflo pair start --mode navigator
 ```
 
-**Your Responsibilities:**
-- Provide high-level direction
-- Review generated code
-- Make architectural decisions
-- Ensure business requirements
+**사용자의 역할:**
+- 상위 수준의 방향 제시
+- 생성된 코드 리뷰
+- 아키텍처 결정
+- 비즈니스 요구 사항 충족 보장
 
-**AI Driver:**
-- Write implementation code
-- Handle syntax details
-- Implement your guidance
-- Manage boilerplate
-- Execute refactoring
+**AI Driver의 역할:**
+- 구현 코드 작성
+- 문법 세부 사항 처리
+- 사용자의 안내 구현
+- 보일러플레이트 관리
+- 리팩터링 실행
 
-**Best For:**
-- Rapid prototyping
-- Boilerplate generation
-- Learning from AI patterns
-- Exploring solutions
+**적합한 경우:**
+- 빠른 프로토타이핑
+- 보일러플레이트 생성
+- AI 패턴에서 배우기
+- 해결책 탐색
 
-**Commands:**
+**명령:**
 ```
 /implement   - Direct implementation
 /refactor    - Request refactoring
@@ -179,8 +179,8 @@ ruflo pair start --mode navigator
 /alternate   - See alternative approaches
 ```
 
-#### Switch Mode
-Automatically alternates roles at intervals.
+#### Switch 모드
+일정 간격으로 역할을 자동으로 교대한다.
 
 ```bash
 # Default 10-minute intervals
@@ -193,60 +193,60 @@ ruflo pair start --mode switch --interval 5m
 ruflo pair start --mode switch --interval 15m
 ```
 
-**Handoff Process:**
-1. 30-second warning before switch
-2. Current driver completes thought
-3. Context summary generated
-4. Roles swap smoothly
-5. New driver continues
+**인계 절차:**
+1. 전환 30초 전 경고
+2. 현재 driver가 생각을 마무리
+3. 컨텍스트 요약 생성
+4. 역할이 매끄럽게 교대
+5. 새 driver가 이어서 진행
 
-**Best For:**
-- Balanced collaboration
-- Knowledge sharing
-- Complex features
-- Extended sessions
+**적합한 경우:**
+- 균형 잡힌 협업
+- 지식 공유
+- 복잡한 기능
+- 장시간 세션
 
-#### Specialized Modes
+#### 특화 모드
 
-**TDD Mode** - Test-Driven Development:
+**TDD 모드** - 테스트 주도 개발:
 ```bash
 ruflo pair start \
   --mode tdd \
   --test-first \
   --coverage 100
 ```
-Workflow: Write failing test → Implement → Refactor → Repeat
+워크플로: 실패하는 테스트 작성 → 구현 → 리팩터링 → 반복
 
-**Review Mode** - Continuous code review:
+**Review 모드** - 지속적 코드 리뷰:
 ```bash
 ruflo pair start \
   --mode review \
   --strict \
   --security
 ```
-Features: Real-time feedback, security scanning, performance analysis
+기능: 실시간 피드백, 보안 스캔, 성능 분석
 
-**Mentor Mode** - Learning-focused:
+**Mentor 모드** - 학습 중심:
 ```bash
 ruflo pair start \
   --mode mentor \
   --explain-all \
   --pace slow
 ```
-Features: Detailed explanations, step-by-step guidance, pattern teaching
+기능: 자세한 설명, 단계별 안내, 패턴 교육
 
-**Debug Mode** - Problem-solving:
+**Debug 모드** - 문제 해결:
 ```bash
 ruflo pair start \
   --mode debug \
   --verbose \
   --trace
 ```
-Features: Issue identification, root cause analysis, fix suggestions
+기능: 문제 식별, 근본 원인 분석, 수정 제안
 
-### In-Session Commands
+### 세션 중 명령
 
-#### Code Commands
+#### 코드 명령
 ```
 /explain [--level basic|detailed|expert]
   Explain the current code or selection
@@ -273,7 +273,7 @@ Features: Issue identification, root cause analysis, fix suggestions
   Apply a design pattern
 ```
 
-#### Testing Commands
+#### 테스트 명령
 ```
 /test [--watch] [--coverage] [--only <pattern>]
   Run test suite
@@ -294,7 +294,7 @@ Features: Issue identification, root cause analysis, fix suggestions
   Create test snapshots
 ```
 
-#### Review Commands
+#### 리뷰 명령
 ```
 /review [--scope current|file|changes] [--strict]
   Perform code review
@@ -315,7 +315,7 @@ Features: Issue identification, root cause analysis, fix suggestions
   Analyze code complexity
 ```
 
-#### Navigation Commands
+#### 탐색 명령
 ```
 /goto <file>[:line[:column]]
   Navigate to file or location
@@ -336,7 +336,7 @@ Features: Issue identification, root cause analysis, fix suggestions
   Show project structure
 ```
 
-#### Git Commands
+#### Git 명령
 ```
 /diff [--staged] [--file <file>]
   Show git diff
@@ -357,7 +357,7 @@ Features: Issue identification, root cause analysis, fix suggestions
   Show git blame
 ```
 
-#### AI Partner Commands
+#### AI 파트너 명령
 ```
 /agent [switch|info|config] [<agent-name>]
   Manage AI agent
@@ -375,7 +375,7 @@ Features: Issue identification, root cause analysis, fix suggestions
   Set AI expertise focus
 ```
 
-#### Metrics Commands
+#### 지표 명령
 ```
 /metrics [--period today|session|week|all]
   Show session metrics
@@ -390,7 +390,7 @@ Features: Issue identification, root cause analysis, fix suggestions
   Show improvement leaderboard
 ```
 
-#### Role & Mode Commands
+#### 역할·모드 명령
 ```
 /switch [--immediate]
   Switch driver/navigator roles
@@ -405,9 +405,9 @@ Features: Issue identification, root cause analysis, fix suggestions
   Prepare role handoff
 ```
 
-### Command Shortcuts
+### 명령 단축어
 
-| Alias | Full Command |
+| 별칭 | 전체 명령 |
 |-------|-------------|
 | `/s` | `/suggest` |
 | `/e` | `/explain` |
@@ -420,10 +420,10 @@ Features: Issue identification, root cause analysis, fix suggestions
 | `/sw` | `/switch` |
 | `/st` | `/status` |
 
-### Configuration
+### 설정
 
-#### Basic Configuration
-Create `.claude-flow/pair-config.json`:
+#### 기본 설정
+`.claude-flow/pair-config.json`을 만든다:
 
 ```json
 {
@@ -437,7 +437,7 @@ Create `.claude-flow/pair-config.json`:
 }
 ```
 
-#### Complete Configuration
+#### 전체 설정
 
 ```json
 {
@@ -538,7 +538,7 @@ Create `.claude-flow/pair-config.json`:
 }
 ```
 
-#### Built-in Agents
+#### 내장 에이전트
 
 ```json
 {
@@ -567,7 +567,7 @@ Create `.claude-flow/pair-config.json`:
 }
 ```
 
-#### CLI Configuration
+#### CLI 설정
 ```bash
 # Set configuration
 ruflo pair config set defaultMode switch
@@ -585,9 +585,9 @@ ruflo pair config import config.json
 ruflo pair config reset
 ```
 
-#### Profile Management
+#### 프로필 관리
 
-Create reusable profiles:
+재사용 가능한 프로필을 만든다:
 
 ```bash
 # Create profile
@@ -604,7 +604,7 @@ ruflo pair start --profile refactoring
 ruflo pair profile list
 ```
 
-Profile configuration:
+프로필 설정:
 ```json
 {
   "profiles": {
@@ -632,11 +632,11 @@ Profile configuration:
 }
 ```
 
-### Real-World Examples
+### 실전 예시
 
-#### Example 1: Feature Implementation
+#### 예시 1: 기능 구현
 
-Implementing user authentication with JWT tokens:
+JWT 토큰으로 사용자 인증 구현하기:
 
 ```bash
 # Session setup
@@ -648,7 +648,7 @@ ruflo pair start \
   --test
 ```
 
-**Session Flow:**
+**세션 흐름:**
 ```
 👥 Starting pair programming for authentication feature...
 
@@ -681,9 +681,9 @@ ruflo pair start \
 ✅ Truth Score: 0.98 - Committed successfully
 ```
 
-#### Example 2: Bug Fixing
+#### 예시 2: 버그 수정
 
-Debugging a memory leak in Node.js:
+Node.js의 메모리 누수 디버깅하기:
 
 ```bash
 # Session setup
@@ -694,7 +694,7 @@ ruflo pair start \
   --trace
 ```
 
-**Session Flow:**
+**세션 흐름:**
 ```
 👥 Starting debugging session...
 
@@ -722,9 +722,9 @@ ruflo pair start \
 /commit --message "fix: memory leak in event emitters"
 ```
 
-#### Example 3: TDD Session
+#### 예시 3: TDD 세션
 
-Building shopping cart with test-driven development:
+테스트 주도 개발로 장바구니 만들기:
 
 ```bash
 # Session setup
@@ -734,7 +734,7 @@ ruflo pair start \
   --test-first
 ```
 
-**Session Flow:**
+**세션 흐름:**
 ```
 👥 TDD Session: Shopping Cart Feature
 
@@ -764,9 +764,9 @@ ruflo pair start \
 > AI writes new failing tests...
 ```
 
-#### Example 4: Code Refactoring
+#### 예시 4: 코드 리팩터링
 
-Modernizing legacy code:
+레거시 코드 현대화하기:
 
 ```bash
 # Session setup
@@ -777,7 +777,7 @@ ruflo pair start \
   --threshold 0.98
 ```
 
-**Session Flow:**
+**세션 흐름:**
 ```
 👥 Refactoring Session: Modernizing UserService
 
@@ -812,9 +812,9 @@ ruflo pair start \
 /commit --message "refactor: modernize UserService with async/await"
 ```
 
-#### Example 5: Performance Optimization
+#### 예시 5: 성능 최적화
 
-Optimizing slow React application:
+느린 React 애플리케이션 최적화하기:
 
 ```bash
 # Session setup
@@ -825,7 +825,7 @@ ruflo pair start \
   --profile
 ```
 
-**Session Flow:**
+**세션 흐름:**
 ```
 👥 Performance Optimization Session
 
@@ -857,9 +857,9 @@ ruflo pair start \
 /commit --message "perf: optimize ProductList with memoization and virtualization"
 ```
 
-#### Example 6: API Development
+#### 예시 6: API 개발
 
-Building RESTful API with Express:
+Express로 RESTful API 만들기:
 
 ```bash
 # Session setup
@@ -870,7 +870,7 @@ ruflo pair start \
   --test
 ```
 
-**Session Flow:**
+**세션 흐름:**
 ```
 👥 API Development Session
 
@@ -902,9 +902,9 @@ ruflo pair start \
 > All endpoints tested: 15/15 ✅
 ```
 
-### Session Templates
+### 세션 템플릿
 
-#### Quick Start Templates
+#### 빠른 시작 템플릿
 
 ```bash
 # Refactoring template
@@ -936,15 +936,15 @@ ruflo pair --template learn
 # Examples: Many
 ```
 
-### Session Management
+### 세션 관리
 
-#### Session Status
+#### 세션 상태
 
 ```bash
 ruflo pair status
 ```
 
-**Output:**
+**출력:**
 ```
 👥 Pair Programming Session
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -970,13 +970,13 @@ Next Switch: in 3 minutes
 📝 Current File: src/auth/login.js
 ```
 
-#### Session History
+#### 세션 기록
 
 ```bash
 ruflo pair history
 ```
 
-**Output:**
+**출력:**
 ```
 📚 Session History
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1000,7 +1000,7 @@ ruflo pair history
    Issues Fixed: 5
 ```
 
-#### Session Persistence
+#### 세션 유지
 
 ```bash
 # Save session
@@ -1016,7 +1016,7 @@ ruflo pair --export <session-id> [--format json|md]
 ruflo pair --report <session-id>
 ```
 
-#### Background Sessions
+#### 백그라운드 세션
 
 ```bash
 # Start in background
@@ -1032,11 +1032,11 @@ ruflo pair --attach <session-id>
 ruflo pair end <session-id>
 ```
 
-### Advanced Features
+### 고급 기능
 
-#### Custom Commands
+#### 사용자 정의 명령
 
-Define in configuration:
+설정에서 정의한다:
 
 ```json
 {
@@ -1048,20 +1048,20 @@ Define in configuration:
 }
 ```
 
-Use custom commands:
+사용자 정의 명령 사용:
 ```
 /custom tdd
 /custom full-review
 ```
 
-#### Command Chaining
+#### 명령 체이닝
 
 ```
 /test && /commit && /push
 /lint --fix && /test && /review --strict
 ```
 
-#### Session Recording
+#### 세션 녹화
 
 ```bash
 # Start with recording
@@ -1074,79 +1074,79 @@ ruflo pair --replay <session-id>
 ruflo pair --analytics <session-id>
 ```
 
-#### Integration Options
+#### 연동 옵션
 
-**With Git:**
+**Git과 함께:**
 ```bash
 ruflo pair start --git --auto-commit
 ```
 
-**With CI/CD:**
+**CI/CD와 함께:**
 ```bash
 ruflo pair start --ci --non-interactive
 ```
 
-**With IDE:**
+**IDE와 함께:**
 ```bash
 ruflo pair start --ide vscode
 ```
 
-### Best Practices
+### 모범 사례
 
-#### Session Practices
-1. **Clear Goals** - Define session objectives upfront
-2. **Appropriate Mode** - Choose based on task type
-3. **Enable Verification** - For critical code paths
-4. **Regular Testing** - Maintain quality continuously
-5. **Session Notes** - Document important decisions
-6. **Regular Breaks** - Take breaks every 45-60 minutes
+#### 세션 운영
+1. **명확한 목표** - 세션 목표를 미리 정한다
+2. **알맞은 모드** - 작업 유형에 따라 고른다
+3. **검증 활성화** - 핵심 코드 경로에 적용한다
+4. **정기적인 테스트** - 품질을 꾸준히 유지한다
+5. **세션 메모** - 중요한 결정을 기록한다
+6. **정기적인 휴식** - 45~60분마다 쉰다
 
-#### Code Practices
-1. **Test Early** - Run tests after each change
-2. **Verify Before Commit** - Check truth scores
-3. **Review Security** - Always for sensitive code
-4. **Profile Performance** - Use `/perf` for optimization
-5. **Save Sessions** - For complex work
-6. **Learn from AI** - Ask questions frequently
+#### 코드 작성
+1. **일찍 테스트한다** - 변경할 때마다 테스트를 실행한다
+2. **커밋 전에 검증한다** - truth score를 확인한다
+3. **보안을 리뷰한다** - 민감한 코드는 항상 리뷰한다
+4. **성능을 프로파일링한다** - 최적화에는 `/perf`를 쓴다
+5. **세션을 저장한다** - 복잡한 작업일 때
+6. **AI에게서 배운다** - 자주 질문한다
 
-#### Mode Selection
-- **Driver Mode**: When learning, controlling implementation
-- **Navigator Mode**: For rapid prototyping, generation
-- **Switch Mode**: Long sessions, balanced collaboration
-- **TDD Mode**: Building with tests
-- **Review Mode**: Quality focus
-- **Mentor Mode**: Learning priority
-- **Debug Mode**: Fixing issues
+#### 모드 선택
+- **Driver 모드**: 학습할 때, 구현을 직접 통제할 때
+- **Navigator 모드**: 빠른 프로토타이핑, 코드 생성
+- **Switch 모드**: 긴 세션, 균형 잡힌 협업
+- **TDD 모드**: 테스트와 함께 개발할 때
+- **Review 모드**: 품질에 집중할 때
+- **Mentor 모드**: 학습이 우선일 때
+- **Debug 모드**: 문제를 고칠 때
 
-### Troubleshooting
+### 문제 해결
 
-#### Session Won't Start
-- Check agent availability
-- Verify configuration file syntax
-- Ensure clean workspace
-- Review log files
+#### 세션이 시작되지 않을 때
+- 에이전트 사용 가능 여부를 확인한다
+- 설정 파일 문법을 검증한다
+- 작업 공간이 깨끗한지 확인한다
+- 로그 파일을 검토한다
 
-#### Session Disconnected
-- Use `--recover` to restore
-- Check network connection
-- Verify background processes
-- Review auto-save files
+#### 세션 연결이 끊겼을 때
+- `--recover`로 복원한다
+- 네트워크 연결을 확인한다
+- 백그라운드 프로세스를 확인한다
+- 자동 저장 파일을 검토한다
 
-#### Poor Performance
-- Reduce verification threshold
-- Disable continuous testing
-- Check system resources
-- Use lighter AI model
+#### 성능이 나쁠 때
+- 검증 임계값을 낮춘다
+- 지속적 테스트를 끈다
+- 시스템 자원을 확인한다
+- 더 가벼운 AI 모델을 쓴다
 
-#### Configuration Issues
-- Validate JSON syntax
-- Check file permissions
-- Review priority order (CLI > env > project > user > global)
-- Run `ruflo pair config validate`
+#### 설정 문제
+- JSON 문법을 검증한다
+- 파일 권한을 확인한다
+- 우선순위 순서를 검토한다 (CLI > env > project > user > global)
+- `ruflo pair config validate`를 실행한다
 
-### Quality Metrics
+### 품질 지표
 
-#### Truth Score Thresholds
+#### Truth Score 임계값
 ```
 Error:   < 0.90 ❌
 Warning: 0.90 - 0.95 ⚠️
@@ -1154,7 +1154,7 @@ Good:    0.95 - 0.98 ✅
 Excellent: > 0.98 🌟
 ```
 
-#### Coverage Thresholds
+#### 커버리지 임계값
 ```
 Error:   < 70% ❌
 Warning: 70% - 80% ⚠️
@@ -1162,7 +1162,7 @@ Good:    80% - 90% ✅
 Excellent: > 90% 🌟
 ```
 
-#### Complexity Thresholds
+#### 복잡도 임계값
 ```
 Error:   > 15 ❌
 Warning: 10 - 15 ⚠️
@@ -1170,9 +1170,9 @@ Good:    5 - 10 ✅
 Excellent: < 5 🌟
 ```
 
-### Environment Variables
+### 환경 변수
 
-Override configuration via environment:
+환경 변수로 설정을 덮어쓴다:
 
 ```bash
 export CLAUDE_PAIR_MODE=driver
@@ -1182,17 +1182,17 @@ export CLAUDE_PAIR_AGENT=senior-dev
 export CLAUDE_PAIR_AUTO_TEST=true
 ```
 
-### Command History
+### 명령 기록
 
-Navigate history:
-- `↑/↓` - Navigate through command history
-- `Ctrl+R` - Search command history
-- `!!` - Repeat last command
-- `!<n>` - Run command n from history
+기록 탐색:
+- `↑/↓` - 명령 기록을 위아래로 이동한다
+- `Ctrl+R` - 명령 기록을 검색한다
+- `!!` - 마지막 명령을 반복한다
+- `!<n>` - 기록의 n번째 명령을 실행한다
 
-### Keyboard Shortcuts (Configurable)
+### 키보드 단축키 (설정 가능)
 
-Default shortcuts:
+기본 단축키:
 ```json
 {
   "shortcuts": {
@@ -1204,10 +1204,10 @@ Default shortcuts:
 }
 ```
 
-### Related Commands
+### 관련 명령
 
-- `ruflo pair --help` - Show help
-- `ruflo pair config` - Manage configuration
-- `ruflo pair profile` - Manage profiles
-- `ruflo pair templates` - List templates
-- `ruflo pair agents` - List available agents
+- `ruflo pair --help` - 도움말을 보여 준다
+- `ruflo pair config` - 설정을 관리한다
+- `ruflo pair profile` - 프로필을 관리한다
+- `ruflo pair templates` - 템플릿을 나열한다
+- `ruflo pair agents` - 사용 가능한 에이전트를 나열한다

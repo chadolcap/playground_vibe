@@ -236,6 +236,10 @@ d:\work\study\playground_vibe\image\제작\4포즈\sheet_split\man_2\
 d:\work\study\playground_vibe\image\제작\4포즈\sheet_split\woman_1\
 d:\work\study\playground_vibe\image\제작\4포즈\sheet_split\woman_2\
 
+https://www.blender.org/ : 3d 프로그램 (무료)
+
+https://www.tripo3d.ai/ko : ai 모델링 구현
+
 
 # 무료 에셋
 https://blog.naver.com/dreamkcau/224488514424

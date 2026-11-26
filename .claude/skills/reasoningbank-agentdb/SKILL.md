@@ -1,27 +1,27 @@
 ---
 name: reasoningbank-agentdb
-description: "Implement ReasoningBank adaptive learning with AgentDB's 150x faster vector database. Includes trajectory tracking, verdict judgment, memory distillation, and pattern recognition. Use when building self-learning agents, optimizing decision-making, or implementing experience replay systems."
+description: "150배 빠른 AgentDB 벡터 데이터베이스로 ReasoningBank adaptive learning(적응형 학습)을 구현한다. trajectory tracking(궤적 추적), verdict judgment(판정), memory distillation(메모리 증류), pattern recognition(패턴 인식)을 포함한다. self-learning agent를 만들거나, decision-making(의사결정)을 최적화하거나, experience replay 시스템을 구현할 때 사용한다."
 ---
 
-# ReasoningBank with AgentDB
+# AgentDB 기반 ReasoningBank
 
-## What This Skill Does
+## 이 스킬이 하는 일
 
-Provides ReasoningBank adaptive learning patterns using AgentDB's high-performance backend (150x-12,500x faster). Enables agents to learn from experiences, judge outcomes, distill memories, and improve decision-making over time with 100% backward compatibility.
+AgentDB의 고성능 백엔드(150배~12,500배 빠름)를 이용한 ReasoningBank 적응형 학습 패턴을 제공한다. 에이전트가 경험에서 배우고, 결과를 판정하고, 메모리를 증류하고, 시간이 지나며 의사결정을 개선하게 하며 하위 호환성은 100%다.
 
-**Performance**: 150x faster pattern retrieval, 500x faster batch operations, <1ms memory access.
+**성능**: 패턴 조회 150배, 배치 작업 500배 빠르고 메모리 접근은 1ms 미만이다.
 
-## Prerequisites
+## 사전 요구 사항
 
 - Node.js 18+
-- AgentDB v1.0.7+ (via agentic-flow)
-- Understanding of reinforcement learning concepts (optional)
+- AgentDB v1.0.7+ (agentic-flow 경유)
+- 강화학습 개념에 대한 이해 (선택)
 
 ---
 
-## Quick Start with CLI
+## CLI로 빠르게 시작하기
 
-### Initialize ReasoningBank Database
+### ReasoningBank 데이터베이스 초기화
 
 ```bash
 # Initialize AgentDB for ReasoningBank
@@ -32,7 +32,7 @@ npx agentdb@latest mcp
 claude mcp add agentdb npx agentdb@latest mcp
 ```
 
-### Migrate from Legacy ReasoningBank
+### 기존 ReasoningBank에서 마이그레이션
 
 ```bash
 # Automatic migration with validation
@@ -44,7 +44,7 @@ npx agentdb@latest stats ./.agentdb/reasoningbank.db
 
 ---
 
-## Quick Start with API
+## API로 빠르게 시작하기
 
 ```typescript
 import { createAgentDBAdapter, computeEmbedding } from 'agentic-flow/reasoningbank';
@@ -96,11 +96,11 @@ console.log('Patterns:', result.patterns);
 
 ---
 
-## Core ReasoningBank Concepts
+## ReasoningBank 핵심 개념
 
-### 1. Trajectory Tracking
+### 1. 궤적 추적
 
-Track agent execution paths and outcomes:
+에이전트의 실행 경로와 결과를 추적한다:
 
 ```typescript
 // Record trajectory (sequence of actions)
@@ -130,9 +130,9 @@ await rb.insertPattern({
 });
 ```
 
-### 2. Verdict Judgment
+### 2. 판정
 
-Judge whether a trajectory was successful:
+궤적이 성공했는지 판정한다:
 
 ```typescript
 // Retrieve similar past trajectories
@@ -151,9 +151,9 @@ console.log('Verdict:', verdict);
 console.log('Confidence:', similar.memories[0]?.similarity || 0);
 ```
 
-### 3. Memory Distillation
+### 3. 메모리 증류
 
-Consolidate similar experiences into patterns:
+비슷한 경험들을 패턴으로 통합한다:
 
 ```typescript
 // Get all experiences in domain
@@ -190,13 +190,13 @@ await rb.insertPattern({
 
 ---
 
-## Integration with Reasoning Agents
+## 추론 에이전트 연동
 
-AgentDB provides 4 reasoning modules that enhance ReasoningBank:
+AgentDB는 ReasoningBank를 강화하는 추론 모듈 4개를 제공한다:
 
 ### 1. PatternMatcher
 
-Find similar successful patterns:
+비슷한 성공 패턴을 찾는다:
 
 ```typescript
 const result = await rb.retrieveWithReasoning(queryEmbedding, {
@@ -215,7 +215,7 @@ result.memories.forEach(mem => {
 
 ### 2. ContextSynthesizer
 
-Generate rich context from multiple memories:
+여러 메모리에서 풍부한 맥락을 만든다:
 
 ```typescript
 const result = await rb.retrieveWithReasoning(queryEmbedding, {
@@ -233,7 +233,7 @@ console.log('Synthesized Context:', result.context);
 
 ### 3. MemoryOptimizer
 
-Automatically consolidate and prune:
+자동으로 통합하고 가지치기한다:
 
 ```typescript
 const result = await rb.retrieveWithReasoning(queryEmbedding, {
@@ -248,7 +248,7 @@ console.log('Optimizations:', result.optimizations);
 
 ### 4. ExperienceCurator
 
-Filter by quality and relevance:
+품질과 관련성으로 걸러 낸다:
 
 ```typescript
 const result = await rb.retrieveWithReasoning(queryEmbedding, {
@@ -266,9 +266,9 @@ result.memories.forEach(mem => {
 
 ---
 
-## Legacy API Compatibility
+## 기존 API 호환성
 
-AgentDB maintains 100% backward compatibility with legacy ReasoningBank:
+AgentDB는 기존 ReasoningBank와의 하위 호환성을 100% 유지한다:
 
 ```typescript
 import {
@@ -295,21 +295,21 @@ const newMemories = await distillMemories(
 
 ---
 
-## Performance Characteristics
+## 성능 특성
 
-- **Pattern Search**: 150x faster (100µs vs 15ms)
-- **Memory Retrieval**: <1ms (with cache)
-- **Batch Insert**: 500x faster (2ms vs 1s for 100 patterns)
-- **Trajectory Judgment**: <5ms (including retrieval + analysis)
-- **Memory Distillation**: <50ms (consolidate 100 patterns)
+- **패턴 검색**: 150배 빠름 (100µs 대 15ms)
+- **메모리 조회**: <1ms (캐시 사용 시)
+- **배치 삽입**: 500배 빠름 (패턴 100개 기준 2ms 대 1s)
+- **궤적 판정**: <5ms (조회 + 분석 포함)
+- **메모리 증류**: <50ms (패턴 100개 통합)
 
 ---
 
-## Advanced Patterns
+## 고급 패턴
 
-### Hierarchical Memory
+### 계층형 메모리
 
-Organize memories by abstraction level:
+추상화 수준별로 메모리를 정리한다:
 
 ```typescript
 // Low-level: Specific implementation
@@ -349,9 +349,9 @@ await rb.insertPattern({
 });
 ```
 
-### Multi-Domain Learning
+### 다중 도메인 학습
 
-Transfer learning across domains:
+도메인 간에 학습을 전이한다:
 
 ```typescript
 // Learn from backend optimization
@@ -370,9 +370,9 @@ const transferredKnowledge = backendExperience.memories.map(mem => ({
 
 ---
 
-## CLI Operations
+## CLI 작업
 
-### Database Management
+### 데이터베이스 관리
 
 ```bash
 # Export trajectories and patterns
@@ -386,7 +386,7 @@ npx agentdb@latest stats ./.agentdb/reasoningbank.db
 # Shows: total patterns, domains, confidence distribution
 ```
 
-### Migration
+### 마이그레이션
 
 ```bash
 # Migrate from legacy ReasoningBank
@@ -398,9 +398,9 @@ npx agentdb@latest stats .agentdb/reasoningbank.db
 
 ---
 
-## Troubleshooting
+## 문제 해결
 
-### Issue: Migration fails
+### 문제: 마이그레이션이 실패한다
 ```bash
 # Check source database exists
 ls -la .swarm/memory.db
@@ -409,7 +409,7 @@ ls -la .swarm/memory.db
 DEBUG=agentdb:* npx agentdb@latest migrate --source .swarm/memory.db
 ```
 
-### Issue: Low confidence scores
+### 문제: 신뢰도 점수가 낮다
 ```typescript
 // Enable context synthesis for better quality
 const result = await rb.retrieveWithReasoning(embedding, {
@@ -419,7 +419,7 @@ const result = await rb.retrieveWithReasoning(embedding, {
 });
 ```
 
-### Issue: Memory growing too large
+### 문제: 메모리가 너무 커진다
 ```typescript
 // Enable automatic optimization
 const result = await rb.retrieveWithReasoning(embedding, {
@@ -432,15 +432,15 @@ await rb.optimize();
 
 ---
 
-## Learn More
+## 더 알아보기
 
-- **AgentDB Integration**: node_modules/agentic-flow/docs/AGENTDB_INTEGRATION.md
+- **AgentDB 연동**: node_modules/agentic-flow/docs/AGENTDB_INTEGRATION.md
 - **GitHub**: https://github.com/ruvnet/agentic-flow/tree/main/packages/agentdb
-- **MCP Integration**: `npx agentdb@latest mcp`
-- **Website**: https://agentdb.ruv.io
+- **MCP 연동**: `npx agentdb@latest mcp`
+- **웹사이트**: https://agentdb.ruv.io
 
 ---
 
-**Category**: Machine Learning / Reinforcement Learning
-**Difficulty**: Intermediate
-**Estimated Time**: 20-30 minutes
+**분류**: 머신러닝 / 강화학습
+**난이도**: 중급
+**예상 소요 시간**: 20~30분

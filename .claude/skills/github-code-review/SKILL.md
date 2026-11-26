@@ -1,15 +1,15 @@
 ---
 name: github-code-review
-description: Comprehensive GitHub code review with AI-powered swarm coordination
+description: AI 기반 swarm 협업으로 수행하는 종합 GitHub code review (PR 리뷰) 스킬
 ---
 
-# GitHub Code Review Skill
+# GitHub 코드 리뷰 스킬
 
-> **AI-Powered Code Review**: Deploy specialized review agents to perform comprehensive, intelligent code reviews that go beyond traditional static analysis.
+> **AI 기반 코드 리뷰**: 전문 리뷰 에이전트를 배치해 기존 정적 분석을 넘어서는 포괄적이고 지능적인 코드 리뷰를 수행한다.
 
-## 🎯 Quick Start
+## 🎯 빠른 시작
 
-### Simple Review
+### 간단한 리뷰
 ```bash
 # Initialize review swarm for PR
 gh pr view 123 --json files,diff | npx ruv-swarm github review-init --pr 123
@@ -18,7 +18,7 @@ gh pr view 123 --json files,diff | npx ruv-swarm github review-init --pr 123
 gh pr comment 123 --body "🔍 Multi-agent code review initiated"
 ```
 
-### Complete Review Workflow
+### 전체 리뷰 워크플로
 ```bash
 # Get PR context with gh CLI
 PR_DATA=$(gh pr view 123 --json files,additions,deletions,title,body)
@@ -35,57 +35,57 @@ npx ruv-swarm github review-init \
 
 ---
 
-## 📚 Table of Contents
+## 📚 목차
 
 <details>
-<summary><strong>Core Features</strong></summary>
+<summary><strong>핵심 기능</strong></summary>
 
-- [Multi-Agent Review System](#multi-agent-review-system)
-- [Specialized Review Agents](#specialized-review-agents)
-- [PR-Based Swarm Management](#pr-based-swarm-management)
-- [Automated Workflows](#automated-workflows)
-- [Quality Gates & Checks](#quality-gates--checks)
+- [다중 에이전트 리뷰 시스템](#multi-agent-review-system)
+- [전문 리뷰 에이전트](#specialized-review-agents)
+- [PR 기반 Swarm 관리](#pr-based-swarm-management)
+- [자동화 워크플로](#automated-workflows)
+- [품질 게이트와 검사](#quality-gates--checks)
 
 </details>
 
 <details>
-<summary><strong>Review Agents</strong></summary>
+<summary><strong>리뷰 에이전트</strong></summary>
 
-- [Security Review Agent](#security-review-agent)
-- [Performance Review Agent](#performance-review-agent)
-- [Architecture Review Agent](#architecture-review-agent)
-- [Style & Convention Agent](#style--convention-agent)
-- [Accessibility Agent](#accessibility-agent)
-
-</details>
-
-<details>
-<summary><strong>Advanced Features</strong></summary>
-
-- [Context-Aware Reviews](#context-aware-reviews)
-- [Learning from History](#learning-from-history)
-- [Cross-PR Analysis](#cross-pr-analysis)
-- [Custom Review Agents](#custom-review-agents)
+- [보안 리뷰 에이전트](#security-review-agent)
+- [성능 리뷰 에이전트](#performance-review-agent)
+- [아키텍처 리뷰 에이전트](#architecture-review-agent)
+- [스타일·컨벤션 에이전트](#style--convention-agent)
+- [접근성 에이전트](#accessibility-agent)
 
 </details>
 
 <details>
-<summary><strong>Integration & Automation</strong></summary>
+<summary><strong>고급 기능</strong></summary>
 
-- [CI/CD Integration](#cicd-integration)
-- [Webhook Handlers](#webhook-handlers)
-- [PR Comment Commands](#pr-comment-commands)
-- [Automated Fixes](#automated-fixes)
+- [맥락 인식 리뷰](#context-aware-reviews)
+- [이력 기반 학습](#learning-from-history)
+- [PR 간 분석](#cross-pr-analysis)
+- [사용자 정의 리뷰 에이전트](#custom-review-agents)
+
+</details>
+
+<details>
+<summary><strong>통합과 자동화</strong></summary>
+
+- [CI/CD 통합](#cicd-integration)
+- [Webhook 핸들러](#webhook-handlers)
+- [PR 댓글 명령](#pr-comment-commands)
+- [자동 수정](#automated-fixes)
 
 </details>
 
 ---
 
-## 🚀 Core Features
+## 🚀 핵심 기능
 
-### Multi-Agent Review System
+### 다중 에이전트 리뷰 시스템
 
-Deploy specialized AI agents for comprehensive code review:
+포괄적인 코드 리뷰를 위해 전문 AI 에이전트를 배치한다.
 
 ```bash
 # Initialize review swarm with GitHub CLI integration
@@ -104,19 +104,19 @@ npx ruv-swarm github review-init \
 gh pr comment 123 --body "🔍 Multi-agent code review initiated"
 ```
 
-**Benefits:**
-- ✅ Parallel review by specialized agents
-- ✅ Comprehensive coverage across multiple domains
-- ✅ Faster review cycles with coordinated analysis
-- ✅ Consistent quality standards enforcement
+**장점:**
+- ✅ 전문 에이전트가 병렬로 리뷰한다
+- ✅ 여러 영역을 포괄적으로 다룬다
+- ✅ 조정된 분석으로 리뷰 주기가 빨라진다
+- ✅ 일관된 품질 기준을 적용한다
 
 ---
 
-## 🤖 Specialized Review Agents
+## 🤖 전문 리뷰 에이전트
 
-### Security Review Agent
+### 보안 리뷰 에이전트
 
-**Focus:** Identify security vulnerabilities and suggest fixes
+**초점:** 보안 취약점을 찾아내고 수정 방법을 제안한다
 
 ```bash
 # Get changed files from PR
@@ -141,7 +141,7 @@ fi
 ```
 
 <details>
-<summary><strong>Security Checks Performed</strong></summary>
+<summary><strong>수행하는 보안 검사</strong></summary>
 
 ```javascript
 {
@@ -167,7 +167,7 @@ fi
 </details>
 
 <details>
-<summary><strong>Comment Template: Security Issue</strong></summary>
+<summary><strong>댓글 템플릿: 보안 이슈</strong></summary>
 
 ```markdown
 🔒 **Security Issue: [Type]**
@@ -194,9 +194,9 @@ fi
 
 ---
 
-### Performance Review Agent
+### 성능 리뷰 에이전트
 
-**Focus:** Analyze performance impact and optimization opportunities
+**초점:** 성능 영향과 최적화 기회를 분석한다
 
 ```bash
 # Run performance analysis
@@ -208,7 +208,7 @@ npx ruv-swarm github review-performance \
 ```
 
 <details>
-<summary><strong>Performance Metrics Analyzed</strong></summary>
+<summary><strong>분석하는 성능 지표</strong></summary>
 
 ```javascript
 {
@@ -234,9 +234,9 @@ npx ruv-swarm github review-performance \
 
 ---
 
-### Architecture Review Agent
+### 아키텍처 리뷰 에이전트
 
-**Focus:** Evaluate design patterns and architectural decisions
+**초점:** 디자인 패턴과 아키텍처 결정을 평가한다
 
 ```bash
 # Architecture review
@@ -248,7 +248,7 @@ npx ruv-swarm github review-architecture \
 ```
 
 <details>
-<summary><strong>Architecture Analysis</strong></summary>
+<summary><strong>아키텍처 분석</strong></summary>
 
 ```javascript
 {
@@ -274,9 +274,9 @@ npx ruv-swarm github review-architecture \
 
 ---
 
-### Style & Convention Agent
+### 스타일·컨벤션 에이전트
 
-**Focus:** Enforce coding standards and best practices
+**초점:** 코딩 표준과 모범 사례를 적용한다
 
 ```bash
 # Style enforcement with auto-fix
@@ -287,7 +287,7 @@ npx ruv-swarm github review-style \
 ```
 
 <details>
-<summary><strong>Style Checks</strong></summary>
+<summary><strong>스타일 검사</strong></summary>
 
 ```javascript
 {
@@ -313,9 +313,9 @@ npx ruv-swarm github review-style \
 
 ---
 
-## 🔄 PR-Based Swarm Management
+## 🔄 PR 기반 Swarm 관리
 
-### Create Swarm from PR
+### PR에서 Swarm 생성
 
 ```bash
 # Create swarm from PR description using gh CLI
@@ -329,9 +329,9 @@ gh pr view 123 --json body,labels,author,assignees | \
   npx ruv-swarm swarm init --from-pr-data
 ```
 
-### Label-Based Agent Assignment
+### Label 기반 에이전트 할당
 
-Map PR labels to specialized agents:
+PR label을 전문 에이전트에 매핑한다.
 
 ```json
 {
@@ -346,7 +346,7 @@ Map PR labels to specialized agents:
 }
 ```
 
-### Topology Selection by PR Size
+### PR 크기별 토폴로지 선택
 
 ```bash
 # Automatic topology selection based on PR complexity
@@ -358,9 +358,9 @@ npx ruv-swarm github pr-topology --pr 123
 
 ---
 
-## 🎬 PR Comment Commands
+## 🎬 PR 댓글 명령
 
-Execute swarm commands directly from PR comments:
+PR 댓글에서 swarm 명령을 바로 실행한다.
 
 ```markdown
 <!-- In PR comment -->
@@ -372,7 +372,7 @@ Execute swarm commands directly from PR comments:
 ```
 
 <details>
-<summary><strong>Webhook Handler for Comment Commands</strong></summary>
+<summary><strong>댓글 명령용 Webhook 핸들러</strong></summary>
 
 ```javascript
 // webhook-handler.js
@@ -402,9 +402,9 @@ createServer((req, res) => {
 
 ---
 
-## ⚙️ Review Configuration
+## ⚙️ 리뷰 설정
 
-### Configuration File
+### 설정 파일
 
 ```yaml
 # .github/review-swarm.yml
@@ -443,7 +443,7 @@ review:
       - avoid-circular-deps
 ```
 
-### Custom Review Triggers
+### 사용자 정의 리뷰 트리거
 
 ```javascript
 {
@@ -472,9 +472,9 @@ review:
 
 ---
 
-## 🤖 Automated Workflows
+## 🤖 자동화 워크플로
 
-### Auto-Review on PR Creation
+### PR 생성 시 자동 리뷰
 
 ```yaml
 # .github/workflows/auto-review.yml
@@ -533,9 +533,9 @@ jobs:
 
 ---
 
-## 💬 Intelligent Comment Generation
+## 💬 지능형 댓글 생성
 
-### Generate Contextual Review Comments
+### 맥락 기반 리뷰 댓글 생성
 
 ```bash
 # Get PR diff with context
@@ -569,7 +569,7 @@ echo "$COMMENTS" | jq -c '.[]' | while read -r comment; do
 done
 ```
 
-### Batch Comment Management
+### 댓글 일괄 관리
 
 ```bash
 # Manage review comments efficiently
@@ -582,9 +582,9 @@ npx ruv-swarm github review-comments \
 
 ---
 
-## 🚪 Quality Gates & Checks
+## 🚪 품질 게이트와 검사
 
-### Status Checks
+### 상태 검사
 
 ```yaml
 # Required status checks in branch protection
@@ -598,7 +598,7 @@ protection_rules:
       - "review-swarm/tests"
 ```
 
-### Define Quality Gates
+### 품질 게이트 정의
 
 ```bash
 # Set quality gate thresholds
@@ -612,7 +612,7 @@ npx ruv-swarm github quality-gates \
   }'
 ```
 
-### Track Review Metrics
+### 리뷰 지표 추적
 
 ```bash
 # Monitor review effectiveness
@@ -625,11 +625,11 @@ npx ruv-swarm github review-metrics \
 
 ---
 
-## 🎓 Advanced Features
+## 🎓 고급 기능
 
-### Context-Aware Reviews
+### 맥락 인식 리뷰
 
-Analyze PRs with full project context:
+프로젝트 전체 맥락을 바탕으로 PR을 분석한다.
 
 ```bash
 # Review with comprehensive context
@@ -641,9 +641,9 @@ npx ruv-swarm github review-context \
   --dependency-analysis
 ```
 
-### Learning from History
+### 이력 기반 학습
 
-Train review agents on your codebase patterns:
+코드베이스의 패턴으로 리뷰 에이전트를 학습시킨다.
 
 ```bash
 # Learn from past reviews
@@ -660,9 +660,9 @@ npx ruv-swarm github review-train \
   --improve-accuracy
 ```
 
-### Cross-PR Analysis
+### PR 간 분석
 
-Coordinate reviews across related pull requests:
+관련된 pull request 사이의 리뷰를 조정한다.
 
 ```bash
 # Analyze related PRs together
@@ -673,7 +673,7 @@ npx ruv-swarm github review-batch \
   --combined-impact
 ```
 
-### Multi-PR Swarm Coordination
+### 다중 PR Swarm 조정
 
 ```bash
 # Coordinate swarms across related PRs
@@ -685,9 +685,9 @@ npx ruv-swarm github multi-pr \
 
 ---
 
-## 🛠️ Custom Review Agents
+## 🛠️ 사용자 정의 리뷰 에이전트
 
-### Create Custom Agent
+### 사용자 정의 에이전트 만들기
 
 ```javascript
 // custom-review-agent.js
@@ -741,7 +741,7 @@ class CustomReviewAgent {
 module.exports = CustomReviewAgent;
 ```
 
-### Register Custom Agent
+### 사용자 정의 에이전트 등록
 
 ```bash
 # Register custom review agent
@@ -753,9 +753,9 @@ npx ruv-swarm github register-agent \
 
 ---
 
-## 🔧 CI/CD Integration
+## 🔧 CI/CD 통합
 
-### Integration with Build Pipeline
+### 빌드 파이프라인과 통합
 
 ```yaml
 # .github/workflows/build-and-review.yml
@@ -782,7 +782,7 @@ jobs:
             --include-build-results
 ```
 
-### Automated PR Fixes
+### 자동 PR 수정
 
 ```bash
 # Auto-fix common issues
@@ -792,7 +792,7 @@ npx ruv-swarm github pr-fix 123 \
   --push-changes
 ```
 
-### Progress Updates to PR
+### PR에 진행 상황 업데이트
 
 ```bash
 # Post swarm progress to PR using gh CLI
@@ -808,9 +808,9 @@ fi
 
 ---
 
-## 📋 Complete Workflow Examples
+## 📋 전체 워크플로 예시
 
-### Example 1: Security-Critical PR
+### 예시 1: 보안이 중요한 PR
 
 ```bash
 # Review authentication system changes
@@ -822,7 +822,7 @@ npx ruv-swarm github review-init \
   --penetration-test
 ```
 
-### Example 2: Performance-Sensitive PR
+### 예시 2: 성능에 민감한 PR
 
 ```bash
 # Review database optimization
@@ -834,7 +834,7 @@ npx ruv-swarm github review-init \
   --load-test
 ```
 
-### Example 3: UI Component PR
+### 예시 3: UI 컴포넌트 PR
 
 ```bash
 # Review new component library
@@ -846,7 +846,7 @@ npx ruv-swarm github review-init \
   --responsive-check
 ```
 
-### Example 4: Feature Development PR
+### 예시 4: 기능 개발 PR
 
 ```bash
 # Review new feature implementation
@@ -857,7 +857,7 @@ gh pr view 456 --json body,labels,files | \
     --auto-assign-tasks
 ```
 
-### Example 5: Bug Fix PR
+### 예시 5: 버그 수정 PR
 
 ```bash
 # Review bug fix with debugging focus
@@ -870,9 +870,9 @@ npx ruv-swarm github pr-init 789 \
 
 ---
 
-## 📊 Monitoring & Analytics
+## 📊 모니터링과 분석
 
-### Review Dashboard
+### 리뷰 대시보드
 
 ```bash
 # Launch real-time review dashboard
@@ -881,7 +881,7 @@ npx ruv-swarm github review-dashboard \
   --show "agent-activity,issue-trends,fix-rates,coverage"
 ```
 
-### Generate Review Reports
+### 리뷰 보고서 생성
 
 ```bash
 # Create comprehensive review report
@@ -892,7 +892,7 @@ npx ruv-swarm github review-report \
   --export-pdf
 ```
 
-### PR Swarm Analytics
+### PR Swarm 분석
 
 ```bash
 # Generate PR-specific analytics
@@ -902,7 +902,7 @@ npx ruv-swarm github pr-report 123 \
   --compare-baseline
 ```
 
-### Export to GitHub Insights
+### GitHub Insights로 내보내기
 
 ```bash
 # Export metrics to GitHub Insights
@@ -914,49 +914,49 @@ npx ruv-swarm github export-metrics \
 
 ---
 
-## 🔐 Security Considerations
+## 🔐 보안 고려 사항
 
-### Best Practices
+### 모범 사례
 
-1. **Token Permissions**: Ensure GitHub tokens have minimal required scopes
-2. **Command Validation**: Validate all PR comments before execution
-3. **Rate Limiting**: Implement rate limits for PR operations
-4. **Audit Trail**: Log all swarm operations for compliance
-5. **Secret Management**: Never expose API keys in PR comments or logs
+1. **토큰 권한**: GitHub 토큰에는 꼭 필요한 최소 범위만 준다
+2. **명령 검증**: 실행 전에 모든 PR 댓글을 검증한다
+3. **속도 제한**: PR 작업에 속도 제한을 둔다
+4. **감사 기록**: 규정 준수를 위해 모든 swarm 작업을 기록한다
+5. **시크릿 관리**: PR 댓글이나 로그에 API 키를 절대 노출하지 않는다
 
-### Security Checklist
+### 보안 체크리스트
 
-- [ ] GitHub token scoped to repository only
-- [ ] Webhook signatures verified
-- [ ] Command injection protection enabled
-- [ ] Rate limiting configured
-- [ ] Audit logging enabled
-- [ ] Secrets scanning active
-- [ ] Branch protection rules enforced
+- [ ] GitHub 토큰 범위를 저장소로만 제한
+- [ ] Webhook 서명 검증
+- [ ] 명령 인젝션 방어 활성화
+- [ ] 속도 제한 설정
+- [ ] 감사 로그 활성화
+- [ ] 시크릿 스캔 활성화
+- [ ] 브랜치 보호 규칙 적용
 
 ---
 
-## 📚 Best Practices
+## 📚 모범 사례
 
-### 1. Review Configuration
-- ✅ Define clear review criteria upfront
-- ✅ Set appropriate severity thresholds
-- ✅ Configure agent specializations for your stack
-- ✅ Establish override procedures for emergencies
+### 1. 리뷰 설정
+- ✅ 명확한 리뷰 기준을 미리 정한다
+- ✅ 적절한 심각도 기준치를 설정한다
+- ✅ 사용하는 기술 스택에 맞게 에이전트 전문 분야를 설정한다
+- ✅ 긴급 상황용 예외 처리 절차를 마련한다
 
-### 2. Comment Quality
-- ✅ Provide actionable, specific feedback
-- ✅ Include code examples with suggestions
-- ✅ Reference documentation and best practices
-- ✅ Maintain respectful, constructive tone
+### 2. 댓글 품질
+- ✅ 실행 가능하고 구체적인 피드백을 준다
+- ✅ 제안에 코드 예시를 포함한다
+- ✅ 문서와 모범 사례를 참조한다
+- ✅ 정중하고 건설적인 어조를 유지한다
 
-### 3. Performance Optimization
-- ✅ Cache analysis results to avoid redundant work
-- ✅ Use incremental reviews for large PRs
-- ✅ Enable parallel agent execution
-- ✅ Batch comment operations efficiently
+### 3. 성능 최적화
+- ✅ 중복 작업을 피하도록 분석 결과를 캐시한다
+- ✅ 큰 PR에는 점진적 리뷰를 사용한다
+- ✅ 에이전트 병렬 실행을 켠다
+- ✅ 댓글 작업을 효율적으로 묶어 처리한다
 
-### 4. PR Templates
+### 4. PR 템플릿
 
 ```markdown
 <!-- .github/pull_request_template.md -->
@@ -978,7 +978,7 @@ npx ruv-swarm github export-metrics \
 - [ ] Accessibility check
 ```
 
-### 5. Auto-Merge When Ready
+### 5. 준비되면 자동 병합
 
 ```bash
 # Auto-merge when swarm completes and passes checks
@@ -997,17 +997,17 @@ fi
 
 ---
 
-## 🔗 Integration with Claude Code
+## 🔗 Claude Code와의 통합
 
-### Workflow Pattern
+### 워크플로 패턴
 
-1. **Claude Code** reads PR diff and context
-2. **Swarm** coordinates review approach based on PR type
-3. **Agents** work in parallel on different review aspects
-4. **Progress** updates posted to PR automatically
-5. **Final review** performed before marking ready
+1. **Claude Code**가 PR diff와 맥락을 읽는다
+2. **Swarm**이 PR 유형에 따라 리뷰 방식을 조정한다
+3. **에이전트**들이 서로 다른 리뷰 측면을 병렬로 처리한다
+4. **진행 상황** 업데이트가 PR에 자동으로 게시된다
+5. 준비 완료로 표시하기 전에 **최종 리뷰**를 수행한다
 
-### Example: Complete PR Management
+### 예시: 전체 PR 관리
 
 ```javascript
 [Single Message - Parallel Execution]:
@@ -1038,14 +1038,14 @@ fi
 
 ---
 
-## 🆘 Troubleshooting
+## 🆘 문제 해결
 
-### Common Issues
+### 자주 발생하는 문제
 
 <details>
-<summary><strong>Issue: Review agents not spawning</strong></summary>
+<summary><strong>문제: 리뷰 에이전트가 생성되지 않음</strong></summary>
 
-**Solution:**
+**해결:**
 ```bash
 # Check swarm status
 npx ruv-swarm swarm-status
@@ -1060,9 +1060,9 @@ npx ruv-swarm github review-init --pr 123 --force
 </details>
 
 <details>
-<summary><strong>Issue: Comments not posting to PR</strong></summary>
+<summary><strong>문제: 댓글이 PR에 게시되지 않음</strong></summary>
 
-**Solution:**
+**해결:**
 ```bash
 # Verify GitHub token permissions
 gh auth status
@@ -1077,9 +1077,9 @@ npx ruv-swarm github review-comments --pr 123 --batch
 </details>
 
 <details>
-<summary><strong>Issue: Review taking too long</strong></summary>
+<summary><strong>문제: 리뷰가 너무 오래 걸림</strong></summary>
 
-**Solution:**
+**해결:**
 ```bash
 # Use incremental review for large PRs
 npx ruv-swarm github review-init --pr 123 --incremental
@@ -1095,31 +1095,31 @@ npx ruv-swarm github review-init --pr 123 --parallel --cache-results
 
 ---
 
-## 📖 Additional Resources
+## 📖 추가 자료
 
-### Related Skills
-- `github-pr-manager` - Comprehensive PR lifecycle management
-- `github-workflow-automation` - Automate GitHub workflows
-- `swarm-coordination` - Advanced swarm orchestration
+### 관련 스킬
+- `github-pr-manager` - PR 수명 주기 전반을 관리한다
+- `github-workflow-automation` - GitHub 워크플로를 자동화한다
+- `swarm-coordination` - 고급 swarm 오케스트레이션
 
-### Documentation
-- [GitHub CLI Documentation](https://cli.github.com/manual/)
-- [RUV Swarm Guide](https://github.com/ruvnet/ruv-swarm)
-- [Claude Flow Integration](https://github.com/ruvnet/claude-flow)
+### 문서
+- [GitHub CLI 문서](https://cli.github.com/manual/)
+- [RUV Swarm 가이드](https://github.com/ruvnet/ruv-swarm)
+- [Claude Flow 통합](https://github.com/ruvnet/claude-flow)
 
-### Support
-- GitHub Issues: Report bugs and request features
-- Community: Join discussions and share experiences
-- Examples: Browse example configurations and workflows
-
----
-
-## 📄 License
-
-This skill is part of the Claude Code Flow project and is licensed under the MIT License.
+### 지원
+- GitHub Issues: 버그를 보고하고 기능을 요청한다
+- 커뮤니티: 토론에 참여하고 경험을 공유한다
+- 예시: 예시 설정과 워크플로를 살펴본다
 
 ---
 
-**Last Updated:** 2025-10-19
-**Version:** 1.0.0
-**Maintainer:** Claude Code Flow Team
+## 📄 라이선스
+
+이 스킬은 Claude Code Flow 프로젝트의 일부이며 MIT License로 배포된다.
+
+---
+
+**최종 수정일:** 2025-10-19
+**버전:** 1.0.0
+**관리자:** Claude Code Flow Team

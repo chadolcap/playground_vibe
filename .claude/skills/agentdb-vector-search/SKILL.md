@@ -1,23 +1,23 @@
 ---
 name: agentdb-vector-search
-description: "Implement semantic vector search with AgentDB for intelligent document retrieval, similarity matching, and context-aware querying. Use when building RAG systems, semantic search engines, or intelligent knowledge bases."
+description: "AgentDB로 semantic vector search(의미 기반 벡터 검색)를 구현해 지능형 document retrieval(문서 검색), similarity matching(유사도 매칭), context-aware querying(맥락 인식 질의)을 수행한다. RAG 시스템, semantic search engine, intelligent knowledge base를 만들 때 사용한다."
 ---
 
-# AgentDB Vector Search
+# AgentDB 벡터 검색
 
-## What This Skill Does
+## 이 스킬이 하는 일
 
-Implements vector-based semantic search using AgentDB's high-performance vector database with **150x-12,500x faster** operations than traditional solutions. Features HNSW indexing, quantization, and sub-millisecond search (<100µs).
+기존 방식보다 **150배~12,500배 빠른** AgentDB의 고성능 벡터 데이터베이스로 벡터 기반 의미 검색을 구현한다. HNSW 인덱싱, 양자화, 1ms 미만 검색(<100µs)을 제공한다.
 
-## Prerequisites
+## 사전 요구 사항
 
 - Node.js 18+
-- AgentDB v1.0.7+ (via agentic-flow or standalone)
-- OpenAI API key (for embeddings) or custom embedding model
+- AgentDB v1.0.7+ (agentic-flow 경유 또는 단독 설치)
+- OpenAI API 키(임베딩용) 또는 사용자 정의 임베딩 모델
 
-## Quick Start with CLI
+## CLI로 빠르게 시작하기
 
-### Initialize Vector Database
+### 벡터 데이터베이스 초기화
 
 ```bash
 # Initialize with default dimensions (1536 for OpenAI ada-002)
@@ -36,7 +36,7 @@ npx agentdb@latest init ./vectors.db --preset large   # >100K vectors
 npx agentdb@latest init ./vectors.db --in-memory
 ```
 
-### Query Vector Database
+### 벡터 데이터베이스 조회
 
 ```bash
 # Basic similarity search
@@ -59,7 +59,7 @@ npx agentdb@latest query ./vectors.db "[...]" -f json -k 5
 npx agentdb@latest query ./vectors.db "[...]" -v
 ```
 
-### Import/Export Vectors
+### 벡터 가져오기/내보내기
 
 ```bash
 # Export vectors to JSON
@@ -72,7 +72,7 @@ npx agentdb@latest import ./backup.json
 npx agentdb@latest stats ./vectors.db
 ```
 
-## Quick Start with API
+## API로 빠르게 시작하기
 
 ```typescript
 import { createAgentDBAdapter, computeEmbedding } from 'agentic-flow/reasoningbank';
@@ -116,9 +116,9 @@ const results = await adapter.retrieveWithReasoning(queryEmbedding, {
 });
 ```
 
-## Core Features
+## 핵심 기능
 
-### 1. Vector Storage
+### 1. 벡터 저장
 ```typescript
 // Store with automatic embedding
 await db.storeWithEmbedding({
@@ -127,7 +127,7 @@ await db.storeWithEmbedding({
 });
 ```
 
-### 2. Similarity Search
+### 2. 유사도 검색
 ```typescript
 // Find similar documents
 const similar = await db.findSimilar("quantum computing", {
@@ -136,7 +136,7 @@ const similar = await db.findSimilar("quantum computing", {
 });
 ```
 
-### 3. Hybrid Search (Vector + Metadata)
+### 3. 하이브리드 검색 (벡터 + 메타데이터)
 ```typescript
 // Combine vector similarity with metadata filtering
 const results = await db.hybridSearch({
@@ -149,9 +149,9 @@ const results = await db.hybridSearch({
 });
 ```
 
-## Advanced Usage
+## 고급 사용법
 
-### RAG (Retrieval Augmented Generation)
+### RAG (검색 증강 생성)
 ```typescript
 // Build RAG pipeline
 async function ragQuery(question: string) {
@@ -169,7 +169,7 @@ Question: ${question}`;
 }
 ```
 
-### Batch Operations
+### 배치 작업
 ```typescript
 // Efficient batch storage
 await db.batchStore(documents.map(doc => ({
@@ -179,7 +179,7 @@ await db.batchStore(documents.map(doc => ({
 })));
 ```
 
-## MCP Server Integration
+## MCP 서버 연동
 
 ```bash
 # Start AgentDB MCP server for Claude Code
@@ -194,7 +194,7 @@ claude mcp add agentdb npx agentdb@latest mcp
 # - agentdb_stats: Database statistics
 ```
 
-## Performance Benchmarks
+## 성능 벤치마크
 
 ```bash
 # Run comprehensive benchmarks
@@ -207,32 +207,32 @@ npx agentdb@latest benchmark
 # ✅ Memory Efficiency: 4-32x reduction with quantization
 ```
 
-## Quantization Options
+## 양자화 옵션
 
-AgentDB provides multiple quantization strategies for memory efficiency:
+AgentDB는 메모리 효율을 위해 여러 양자화 전략을 제공한다:
 
-### Binary Quantization (32x reduction)
+### 이진 양자화 (32배 감소)
 ```typescript
 const adapter = await createAgentDBAdapter({
   quantizationType: 'binary',  // 768-dim → 96 bytes
 });
 ```
 
-### Scalar Quantization (4x reduction)
+### 스칼라 양자화 (4배 감소)
 ```typescript
 const adapter = await createAgentDBAdapter({
   quantizationType: 'scalar',  // 768-dim → 768 bytes
 });
 ```
 
-### Product Quantization (8-16x reduction)
+### 곱 양자화 (8~16배 감소)
 ```typescript
 const adapter = await createAgentDBAdapter({
   quantizationType: 'product',  // 768-dim → 48-96 bytes
 });
 ```
 
-## Distance Metrics
+## 거리 척도
 
 ```bash
 # Cosine similarity (default, best for most use cases)
@@ -245,35 +245,35 @@ npx agentdb@latest query ./db.sqlite "[...]" -m euclidean
 npx agentdb@latest query ./db.sqlite "[...]" -m dot
 ```
 
-## Advanced Features
+## 고급 기능
 
-### HNSW Indexing
-- **O(log n) search complexity**
-- **Sub-millisecond retrieval** (<100µs)
-- **Automatic index building**
+### HNSW 인덱싱
+- **O(log n) 검색 복잡도**
+- **1ms 미만 조회** (<100µs)
+- **인덱스 자동 생성**
 
-### Caching
-- **1000 pattern in-memory cache**
-- **<1ms pattern retrieval**
-- **Automatic cache invalidation**
+### 캐시
+- **패턴 1000개 인메모리 캐시**
+- **1ms 미만 패턴 조회**
+- **캐시 자동 무효화**
 
-### MMR (Maximal Marginal Relevance)
-- **Diverse result sets**
-- **Avoid redundancy**
-- **Balance relevance and diversity**
+### MMR (최대 한계 관련성)
+- **다양한 결과 집합**
+- **중복 회피**
+- **관련성과 다양성의 균형**
 
-## Performance Tips
+## 성능 팁
 
-1. **Enable HNSW indexing**: Automatic with AgentDB, 10-100x faster
-2. **Use quantization**: Binary (32x), Scalar (4x), Product (8-16x) memory reduction
-3. **Batch operations**: 500x faster for bulk inserts
-4. **Match dimensions**: 1536 (OpenAI), 768 (sentence-transformers), 384 (MiniLM)
-5. **Similarity threshold**: Start at 0.7 for quality, adjust based on use case
-6. **Enable caching**: 1000 pattern cache for frequent queries
+1. **HNSW 인덱싱을 켠다**: AgentDB에서는 자동이며 10~100배 빠르다
+2. **양자화를 쓴다**: Binary(32배), Scalar(4배), Product(8~16배)만큼 메모리가 줄어든다
+3. **배치 작업을 쓴다**: 대량 삽입이 500배 빠르다
+4. **차원을 맞춘다**: 1536 (OpenAI), 768 (sentence-transformers), 384 (MiniLM)
+5. **유사도 임계값**: 품질을 위해 0.7에서 시작하고 용도에 맞게 조정한다
+6. **캐시를 켠다**: 자주 쓰는 질의에 패턴 1000개 캐시를 쓴다
 
-## Troubleshooting
+## 문제 해결
 
-### Issue: Slow search performance
+### 문제: 검색 성능이 느리다
 ```bash
 # Check if HNSW indexing is enabled (automatic)
 npx agentdb@latest stats ./vectors.db
@@ -281,13 +281,13 @@ npx agentdb@latest stats ./vectors.db
 # Expected: <100µs search time
 ```
 
-### Issue: High memory usage
+### 문제: 메모리 사용량이 높다
 ```bash
 # Enable binary quantization (32x reduction)
 # Use in adapter: quantizationType: 'binary'
 ```
 
-### Issue: Poor relevance
+### 문제: 관련성이 낮다
 ```bash
 # Adjust similarity threshold
 npx agentdb@latest query ./db.sqlite "[...]" -t 0.8  # Higher threshold
@@ -296,7 +296,7 @@ npx agentdb@latest query ./db.sqlite "[...]" -t 0.8  # Higher threshold
 # Use in adapter: useMMR: true
 ```
 
-### Issue: Wrong dimensions
+### 문제: 차원이 맞지 않는다
 ```bash
 # Check embedding model dimensions:
 # - OpenAI ada-002: 1536
@@ -306,7 +306,7 @@ npx agentdb@latest query ./db.sqlite "[...]" -t 0.8  # Higher threshold
 npx agentdb@latest init ./db.sqlite --dimension 768
 ```
 
-## Database Statistics
+## 데이터베이스 통계
 
 ```bash
 # Get comprehensive stats
@@ -320,20 +320,20 @@ npx agentdb@latest stats ./vectors.db
 # - Index status
 ```
 
-## Performance Characteristics
+## 성능 특성
 
-- **Vector Search**: <100µs (HNSW indexing)
-- **Pattern Retrieval**: <1ms (with cache)
-- **Batch Insert**: 2ms for 100 vectors
-- **Memory Efficiency**: 4-32x reduction with quantization
-- **Scalability**: Handles 1M+ vectors efficiently
-- **Latency**: Sub-millisecond for most operations
+- **벡터 검색**: <100µs (HNSW 인덱싱)
+- **패턴 조회**: <1ms (캐시 사용 시)
+- **배치 삽입**: 벡터 100개에 2ms
+- **메모리 효율**: 양자화로 4~32배 감소
+- **확장성**: 100만 개 이상의 벡터를 효율적으로 처리한다
+- **지연 시간**: 대부분의 작업이 1ms 미만이다
 
-## Learn More
+## 더 알아보기
 
 - GitHub: https://github.com/ruvnet/agentic-flow/tree/main/packages/agentdb
-- Documentation: node_modules/agentic-flow/docs/AGENTDB_INTEGRATION.md
-- MCP Integration: `npx agentdb@latest mcp` for Claude Code
-- Website: https://agentdb.ruv.io
-- CLI Help: `npx agentdb@latest --help`
-- Command Help: `npx agentdb@latest help <command>`
+- 문서: node_modules/agentic-flow/docs/AGENTDB_INTEGRATION.md
+- MCP 연동: Claude Code용 `npx agentdb@latest mcp`
+- 웹사이트: https://agentdb.ruv.io
+- CLI 도움말: `npx agentdb@latest --help`
+- 명령 도움말: `npx agentdb@latest help <command>`

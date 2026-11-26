@@ -1,23 +1,23 @@
 ---
 name: skill-builder
-description: "Create new Claude Code Skills with proper YAML frontmatter, progressive disclosure structure, and complete directory organization. Use when you need to build custom skills for specific workflows, generate skill templates, or understand the Claude Skills specification."
+description: "올바른 YAML frontmatter, 점진적 공개(progressive disclosure) 구조, 완전한 디렉터리 구성을 갖춘 새 Claude Code Skills를 만든다. 특정 워크플로용 커스텀 skills를 만들거나, skill 템플릿을 생성하거나, Claude Skills 명세를 이해해야 할 때 사용한다."
 ---
 
-# Skill Builder
+# 스킬 빌더
 
-## What This Skill Does
+## 이 스킬이 하는 일
 
-Creates production-ready Claude Code Skills with proper YAML frontmatter, progressive disclosure architecture, and complete file/folder structure. This skill guides you through building skills that Claude can autonomously discover and use across all surfaces (Claude.ai, Claude Code, SDK, API).
+올바른 YAML frontmatter, 점진적 공개 아키텍처, 완전한 파일·폴더 구조를 갖춘, 실제 운영에 쓸 수 있는 Claude Code Skills를 만든다. 이 스킬은 Claude가 모든 환경(Claude.ai, Claude Code, SDK, API)에서 스스로 찾아 사용할 수 있는 스킬을 만드는 과정을 안내한다.
 
-## Prerequisites
+## 사전 준비
 
-- Claude Code 2.0+ or Claude.ai with Skills support
-- Basic understanding of Markdown and YAML
-- Text editor or IDE
+- Claude Code 2.0 이상 또는 Skills를 지원하는 Claude.ai
+- Markdown과 YAML에 대한 기본 이해
+- 텍스트 편집기 또는 IDE
 
-## Quick Start
+## 빠른 시작
 
-### Creating Your First Skill
+### 첫 스킬 만들기
 
 ```bash
 # 1. Create skill directory (MUST be at top level, NOT in subdirectories!)
@@ -45,11 +45,11 @@ EOF
 
 ---
 
-## Complete Specification
+## 전체 명세
 
-### 📋 YAML Frontmatter (REQUIRED)
+### 📋 YAML Frontmatter (필수)
 
-Every SKILL.md **must** start with YAML frontmatter containing exactly two required fields:
+모든 SKILL.md는 정확히 두 개의 필수 필드를 담은 YAML frontmatter로 **반드시** 시작해야 한다.
 
 ```yaml
 ---
@@ -59,37 +59,37 @@ and when Claude should use it."       # Include BOTH what & when
 ---
 ```
 
-#### Field Requirements
+#### 필드 요구 사항
 
-**`name`** (REQUIRED):
-- **Type**: String
-- **Max Length**: 64 characters
-- **Format**: Human-friendly display name
-- **Usage**: Shown in skill lists, UI, and loaded into Claude's system prompt
-- **Best Practice**: Use Title Case, be concise and descriptive
-- **Examples**:
+**`name`** (필수):
+- **타입**: String
+- **최대 길이**: 64자
+- **형식**: 사람이 읽기 쉬운 표시 이름
+- **용도**: 스킬 목록과 UI에 표시되고, Claude의 시스템 프롬프트에 로드된다
+- **모범 사례**: Title Case를 쓰고, 간결하면서도 설명적으로 짓는다
+- **예시**:
   - ✅ "API Documentation Generator"
   - ✅ "React Component Builder"
   - ✅ "Database Schema Designer"
-  - ❌ "skill-1" (not descriptive)
-  - ❌ "This is a very long skill name that exceeds sixty-four characters" (too long)
+  - ❌ "skill-1" (설명적이지 않음)
+  - ❌ "This is a very long skill name that exceeds sixty-four characters" (너무 김)
 
-**`description`** (REQUIRED):
-- **Type**: String
-- **Max Length**: 1024 characters
-- **Format**: Plain text or minimal markdown
-- **Content**: MUST include:
-  1. **What** the skill does (functionality)
-  2. **When** Claude should invoke it (trigger conditions)
-- **Usage**: Loaded into Claude's system prompt for autonomous matching
-- **Best Practice**: Front-load key trigger words, be specific about use cases
-- **Examples**:
+**`description`** (필수):
+- **타입**: String
+- **최대 길이**: 1024자
+- **형식**: 일반 텍스트 또는 최소한의 markdown
+- **내용**: 반드시 다음을 포함한다
+  1. 스킬이 **무엇을** 하는지 (기능)
+  2. Claude가 **언제** 호출해야 하는지 (트리거 조건)
+- **용도**: 자율 매칭을 위해 Claude의 시스템 프롬프트에 로드된다
+- **모범 사례**: 핵심 트리거 단어를 앞쪽에 두고, 사용 사례를 구체적으로 쓴다
+- **예시**:
   - ✅ "Generate OpenAPI 3.0 documentation from Express.js routes. Use when creating API docs, documenting endpoints, or building API specifications."
   - ✅ "Create React functional components with TypeScript, hooks, and tests. Use when scaffolding new components or converting class components."
-  - ❌ "A comprehensive guide to API documentation" (no "when" clause)
-  - ❌ "Documentation tool" (too vague)
+  - ❌ "A comprehensive guide to API documentation" ("언제" 절이 없음)
+  - ❌ "Documentation tool" (너무 모호함)
 
-#### YAML Formatting Rules
+#### YAML 작성 규칙
 
 ```yaml
 ---
@@ -117,23 +117,23 @@ tags: ["dev", "api"]   # NOT part of spec
 ---
 ```
 
-**Critical**: Only `name` and `description` are used by Claude. Additional fields are ignored.
+**중요**: Claude는 `name`과 `description`만 사용한다. 그 밖의 필드는 무시된다.
 
 ---
 
-### 📂 Directory Structure
+### 📂 디렉터리 구조
 
-#### Minimal Skill (Required)
+#### 최소 스킬 (필수)
 ```
 ~/.claude/skills/                    # Personal skills location
 └── my-skill/                        # Skill directory (MUST be at top level!)
     └── SKILL.md                     # REQUIRED: Main skill file
 ```
 
-**IMPORTANT**: Skills MUST be directly under `~/.claude/skills/[skill-name]/`.
-Claude Code does NOT support nested subdirectories or namespaces!
+**중요**: 스킬은 반드시 `~/.claude/skills/[skill-name]/` 바로 아래에 있어야 한다.
+Claude Code는 중첩된 하위 디렉터리나 네임스페이스를 지원하지 않는다!
 
-#### Full-Featured Skill (Recommended)
+#### 전체 기능 스킬 (권장)
 ```
 ~/.claude/skills/
 └── my-skill/                        # Top-level skill directory
@@ -157,39 +157,39 @@ Claude Code does NOT support nested subdirectories or namespaces!
             └── API_REFERENCE.md
 ```
 
-#### Skills Locations
+#### 스킬 위치
 
-**Personal Skills** (available across all projects):
+**개인 스킬** (모든 프로젝트에서 사용 가능):
 ```
 ~/.claude/skills/
 └── [your-skills]/
 ```
-- **Path**: `~/.claude/skills/` or `$HOME/.claude/skills/`
-- **Scope**: Available in all projects for this user
-- **Version Control**: NOT committed to git (outside repo)
-- **Use Case**: Personal productivity tools, custom workflows
+- **경로**: `~/.claude/skills/` 또는 `$HOME/.claude/skills/`
+- **범위**: 이 사용자의 모든 프로젝트에서 사용할 수 있다
+- **버전 관리**: git에 커밋되지 않는다 (저장소 밖)
+- **사용 사례**: 개인 생산성 도구, 커스텀 워크플로
 
-**Project Skills** (team-shared, version controlled):
+**프로젝트 스킬** (팀 공유, 버전 관리됨):
 ```
 <project-root>/.claude/skills/
 └── [team-skills]/
 ```
-- **Path**: `.claude/skills/` in project root
-- **Scope**: Available only in this project
-- **Version Control**: SHOULD be committed to git
-- **Use Case**: Team workflows, project-specific tools, shared knowledge
+- **경로**: 프로젝트 루트의 `.claude/skills/`
+- **범위**: 이 프로젝트에서만 사용할 수 있다
+- **버전 관리**: git에 커밋해야 한다
+- **사용 사례**: 팀 워크플로, 프로젝트 전용 도구, 공유 지식
 
 ---
 
-### 🎯 Progressive Disclosure Architecture
+### 🎯 점진적 공개 아키텍처
 
-Claude Code uses a **3-level progressive disclosure system** to scale to 100+ skills without context penalty:
+Claude Code는 **3단계 점진적 공개 시스템**을 사용해 컨텍스트 부담 없이 100개 이상의 스킬로 확장한다.
 
-#### Level 1: Metadata (Name + Description)
-**Loaded**: At Claude Code startup, always
-**Size**: ~200 chars per skill
-**Purpose**: Enable autonomous skill matching
-**Context**: Loaded into system prompt for ALL skills
+#### 1단계: 메타데이터 (이름 + 설명)
+**로드 시점**: Claude Code 시작 시 항상
+**크기**: 스킬당 약 200자
+**목적**: 스킬 자율 매칭을 가능하게 한다
+**컨텍스트**: 모든 스킬에 대해 시스템 프롬프트에 로드된다
 
 ```yaml
 ---
@@ -200,11 +200,11 @@ description: "Creates REST APIs..."   # ~50 chars
 # 100 skills = ~6KB context (minimal!)
 ```
 
-#### Level 2: SKILL.md Body
-**Loaded**: When skill is triggered/matched
-**Size**: ~1-10KB typically
-**Purpose**: Main instructions and procedures
-**Context**: Only loaded for ACTIVE skills
+#### 2단계: SKILL.md 본문
+**로드 시점**: 스킬이 트리거되거나 매칭될 때
+**크기**: 보통 약 1~10KB
+**목적**: 주요 지침과 절차
+**컨텍스트**: 활성화된 스킬에 대해서만 로드된다
 
 ```markdown
 # API Builder
@@ -219,11 +219,11 @@ description: "Creates REST APIs..."   # ~50 chars
 [Detailed instructions]
 ```
 
-#### Level 3+: Referenced Files
-**Loaded**: On-demand as Claude navigates
-**Size**: Variable (KB to MB)
-**Purpose**: Deep reference, examples, schemas
-**Context**: Loaded only when Claude accesses specific files
+#### 3단계 이상: 참조 파일
+**로드 시점**: Claude가 탐색할 때 필요에 따라
+**크기**: 가변 (KB~MB)
+**목적**: 심화 참조, 예시, 스키마
+**컨텍스트**: Claude가 특정 파일에 접근할 때만 로드된다
 
 ```markdown
 # In SKILL.md
@@ -234,13 +234,13 @@ Use template: `resources/templates/api-template.js`
 # Claude will load these files ONLY if needed
 ```
 
-**Benefit**: Install 100+ skills with ~6KB context. Only active skill content (1-10KB) enters context.
+**이점**: 100개 이상의 스킬을 약 6KB 컨텍스트로 설치할 수 있다. 활성화된 스킬의 내용(1~10KB)만 컨텍스트에 들어간다.
 
 ---
 
-### 📝 SKILL.md Content Structure
+### 📝 SKILL.md 내용 구조
 
-#### Recommended 4-Level Structure
+#### 권장 4단계 구조
 
 ```markdown
 ---
@@ -345,11 +345,11 @@ See [examples/](resources/examples/)
 
 ---
 
-### 🎨 Content Best Practices
+### 🎨 내용 작성 모범 사례
 
-#### Writing Effective Descriptions
+#### 효과적인 설명 작성
 
-**Front-Load Keywords**:
+**키워드를 앞에 둔다**:
 ```yaml
 # ✅ GOOD: Keywords first
 description: "Generate TypeScript interfaces from JSON schema. Use when converting schemas, creating types, or building API clients."
@@ -358,7 +358,7 @@ description: "Generate TypeScript interfaces from JSON schema. Use when converti
 description: "This skill helps developers who need to work with JSON schemas by providing a way to generate TypeScript interfaces."
 ```
 
-**Include Trigger Conditions**:
+**트리거 조건을 포함한다**:
 ```yaml
 # ✅ GOOD: Clear "when" clause
 description: "Debug React performance issues using Chrome DevTools. Use when components re-render unnecessarily, investigating slow updates, or optimizing bundle size."
@@ -367,7 +367,7 @@ description: "Debug React performance issues using Chrome DevTools. Use when com
 description: "Helps with React performance debugging."
 ```
 
-**Be Specific**:
+**구체적으로 쓴다**:
 ```yaml
 # ✅ GOOD: Specific technologies
 description: "Create Express.js REST endpoints with Joi validation, Swagger docs, and Jest tests. Use when building new APIs or adding endpoints."
@@ -376,15 +376,15 @@ description: "Create Express.js REST endpoints with Joi validation, Swagger docs
 description: "Build API endpoints with proper validation and testing."
 ```
 
-#### Progressive Disclosure Writing
+#### 점진적 공개를 고려한 작성
 
-**Keep Level 1 Brief** (Overview):
+**1단계는 짧게 유지한다** (개요):
 ```markdown
 ## What This Skill Does
 Creates production-ready React components with TypeScript, hooks, and tests in 3 steps.
 ```
 
-**Level 2 for Common Paths** (Quick Start):
+**2단계는 흔한 경로용이다** (빠른 시작):
 ```markdown
 ## Quick Start
 ```bash
@@ -393,7 +393,7 @@ generate-component MyComponent
 ```
 ```
 
-**Level 3 for Details** (Step-by-Step):
+**3단계는 세부 사항용이다** (단계별 안내):
 ```markdown
 ## Step-by-Step Guide
 
@@ -404,7 +404,7 @@ generate-component MyComponent
 [Detailed explanations]
 ```
 
-**Level 4 for Edge Cases** (Reference):
+**4단계는 예외 상황용이다** (참조):
 ```markdown
 ## Advanced Configuration
 For complex scenarios like HOCs, render props, or custom hooks, see [ADVANCED.md](docs/ADVANCED.md).
@@ -412,15 +412,15 @@ For complex scenarios like HOCs, render props, or custom hooks, see [ADVANCED.md
 
 ---
 
-### 🛠️ Adding Scripts and Resources
+### 🛠️ 스크립트와 리소스 추가
 
-#### Scripts Directory
+#### 스크립트 디렉터리
 
-**Purpose**: Executable scripts that Claude can run
-**Location**: `scripts/` in skill directory
-**Usage**: Referenced from SKILL.md
+**목적**: Claude가 실행할 수 있는 실행 스크립트
+**위치**: 스킬 디렉터리 안의 `scripts/`
+**사용법**: SKILL.md에서 참조한다
 
-Example:
+예시:
 ```bash
 # In skill directory
 scripts/
@@ -430,7 +430,7 @@ scripts/
 └── deploy.sh         # Deployment script
 ```
 
-Reference from SKILL.md:
+SKILL.md에서 참조하는 예:
 ```markdown
 ## Setup
 Run the setup script:
@@ -445,13 +445,13 @@ node scripts/validate.js config.json
 ```
 ```
 
-#### Resources Directory
+#### 리소스 디렉터리
 
-**Purpose**: Templates, examples, schemas, static files
-**Location**: `resources/` in skill directory
-**Usage**: Referenced or copied by scripts
+**목적**: 템플릿, 예시, 스키마, 정적 파일
+**위치**: 스킬 디렉터리 안의 `resources/`
+**사용법**: 스크립트가 참조하거나 복사한다
 
-Example:
+예시:
 ```bash
 resources/
 ├── templates/
@@ -467,7 +467,7 @@ resources/
     └── output.schema.json
 ```
 
-Reference from SKILL.md:
+SKILL.md에서 참조하는 예:
 ```markdown
 ## Templates
 Use the component template:
@@ -483,23 +483,23 @@ See working examples in `resources/examples/`:
 
 ---
 
-### 🔗 File References and Navigation
+### 🔗 파일 참조와 탐색
 
-Claude can navigate to referenced files automatically. Use these patterns:
+Claude는 참조된 파일로 자동으로 이동할 수 있다. 다음 패턴을 사용한다.
 
-#### Markdown Links
+#### Markdown 링크
 ```markdown
 See [Advanced Configuration](docs/ADVANCED.md) for complex scenarios.
 See [Troubleshooting Guide](docs/TROUBLESHOOTING.md) if you encounter errors.
 ```
 
-#### Relative File Paths
+#### 상대 파일 경로
 ```markdown
 Use the template located at `resources/templates/api-template.js`
 See examples in `resources/examples/basic-usage/`
 ```
 
-#### Inline File Content
+#### 인라인 파일 내용
 ```markdown
 ## Example Configuration
 See `resources/examples/config.json`:
@@ -510,54 +510,54 @@ See `resources/examples/config.json`:
 ```
 ```
 
-**Best Practice**: Keep SKILL.md lean (~2-5KB). Move lengthy content to separate files and reference them. Claude will load only what's needed.
+**모범 사례**: SKILL.md는 가볍게(약 2~5KB) 유지한다. 긴 내용은 별도 파일로 옮기고 참조한다. Claude는 필요한 것만 로드한다.
 
 ---
 
-### ✅ Validation Checklist
+### ✅ 검증 체크리스트
 
-Before publishing a skill, verify:
+스킬을 배포하기 전에 다음을 확인한다.
 
 **YAML Frontmatter**:
-- [ ] Starts with `---`
-- [ ] Contains `name` field (max 64 chars)
-- [ ] Contains `description` field (max 1024 chars)
-- [ ] Description includes "what" and "when"
-- [ ] Ends with `---`
-- [ ] No YAML syntax errors
+- [ ] `---`로 시작한다
+- [ ] `name` 필드가 있다 (최대 64자)
+- [ ] `description` 필드가 있다 (최대 1024자)
+- [ ] 설명에 "무엇"과 "언제"가 들어 있다
+- [ ] `---`로 끝난다
+- [ ] YAML 문법 오류가 없다
 
-**File Structure**:
-- [ ] SKILL.md exists in skill directory
-- [ ] Directory is DIRECTLY in `~/.claude/skills/[skill-name]/` or `.claude/skills/[skill-name]/`
-- [ ] Uses clear, descriptive directory name
-- [ ] **NO nested subdirectories** (Claude Code requires top-level structure)
+**파일 구조**:
+- [ ] 스킬 디렉터리에 SKILL.md가 있다
+- [ ] 디렉터리가 `~/.claude/skills/[skill-name]/` 또는 `.claude/skills/[skill-name]/` 바로 아래에 있다
+- [ ] 명확하고 설명적인 디렉터리 이름을 쓴다
+- [ ] **중첩된 하위 디렉터리가 없다** (Claude Code는 최상위 구조를 요구한다)
 
-**Content Quality**:
-- [ ] Level 1 (Overview) is brief and clear
-- [ ] Level 2 (Quick Start) shows common use case
-- [ ] Level 3 (Details) provides step-by-step guide
-- [ ] Level 4 (Reference) links to advanced content
-- [ ] Examples are concrete and runnable
-- [ ] Troubleshooting section addresses common issues
+**내용 품질**:
+- [ ] 1단계(개요)가 짧고 명확하다
+- [ ] 2단계(빠른 시작)가 흔한 사용 사례를 보여 준다
+- [ ] 3단계(세부 사항)가 단계별 안내를 제공한다
+- [ ] 4단계(참조)가 심화 내용으로 연결된다
+- [ ] 예시가 구체적이고 실행 가능하다
+- [ ] 문제 해결 절이 흔한 문제를 다룬다
 
-**Progressive Disclosure**:
-- [ ] Core instructions in SKILL.md (~2-5KB)
-- [ ] Advanced content in separate docs/
-- [ ] Large resources in resources/ directory
-- [ ] Clear navigation between levels
+**점진적 공개**:
+- [ ] 핵심 지침이 SKILL.md에 있다 (약 2~5KB)
+- [ ] 심화 내용이 별도의 docs/에 있다
+- [ ] 큰 리소스가 resources/ 디렉터리에 있다
+- [ ] 단계 사이의 탐색이 명확하다
 
-**Testing**:
-- [ ] Skill appears in Claude's skill list
-- [ ] Description triggers on relevant queries
-- [ ] Instructions are clear and actionable
-- [ ] Scripts execute successfully (if included)
-- [ ] Examples work as documented
+**테스트**:
+- [ ] 스킬이 Claude의 스킬 목록에 나타난다
+- [ ] 관련 질의에서 설명이 트리거된다
+- [ ] 지침이 명확하고 실행 가능하다
+- [ ] 스크립트가 성공적으로 실행된다 (포함한 경우)
+- [ ] 예시가 문서대로 동작한다
 
 ---
 
-## Skill Builder Templates
+## 스킬 빌더 템플릿
 
-### Template 1: Basic Skill (Minimal)
+### 템플릿 1: 기본 스킬 (최소)
 
 ```markdown
 ---
@@ -591,7 +591,7 @@ description: "One sentence what. One sentence when to use."
   - **Solution**: Fix description
 ```
 
-### Template 2: Intermediate Skill (With Scripts)
+### 템플릿 2: 중급 스킬 (스크립트 포함)
 
 ```markdown
 ---
@@ -646,7 +646,7 @@ Edit `config.json`:
 [Common issues and solutions]
 ```
 
-### Template 3: Advanced Skill (Full-Featured)
+### 템플릿 3: 고급 스킬 (전체 기능)
 
 ```markdown
 ---
@@ -806,9 +806,9 @@ Complete API documentation: [API_REFERENCE.md](docs/API_REFERENCE.md)
 
 ---
 
-## Examples from the Wild
+## 실제 사례
 
-### Example 1: Simple Documentation Skill
+### 예시 1: 간단한 문서화 스킬
 
 ```markdown
 ---
@@ -837,7 +837,7 @@ Creates well-structured README.md files with badges, installation, usage, and co
 Edit sections in `resources/templates/sections/` before generating.
 ```
 
-### Example 2: Code Generation Skill
+### 예시 2: 코드 생성 스킬
 
 ```markdown
 ---
@@ -885,26 +885,26 @@ See `resources/templates/` for available component templates.
 
 ---
 
-## Learn More
+## 더 알아보기
 
-### Official Resources
-- [Anthropic Agent Skills Documentation](https://docs.claude.com/en/docs/agents-and-tools/agent-skills)
-- [GitHub Skills Repository](https://github.com/anthropics/skills)
-- [Claude Code Documentation](https://docs.claude.com/en/docs/claude-code)
+### 공식 자료
+- [Anthropic Agent Skills 문서](https://docs.claude.com/en/docs/agents-and-tools/agent-skills)
+- [GitHub Skills 저장소](https://github.com/anthropics/skills)
+- [Claude Code 문서](https://docs.claude.com/en/docs/claude-code)
 
-### Community
-- [Skills Marketplace](https://github.com/anthropics/skills) - Browse community skills
-- [Anthropic Discord](https://discord.gg/anthropic) - Get help from community
+### 커뮤니티
+- [Skills 마켓플레이스](https://github.com/anthropics/skills) - 커뮤니티 스킬을 둘러본다
+- [Anthropic Discord](https://discord.gg/anthropic) - 커뮤니티에서 도움을 받는다
 
-### Advanced Topics
-- Multi-file skills with complex navigation
-- Skills that spawn other skills
-- Integration with MCP tools
-- Dynamic skill generation
+### 심화 주제
+- 복잡한 탐색을 갖춘 다중 파일 스킬
+- 다른 스킬을 생성하는 스킬
+- MCP 도구와의 연동
+- 동적 스킬 생성
 
 ---
 
-**Created**: 2025-10-19
-**Version**: 1.0.0
-**Maintained By**: agentic-flow team
-**License**: MIT
+**작성일**: 2025-10-19
+**버전**: 1.0.0
+**관리**: agentic-flow 팀
+**라이선스**: MIT

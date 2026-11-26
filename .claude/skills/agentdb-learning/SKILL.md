@@ -1,27 +1,27 @@
 ---
 name: agentdb-learning
-description: "Create and train AI learning plugins with AgentDB's 9 reinforcement learning algorithms. Includes Decision Transformer, Q-Learning, SARSA, Actor-Critic, and more. Use when building self-learning agents, implementing RL, or optimizing agent behavior through experience."
+description: "AgentDB의 reinforcement learning(강화학습) 알고리즘 9종으로 AI learning plugin을 만들고 학습시킨다. Decision Transformer, Q-Learning, SARSA, Actor-Critic 등을 포함한다. self-learning agent를 만들거나, RL을 구현하거나, 경험을 통해 agent 행동을 최적화할 때 사용한다."
 ---
 
-# AgentDB Learning Plugins
+# AgentDB 학습 플러그인
 
-## What This Skill Does
+## 이 스킬이 하는 일
 
-Provides access to 9 reinforcement learning algorithms via AgentDB's plugin system. Create, train, and deploy learning plugins for autonomous agents that improve through experience. Includes offline RL (Decision Transformer), value-based learning (Q-Learning), policy gradients (Actor-Critic), and advanced techniques.
+AgentDB의 플러그인 시스템으로 강화학습 알고리즘 9종을 쓸 수 있게 한다. 경험을 통해 개선되는 자율 에이전트용 학습 플러그인을 만들고, 학습시키고, 배포한다. 오프라인 RL(Decision Transformer), 가치 기반 학습(Q-Learning), 정책 경사(Actor-Critic)와 고급 기법을 포함한다.
 
-**Performance**: Train models 10-100x faster with WASM-accelerated neural inference.
+**성능**: WASM으로 가속된 신경망 추론으로 모델을 10~100배 빠르게 학습시킨다.
 
-## Prerequisites
+## 사전 요구 사항
 
 - Node.js 18+
-- AgentDB v1.0.7+ (via agentic-flow)
-- Basic understanding of reinforcement learning (recommended)
+- AgentDB v1.0.7+ (agentic-flow 경유)
+- 강화학습에 대한 기본 이해 (권장)
 
 ---
 
-## Quick Start with CLI
+## CLI로 빠르게 시작하기
 
-### Create Learning Plugin
+### 학습 플러그인 만들기
 
 ```bash
 # Interactive wizard
@@ -37,7 +37,7 @@ npx agentdb@latest create-plugin -t q-learning --dry-run
 npx agentdb@latest create-plugin -t actor-critic -o ./plugins
 ```
 
-### List Available Templates
+### 사용 가능한 템플릿 목록 보기
 
 ```bash
 # Show all plugin templates
@@ -51,7 +51,7 @@ npx agentdb@latest list-templates
 # - curiosity-driven (exploration-based)
 ```
 
-### Manage Plugins
+### 플러그인 관리
 
 ```bash
 # List installed plugins
@@ -65,7 +65,7 @@ npx agentdb@latest plugin-info my-agent
 
 ---
 
-## Quick Start with API
+## API로 빠르게 시작하기
 
 ```typescript
 import { createAgentDBAdapter } from 'agentic-flow/reasoningbank';
@@ -112,25 +112,25 @@ console.log('Duration:', metrics.duration, 'ms');
 
 ---
 
-## Available Learning Algorithms (9 Total)
+## 사용 가능한 학습 알고리즘 (총 9개)
 
-### 1. Decision Transformer (Recommended)
+### 1. Decision Transformer (권장)
 
-**Type**: Offline Reinforcement Learning
-**Best For**: Learning from logged experiences, imitation learning
-**Strengths**: No online interaction needed, stable training
+**유형**: 오프라인 강화학습
+**적합한 용도**: 기록된 경험으로 학습, 모방 학습
+**강점**: 온라인 상호작용이 필요 없고 학습이 안정적이다
 
 ```bash
 npx agentdb@latest create-plugin -t decision-transformer -n dt-agent
 ```
 
-**Use Cases**:
-- Learn from historical data
-- Imitation learning from expert demonstrations
-- Safe learning without environment interaction
-- Sequence modeling tasks
+**사용 사례**:
+- 과거 데이터로 학습
+- 전문가 시연을 통한 모방 학습
+- 환경과 상호작용하지 않는 안전한 학습
+- 시퀀스 모델링 작업
 
-**Configuration**:
+**설정**:
 ```json
 {
   "algorithm": "decision-transformer",
@@ -144,21 +144,21 @@ npx agentdb@latest create-plugin -t decision-transformer -n dt-agent
 
 ### 2. Q-Learning
 
-**Type**: Value-Based RL (Off-Policy)
-**Best For**: Discrete action spaces, sample efficiency
-**Strengths**: Proven, simple, works well for small/medium problems
+**유형**: 가치 기반 RL (Off-Policy)
+**적합한 용도**: 이산 행동 공간, 샘플 효율
+**강점**: 검증되었고 단순하며 소·중규모 문제에 잘 맞는다
 
 ```bash
 npx agentdb@latest create-plugin -t q-learning -n q-agent
 ```
 
-**Use Cases**:
-- Grid worlds, board games
-- Navigation tasks
-- Resource allocation
-- Discrete decision-making
+**사용 사례**:
+- 그리드 월드, 보드게임
+- 내비게이션 작업
+- 자원 할당
+- 이산 의사결정
 
-**Configuration**:
+**설정**:
 ```json
 {
   "algorithm": "q-learning",
@@ -171,20 +171,20 @@ npx agentdb@latest create-plugin -t q-learning -n q-agent
 
 ### 3. SARSA
 
-**Type**: Value-Based RL (On-Policy)
-**Best For**: Safe exploration, risk-sensitive tasks
-**Strengths**: More conservative than Q-Learning, better for safety
+**유형**: 가치 기반 RL (On-Policy)
+**적합한 용도**: 안전한 탐색, 위험에 민감한 작업
+**강점**: Q-Learning보다 보수적이어서 안전성에 유리하다
 
 ```bash
 npx agentdb@latest create-plugin -t sarsa -n sarsa-agent
 ```
 
-**Use Cases**:
-- Safety-critical applications
-- Risk-sensitive decision-making
-- Online learning with exploration
+**사용 사례**:
+- 안전이 중요한 애플리케이션
+- 위험에 민감한 의사결정
+- 탐색을 동반한 온라인 학습
 
-**Configuration**:
+**설정**:
 ```json
 {
   "algorithm": "sarsa",
@@ -196,20 +196,20 @@ npx agentdb@latest create-plugin -t sarsa -n sarsa-agent
 
 ### 4. Actor-Critic
 
-**Type**: Policy Gradient with Value Baseline
-**Best For**: Continuous actions, variance reduction
-**Strengths**: Stable, works for continuous/discrete actions
+**유형**: 가치 베이스라인을 쓰는 정책 경사
+**적합한 용도**: 연속 행동, 분산 감소
+**강점**: 안정적이며 연속·이산 행동 모두에 쓸 수 있다
 
 ```bash
 npx agentdb@latest create-plugin -t actor-critic -n ac-agent
 ```
 
-**Use Cases**:
-- Continuous control (robotics, simulations)
-- Complex action spaces
-- Multi-agent coordination
+**사용 사례**:
+- 연속 제어 (로보틱스, 시뮬레이션)
+- 복잡한 행동 공간
+- 다중 에이전트 협조
 
-**Configuration**:
+**설정**:
 ```json
 {
   "algorithm": "actor-critic",
@@ -222,69 +222,69 @@ npx agentdb@latest create-plugin -t actor-critic -n ac-agent
 
 ### 5. Active Learning
 
-**Type**: Query-Based Learning
-**Best For**: Label-efficient learning, human-in-the-loop
-**Strengths**: Minimizes labeling cost, focuses on uncertain samples
+**유형**: 질의 기반 학습
+**적합한 용도**: 레이블 효율적 학습, human-in-the-loop
+**강점**: 레이블링 비용을 최소화하고 불확실한 샘플에 집중한다
 
-**Use Cases**:
-- Human feedback incorporation
-- Label-efficient training
-- Uncertainty sampling
-- Annotation cost reduction
+**사용 사례**:
+- 사람 피드백 반영
+- 레이블 효율적 학습
+- 불확실성 샘플링
+- 주석 비용 절감
 
 ### 6. Adversarial Training
 
-**Type**: Robustness Enhancement
-**Best For**: Safety, robustness to perturbations
-**Strengths**: Improves model robustness, adversarial defense
+**유형**: 견고성 강화
+**적합한 용도**: 안전성, 섭동에 대한 견고성
+**강점**: 모델 견고성을 높이고 적대적 공격을 방어한다
 
-**Use Cases**:
-- Security applications
-- Robust decision-making
-- Adversarial defense
-- Safety testing
+**사용 사례**:
+- 보안 애플리케이션
+- 견고한 의사결정
+- 적대적 공격 방어
+- 안전성 테스트
 
 ### 7. Curriculum Learning
 
-**Type**: Progressive Difficulty Training
-**Best For**: Complex tasks, faster convergence
-**Strengths**: Stable learning, faster convergence on hard tasks
+**유형**: 점진적 난이도 학습
+**적합한 용도**: 복잡한 작업, 빠른 수렴
+**강점**: 학습이 안정적이고 어려운 작업에서 더 빨리 수렴한다
 
-**Use Cases**:
-- Complex multi-stage tasks
-- Hard exploration problems
-- Skill composition
-- Transfer learning
+**사용 사례**:
+- 복잡한 다단계 작업
+- 탐색이 어려운 문제
+- 기술 조합
+- 전이 학습
 
 ### 8. Federated Learning
 
-**Type**: Distributed Learning
-**Best For**: Privacy, distributed data
-**Strengths**: Privacy-preserving, scalable
+**유형**: 분산 학습
+**적합한 용도**: 프라이버시, 분산된 데이터
+**강점**: 프라이버시를 보존하고 확장 가능하다
 
-**Use Cases**:
-- Multi-agent systems
-- Privacy-sensitive data
-- Distributed training
-- Collaborative learning
+**사용 사례**:
+- 다중 에이전트 시스템
+- 프라이버시에 민감한 데이터
+- 분산 학습
+- 협업 학습
 
 ### 9. Multi-Task Learning
 
-**Type**: Transfer Learning
-**Best For**: Related tasks, knowledge sharing
-**Strengths**: Faster learning on new tasks, better generalization
+**유형**: 전이 학습
+**적합한 용도**: 연관된 작업, 지식 공유
+**강점**: 새 작업을 더 빨리 배우고 일반화가 잘 된다
 
-**Use Cases**:
-- Task families
-- Transfer learning
-- Domain adaptation
-- Meta-learning
+**사용 사례**:
+- 작업군
+- 전이 학습
+- 도메인 적응
+- 메타 학습
 
 ---
 
-## Training Workflow
+## 학습 워크플로
 
-### 1. Collect Experiences
+### 1. 경험 수집
 
 ```typescript
 // Store experiences during agent execution
@@ -316,7 +316,7 @@ for (let i = 0; i < numEpisodes; i++) {
 }
 ```
 
-### 2. Train Model
+### 2. 모델 학습
 
 ```typescript
 // Train on collected experiences
@@ -336,7 +336,7 @@ console.log('Training Metrics:', trainingMetrics);
 // }
 ```
 
-### 3. Evaluate Performance
+### 3. 성능 평가
 
 ```typescript
 // Retrieve similar successful experiences
@@ -357,9 +357,9 @@ console.log('Confidence:', confidence);
 
 ---
 
-## Advanced Training Techniques
+## 고급 학습 기법
 
-### Experience Replay
+### 경험 재생
 
 ```typescript
 // Store experiences in buffer
@@ -376,7 +376,7 @@ await adapter.train({
 });
 ```
 
-### Prioritized Experience Replay
+### 우선순위 경험 재생
 
 ```typescript
 // Store experiences with priority (TD error)
@@ -394,7 +394,7 @@ const highPriority = await adapter.retrieveWithReasoning(queryEmbedding, {
 });
 ```
 
-### Multi-Agent Training
+### 다중 에이전트 학습
 
 ```typescript
 // Collect experiences from multiple agents
@@ -416,9 +416,9 @@ await adapter.train({
 
 ---
 
-## Performance Optimization
+## 성능 최적화
 
-### Batch Training
+### 배치 학습
 
 ```typescript
 // Collect batch of experiences
@@ -436,7 +436,7 @@ await adapter.train({
 });
 ```
 
-### Incremental Learning
+### 점진적 학습
 
 ```typescript
 // Train incrementally as new data arrives
@@ -454,9 +454,9 @@ setInterval(async () => {
 
 ---
 
-## Integration with Reasoning Agents
+## 추론 에이전트 연동
 
-Combine learning with reasoning for better performance:
+더 나은 성능을 위해 학습과 추론을 함께 쓴다:
 
 ```typescript
 // Train learning model
@@ -478,7 +478,7 @@ const confidence = result.memories[0].similarity;
 
 ---
 
-## CLI Operations
+## CLI 작업
 
 ```bash
 # Create plugin
@@ -496,9 +496,9 @@ npx agentdb@latest list-templates
 
 ---
 
-## Troubleshooting
+## 문제 해결
 
-### Issue: Training not converging
+### 문제: 학습이 수렴하지 않는다
 ```typescript
 // Reduce learning rate
 await adapter.train({
@@ -508,7 +508,7 @@ await adapter.train({
 });
 ```
 
-### Issue: Overfitting
+### 문제: 과적합
 ```typescript
 // Use validation split
 await adapter.train({
@@ -523,7 +523,7 @@ await adapter.retrieveWithReasoning(queryEmbedding, {
 });
 ```
 
-### Issue: Slow training
+### 문제: 학습이 느리다
 ```bash
 # Enable quantization for faster inference
 # Use binary quantization (32x faster)
@@ -531,15 +531,15 @@ await adapter.retrieveWithReasoning(queryEmbedding, {
 
 ---
 
-## Learn More
+## 더 알아보기
 
-- **Algorithm Papers**: See docs/algorithms/ for detailed papers
+- **알고리즘 논문**: 자세한 논문은 docs/algorithms/ 를 참고한다
 - **GitHub**: https://github.com/ruvnet/agentic-flow/tree/main/packages/agentdb
-- **MCP Integration**: `npx agentdb@latest mcp`
-- **Website**: https://agentdb.ruv.io
+- **MCP 연동**: `npx agentdb@latest mcp`
+- **웹사이트**: https://agentdb.ruv.io
 
 ---
 
-**Category**: Machine Learning / Reinforcement Learning
-**Difficulty**: Intermediate to Advanced
-**Estimated Time**: 30-60 minutes
+**분류**: 머신러닝 / 강화학습
+**난이도**: 중급~고급
+**예상 소요 시간**: 30~60분

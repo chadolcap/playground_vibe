@@ -1,21 +1,21 @@
 ---
 name: swarm-orchestration
-description: "Orchestrate multi-agent swarms with agentic-flow for parallel task execution, dynamic topology, and intelligent coordination. Use when scaling beyond single agents, implementing complex workflows, or building distributed AI systems."
+description: "agentic-flow로 multi-agent swarm을 오케스트레이션(orchestration)해 병렬 작업 실행(parallel task execution), 동적 토폴로지(dynamic topology), 지능형 조정(intelligent coordination)을 수행한다. 단일 에이전트를 넘어 확장하거나, 복잡한 워크플로를 구현하거나, 분산 AI 시스템(distributed AI systems)을 만들 때 사용한다."
 ---
 
-# Swarm Orchestration
+# Swarm 오케스트레이션
 
-## What This Skill Does
+## 이 스킬이 하는 일
 
-Orchestrates multi-agent swarms using agentic-flow's advanced coordination system. Supports mesh, hierarchical, and adaptive topologies with automatic task distribution, load balancing, and fault tolerance.
+agentic-flow의 고급 조정 시스템으로 다중 에이전트 swarm을 오케스트레이션한다. mesh, hierarchical, adaptive 토폴로지를 지원하며, 작업 자동 분배, 부하 분산, 장애 허용(fault tolerance)을 제공한다.
 
-## Prerequisites
+## 사전 요구 사항
 
 - agentic-flow v1.5.11+
 - Node.js 18+
-- Understanding of distributed systems (helpful)
+- 분산 시스템에 대한 이해 (있으면 도움이 된다)
 
-## Quick Start
+## 빠른 시작
 
 ```bash
 # Initialize swarm
@@ -32,9 +32,9 @@ npx agentic-flow hooks task-orchestrate \
   --mode parallel
 ```
 
-## Topology Patterns
+## 토폴로지 패턴
 
-### 1. Mesh (Peer-to-Peer)
+### 1. Mesh (피어 간 직접 연결)
 ```typescript
 // Equal peers, distributed decision-making
 await swarm.init({
@@ -44,7 +44,7 @@ await swarm.init({
 });
 ```
 
-### 2. Hierarchical (Queen-Worker)
+### 2. Hierarchical (Queen-Worker 계층형)
 ```typescript
 // Centralized coordination, specialized workers
 await swarm.init({
@@ -54,7 +54,7 @@ await swarm.init({
 });
 ```
 
-### 3. Adaptive (Dynamic)
+### 3. Adaptive (동적)
 ```typescript
 // Automatically switches topology based on task
 await swarm.init({
@@ -63,9 +63,9 @@ await swarm.init({
 });
 ```
 
-## Task Orchestration
+## 작업 오케스트레이션
 
-### Parallel Execution
+### 병렬 실행
 ```typescript
 // Execute tasks concurrently
 const results = await swarm.execute({
@@ -79,7 +79,7 @@ const results = await swarm.execute({
 });
 ```
 
-### Pipeline Execution
+### 파이프라인 실행
 ```typescript
 // Sequential pipeline with dependencies
 await swarm.pipeline([
@@ -90,7 +90,7 @@ await swarm.pipeline([
 ]);
 ```
 
-### Adaptive Execution
+### 적응형 실행
 ```typescript
 // Let swarm decide execution strategy
 await swarm.autoOrchestrate({
@@ -103,7 +103,7 @@ await swarm.autoOrchestrate({
 });
 ```
 
-## Memory Coordination
+## 메모리 조정
 
 ```typescript
 // Share state across swarm
@@ -116,9 +116,9 @@ await swarm.memory.store('api-schema', {
 const schema = await swarm.memory.retrieve('api-schema');
 ```
 
-## Advanced Features
+## 고급 기능
 
-### Load Balancing
+### 부하 분산
 ```typescript
 // Automatic work distribution
 await swarm.enableLoadBalancing({
@@ -127,7 +127,7 @@ await swarm.enableLoadBalancing({
 });
 ```
 
-### Fault Tolerance
+### 장애 허용
 ```typescript
 // Handle agent failures
 await swarm.setResiliency({
@@ -136,14 +136,14 @@ await swarm.setResiliency({
 });
 ```
 
-### Performance Monitoring
+### 성능 모니터링
 ```typescript
 // Track swarm metrics
 const metrics = await swarm.getMetrics();
 // { throughput, latency, success_rate, agent_utilization }
 ```
 
-## Integration with Hooks
+## Hooks 연동
 
 ```bash
 # Pre-task coordination
@@ -156,24 +156,24 @@ npx agentic-flow hooks post-task --task-id "task-123"
 npx agentic-flow hooks session-restore --session-id "swarm-001"
 ```
 
-## Best Practices
+## 모범 사례
 
-1. **Start small**: Begin with 2-3 agents, scale up
-2. **Use memory**: Share context through swarm memory
-3. **Monitor metrics**: Track performance and bottlenecks
-4. **Enable hooks**: Automatic coordination and sync
-5. **Set timeouts**: Prevent hung tasks
+1. **작게 시작한다**: 에이전트 2~3개로 시작해 점차 늘린다
+2. **메모리를 쓴다**: swarm 메모리로 컨텍스트를 공유한다
+3. **지표를 모니터링한다**: 성능과 병목을 추적한다
+4. **hooks를 켠다**: 조정과 동기화를 자동화한다
+5. **타임아웃을 건다**: 멈춘 작업을 막는다
 
-## Troubleshooting
+## 문제 해결
 
-### Issue: Agents not coordinating
-**Solution**: Verify memory access and enable hooks
+### 문제: 에이전트끼리 조정이 안 된다
+**해결**: 메모리 접근을 확인하고 hooks를 켠다
 
-### Issue: Poor performance
-**Solution**: Check topology (use adaptive) and enable load balancing
+### 문제: 성능이 낮다
+**해결**: 토폴로지를 점검하고(adaptive 사용) 부하 분산을 켠다
 
-## Learn More
+## 더 알아보기
 
-- Swarm Guide: docs/swarm/orchestration.md
-- Topology Patterns: docs/swarm/topologies.md
-- Hooks Integration: docs/hooks/coordination.md
+- Swarm 가이드: docs/swarm/orchestration.md
+- 토폴로지 패턴: docs/swarm/topologies.md
+- Hooks 연동: docs/hooks/coordination.md

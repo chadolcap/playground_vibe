@@ -1,39 +1,39 @@
 ---
 name: agentdb-advanced
-description: "Master advanced AgentDB features including QUIC synchronization, multi-database management, custom distance metrics, hybrid search, and distributed systems integration. Use when building distributed AI systems, multi-agent coordination, or advanced vector search applications."
+description: "QUIC synchronization, multi-database 관리, custom distance metrics, hybrid search, 분산 시스템(distributed systems) 연동을 포함한 AgentDB 고급 기능을 익힌다. 분산 AI 시스템, multi-agent coordination, 고급 vector search 애플리케이션을 만들 때 사용한다."
 ---
 
-# AgentDB Advanced Features
+# AgentDB 고급 기능
 
-## What This Skill Does
+## 이 스킬이 하는 일
 
-Covers advanced AgentDB capabilities for distributed systems, multi-database coordination, custom distance metrics, hybrid search (vector + metadata), QUIC synchronization, and production deployment patterns. Enables building sophisticated AI systems with sub-millisecond cross-node communication and advanced search capabilities.
+분산 시스템, 다중 데이터베이스 조정, 사용자 정의 거리 척도, 하이브리드 검색(벡터 + 메타데이터), QUIC 동기화, 프로덕션 배포 패턴 같은 AgentDB의 고급 기능을 다룬다. 노드 간 1ms 미만 통신과 고급 검색 기능을 갖춘 정교한 AI 시스템을 만들 수 있게 한다.
 
-**Performance**: <1ms QUIC sync, hybrid search with filters, custom distance metrics.
+**성능**: QUIC 동기화 <1ms, 필터를 쓰는 하이브리드 검색, 사용자 정의 거리 척도.
 
-## Prerequisites
+## 사전 요구 사항
 
 - Node.js 18+
-- AgentDB v1.0.7+ (via agentic-flow)
-- Understanding of distributed systems (for QUIC sync)
-- Vector search fundamentals
+- AgentDB v1.0.7+ (agentic-flow 경유)
+- 분산 시스템에 대한 이해 (QUIC 동기화용)
+- 벡터 검색 기초
 
 ---
 
-## QUIC Synchronization
+## QUIC 동기화
 
-### What is QUIC Sync?
+### QUIC Sync란?
 
-QUIC (Quick UDP Internet Connections) enables sub-millisecond latency synchronization between AgentDB instances across network boundaries with automatic retry, multiplexing, and encryption.
+QUIC(Quick UDP Internet Connections)는 네트워크 경계를 넘어 AgentDB 인스턴스 사이를 1ms 미만의 지연으로 동기화하며, 자동 재시도·멀티플렉싱·암호화를 제공한다.
 
-**Benefits**:
-- <1ms latency between nodes
-- Multiplexed streams (multiple operations simultaneously)
-- Built-in encryption (TLS 1.3)
-- Automatic retry and recovery
-- Event-based broadcasting
+**장점**:
+- 노드 간 지연 <1ms
+- 멀티플렉싱 스트림 (여러 연산을 동시에 처리)
+- 내장 암호화 (TLS 1.3)
+- 자동 재시도와 복구
+- 이벤트 기반 브로드캐스트
 
-### Enable QUIC Sync
+### QUIC Sync 켜기
 
 ```typescript
 import { createAgentDBAdapter } from 'agentic-flow/reasoningbank';
@@ -58,7 +58,7 @@ await adapter.insertPattern({
 // Available on all peers within ~1ms
 ```
 
-### QUIC Configuration
+### QUIC 설정
 
 ```typescript
 const adapter = await createAgentDBAdapter({
@@ -72,7 +72,7 @@ const adapter = await createAgentDBAdapter({
 });
 ```
 
-### Multi-Node Deployment
+### 다중 노드 배포
 
 ```bash
 # Node 1 (192.168.1.10)
@@ -96,11 +96,11 @@ node server.js
 
 ---
 
-## Distance Metrics
+## 거리 척도
 
-### Cosine Similarity (Default)
+### 코사인 유사도 (기본값)
 
-Best for normalized vectors, semantic similarity:
+정규화된 벡터, 의미 유사도에 가장 적합하다.
 
 ```bash
 # CLI
@@ -113,18 +113,18 @@ const result = await adapter.retrieveWithReasoning(queryEmbedding, {
 });
 ```
 
-**Use Cases**:
-- Text embeddings (BERT, GPT, etc.)
-- Semantic search
-- Document similarity
-- Most general-purpose applications
+**사용 사례**:
+- 텍스트 임베딩 (BERT, GPT 등)
+- 의미 기반 검색
+- 문서 유사도
+- 대부분의 범용 애플리케이션
 
-**Formula**: `cos(θ) = (A · B) / (||A|| × ||B||)`
-**Range**: [-1, 1] (1 = identical, -1 = opposite)
+**공식**: `cos(θ) = (A · B) / (||A|| × ||B||)`
+**범위**: [-1, 1] (1 = 동일, -1 = 정반대)
 
-### Euclidean Distance (L2)
+### 유클리드 거리 (L2)
 
-Best for spatial data, geometric similarity:
+공간 데이터, 기하학적 유사도에 가장 적합하다.
 
 ```bash
 # CLI
@@ -137,18 +137,18 @@ const result = await adapter.retrieveWithReasoning(queryEmbedding, {
 });
 ```
 
-**Use Cases**:
-- Image embeddings
-- Spatial data
-- Computer vision
-- When vector magnitude matters
+**사용 사례**:
+- 이미지 임베딩
+- 공간 데이터
+- 컴퓨터 비전
+- 벡터 크기가 의미를 가질 때
 
-**Formula**: `d = √(Σ(ai - bi)²)`
-**Range**: [0, ∞] (0 = identical, ∞ = very different)
+**공식**: `d = √(Σ(ai - bi)²)`
+**범위**: [0, ∞] (0 = 동일, ∞ = 매우 다름)
 
-### Dot Product
+### 내적 (Dot Product)
 
-Best for pre-normalized vectors, fast computation:
+미리 정규화된 벡터, 빠른 계산에 가장 적합하다.
 
 ```bash
 # CLI
@@ -161,15 +161,15 @@ const result = await adapter.retrieveWithReasoning(queryEmbedding, {
 });
 ```
 
-**Use Cases**:
-- Pre-normalized embeddings
-- Fast similarity computation
-- When vectors are already unit-length
+**사용 사례**:
+- 미리 정규화된 임베딩
+- 빠른 유사도 계산
+- 벡터가 이미 단위 길이일 때
 
-**Formula**: `dot = Σ(ai × bi)`
-**Range**: [-∞, ∞] (higher = more similar)
+**공식**: `dot = Σ(ai × bi)`
+**범위**: [-∞, ∞] (높을수록 더 유사)
 
-### Custom Distance Metrics
+### 사용자 정의 거리 척도
 
 ```typescript
 // Implement custom distance function
@@ -188,11 +188,11 @@ function customDistance(vec1: number[], vec2: number[]): number {
 
 ---
 
-## Hybrid Search (Vector + Metadata)
+## 하이브리드 검색 (벡터 + 메타데이터)
 
-### Basic Hybrid Search
+### 기본 하이브리드 검색
 
-Combine vector similarity with metadata filtering:
+벡터 유사도와 메타데이터 필터링을 결합한다.
 
 ```typescript
 // Store documents with metadata
@@ -229,7 +229,7 @@ const result = await adapter.retrieveWithReasoning(queryEmbedding, {
 });
 ```
 
-### Advanced Filtering
+### 고급 필터링
 
 ```typescript
 // Complex metadata queries
@@ -246,9 +246,9 @@ const result = await adapter.retrieveWithReasoning(queryEmbedding, {
 });
 ```
 
-### Weighted Hybrid Search
+### 가중 하이브리드 검색
 
-Combine vector and metadata scores:
+벡터 점수와 메타데이터 점수를 결합한다.
 
 ```typescript
 const result = await adapter.retrieveWithReasoning(queryEmbedding, {
@@ -267,9 +267,9 @@ const result = await adapter.retrieveWithReasoning(queryEmbedding, {
 
 ---
 
-## Multi-Database Management
+## 다중 데이터베이스 관리
 
-### Multiple Databases
+### 여러 데이터베이스
 
 ```typescript
 // Separate databases for different domains
@@ -291,7 +291,7 @@ await conversationDB.insertPattern({ /* conversation */ });
 await codeDB.insertPattern({ /* code */ });
 ```
 
-### Database Sharding
+### 데이터베이스 샤딩
 
 ```typescript
 // Shard by domain for horizontal scaling
@@ -316,7 +316,7 @@ await db.insertPattern({ /* ... */ });
 
 ## MMR (Maximal Marginal Relevance)
 
-Retrieve diverse results to avoid redundancy:
+중복을 피하도록 다양한 결과를 가져온다.
 
 ```typescript
 // Without MMR: Similar results may be redundant
@@ -333,22 +333,22 @@ const diverseResults = await adapter.retrieveWithReasoning(queryEmbedding, {
 });
 ```
 
-**MMR Parameters**:
-- `mmrLambda = 0`: Maximum relevance (may be redundant)
-- `mmrLambda = 0.5`: Balanced (default)
-- `mmrLambda = 1`: Maximum diversity (may be less relevant)
+**MMR 파라미터**:
+- `mmrLambda = 0`: 최대 관련성 (중복될 수 있음)
+- `mmrLambda = 0.5`: 균형 (기본값)
+- `mmrLambda = 1`: 최대 다양성 (관련성이 낮아질 수 있음)
 
-**Use Cases**:
-- Search result diversification
-- Recommendation systems
-- Avoiding echo chambers
-- Exploratory search
+**사용 사례**:
+- 검색 결과 다양화
+- 추천 시스템
+- 에코 체임버 회피
+- 탐색형 검색
 
 ---
 
-## Context Synthesis
+## 컨텍스트 합성
 
-Generate rich context from multiple memories:
+여러 메모리에서 풍부한 컨텍스트를 생성한다.
 
 ```typescript
 const result = await adapter.retrieveWithReasoning(queryEmbedding, {
@@ -369,9 +369,9 @@ console.log('Patterns:', result.patterns);
 
 ---
 
-## Production Patterns
+## 프로덕션 패턴
 
-### Connection Pooling
+### 커넥션 풀링
 
 ```typescript
 // Singleton pattern for shared adapter
@@ -395,7 +395,7 @@ const db = await AgentDBPool.getInstance();
 const results = await db.retrieveWithReasoning(queryEmbedding, { k: 10 });
 ```
 
-### Error Handling
+### 오류 처리
 
 ```typescript
 async function safeRetrieve(queryEmbedding: number[], options: any) {
@@ -416,7 +416,7 @@ async function safeRetrieve(queryEmbedding: number[], options: any) {
 }
 ```
 
-### Monitoring and Logging
+### 모니터링과 로깅
 
 ```typescript
 // Performance monitoring
@@ -440,9 +440,9 @@ console.log('Database Stats:', {
 
 ---
 
-## CLI Advanced Operations
+## CLI 고급 작업
 
-### Database Import/Export
+### 데이터베이스 가져오기/내보내기
 
 ```bash
 # Export with compression
@@ -455,7 +455,7 @@ npx agentdb@latest import ./backup.json.gz --decompress
 npx agentdb@latest merge ./db1.sqlite ./db2.sqlite ./merged.sqlite
 ```
 
-### Database Optimization
+### 데이터베이스 최적화
 
 ```bash
 # Vacuum database (reclaim space)
@@ -470,7 +470,7 @@ npx agentdb@latest reindex ./vectors.db
 
 ---
 
-## Environment Variables
+## 환경 변수
 
 ```bash
 # AgentDB configuration
@@ -497,9 +497,9 @@ AGENTDB_QUIC_PEERS=host1:4433,host2:4433
 
 ---
 
-## Troubleshooting
+## 문제 해결
 
-### Issue: QUIC sync not working
+### 문제: QUIC 동기화가 동작하지 않는다
 
 ```bash
 # Check firewall allows UDP port 4433
@@ -512,7 +512,7 @@ ping host1
 DEBUG=agentdb:quic node server.js
 ```
 
-### Issue: Hybrid search returns no results
+### 문제: 하이브리드 검색 결과가 없다
 
 ```typescript
 // Relax filters
@@ -524,7 +524,7 @@ const result = await adapter.retrieveWithReasoning(queryEmbedding, {
 });
 ```
 
-### Issue: Memory consolidation too aggressive
+### 문제: 메모리 통합이 너무 공격적이다
 
 ```typescript
 // Disable automatic optimization
@@ -536,15 +536,15 @@ const result = await adapter.retrieveWithReasoning(queryEmbedding, {
 
 ---
 
-## Learn More
+## 더 알아보기
 
-- **QUIC Protocol**: docs/quic-synchronization.pdf
-- **Hybrid Search**: docs/hybrid-search-guide.md
+- **QUIC 프로토콜**: docs/quic-synchronization.pdf
+- **하이브리드 검색**: docs/hybrid-search-guide.md
 - **GitHub**: https://github.com/ruvnet/agentic-flow/tree/main/packages/agentdb
-- **Website**: https://agentdb.ruv.io
+- **웹사이트**: https://agentdb.ruv.io
 
 ---
 
-**Category**: Advanced / Distributed Systems
-**Difficulty**: Advanced
-**Estimated Time**: 45-60 minutes
+**분류**: 고급 / 분산 시스템
+**난이도**: 고급
+**예상 소요 시간**: 45~60분

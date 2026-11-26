@@ -1,52 +1,52 @@
 ---
 name: hooks-automation
-description: Automated coordination, formatting, and learning from Claude Code operations using intelligent hooks with MCP integration. Includes pre/post task hooks, session management, Git integration, memory coordination, and neural pattern training for enhanced development workflows.
+description: MCP 연동 지능형 hooks로 Claude Code 작업을 자동으로 조정·포맷팅·학습한다. pre/post task hooks, session management, Git integration, memory coordination, neural pattern training을 포함해 개발 워크플로를 강화한다.
 ---
 
-# Hooks Automation
+# Hooks 자동화
 
-Intelligent automation system that coordinates, validates, and learns from Claude Code operations through hooks integrated with MCP tools and neural pattern training.
+MCP 도구와 neural pattern training에 연동된 hooks를 통해 Claude Code 작업을 조정하고 검증하며 학습하는 지능형 자동화 시스템이다.
 
-## What This Skill Does
+## 이 스킬이 하는 일
 
-This skill provides a comprehensive hook system that automatically manages development operations, coordinates swarm agents, maintains session state, and continuously learns from coding patterns. It enables automated agent assignment, code formatting, performance tracking, and cross-session memory persistence.
+이 스킬은 개발 작업을 자동으로 관리하고, 스웜 에이전트를 조정하며, 세션 상태를 유지하고, 코딩 패턴에서 지속적으로 학습하는 종합 hook 시스템을 제공한다. 에이전트 자동 배정, 코드 포맷팅, 성능 추적, 세션 간 메모리 유지를 가능하게 한다.
 
-**Key Capabilities:**
-- **Pre-Operation Hooks**: Validate, prepare, and auto-assign agents before operations
-- **Post-Operation Hooks**: Format, analyze, and train patterns after operations
-- **Session Management**: Persist state, restore context, generate summaries
-- **Memory Coordination**: Synchronize knowledge across swarm agents
-- **Git Integration**: Automated commit hooks with quality verification
-- **Neural Training**: Continuous learning from successful patterns
-- **MCP Integration**: Seamless coordination with swarm tools
+**핵심 기능:**
+- **작업 전 Hooks**: 작업 전에 검증하고 준비하며 에이전트를 자동 배정한다
+- **작업 후 Hooks**: 작업 후에 포맷팅하고 분석하며 패턴을 학습한다
+- **세션 관리**: 상태를 유지하고 컨텍스트를 복원하며 요약을 생성한다
+- **메모리 조정**: 스웜 에이전트 간 지식을 동기화한다
+- **Git 연동**: 품질 검증이 포함된 자동 커밋 hooks
+- **Neural 학습**: 성공한 패턴에서 지속적으로 학습한다
+- **MCP 연동**: 스웜 도구와 매끄럽게 조정한다
 
-## Prerequisites
+## 사전 요구 사항
 
-**Required:**
-- Claude Flow CLI installed (`npm install -g claude-flow@alpha`)
-- Claude Code with hooks enabled
-- `.claude/settings.json` with hook configurations
+**필수:**
+- Claude Flow CLI 설치 (`npm install -g claude-flow@alpha`)
+- hooks가 활성화된 Claude Code
+- hook 설정이 담긴 `.claude/settings.json`
 
-**Optional:**
-- MCP servers configured (claude-flow, ruv-swarm, flow-nexus)
-- Git repository for version control
-- Testing framework for quality verification
+**선택:**
+- MCP 서버 설정 (claude-flow, ruv-swarm, flow-nexus)
+- 버전 관리를 위한 Git 저장소
+- 품질 검증을 위한 테스트 프레임워크
 
-## Quick Start
+## 빠른 시작
 
-### Initialize Hooks System
+### Hooks 시스템 초기화
 
 ```bash
 # Initialize with default hooks configuration
 npx @claude-flow/cli@latest init --hooks
 ```
 
-This creates:
-- `.claude/settings.json` with pre-configured hooks
-- Hook command documentation in `.claude/commands/hooks/`
-- Default hook handlers for common operations
+다음이 생성된다:
+- 미리 설정된 hooks가 담긴 `.claude/settings.json`
+- `.claude/commands/hooks/`의 hook 명령 문서
+- 자주 쓰는 작업용 기본 hook 핸들러
 
-### Basic Hook Usage
+### 기본 Hook 사용법
 
 ```bash
 # Pre-task hook (auto-spawns agents)
@@ -61,15 +61,15 @@ npx @claude-flow/cli@latest hooks session-end --session-id "dev-session" --expor
 
 ---
 
-## Complete Guide
+## 전체 가이드
 
-### Available Hooks
+### 사용 가능한 Hooks
 
-#### Pre-Operation Hooks
+#### 작업 전 Hooks
 
-Hooks that execute BEFORE operations to prepare and validate:
+작업 **전에** 실행되어 준비와 검증을 하는 hooks:
 
-**pre-edit** - Validate and assign agents before file modifications
+**pre-edit** - 파일 수정 전에 검증하고 에이전트를 배정한다
 ```bash
 npx @claude-flow/cli@latest hooks pre-edit [options]
 
@@ -86,13 +86,13 @@ Examples:
   npx @claude-flow/cli@latest hooks pre-edit -f "production.env" --backup-file --check-conflicts
 ```
 
-**Features:**
-- Auto agent assignment based on file type
-- Syntax validation to prevent broken code
-- Conflict detection for concurrent edits
-- Automatic file backups for safety
+**기능:**
+- 파일 유형에 따른 에이전트 자동 배정
+- 깨진 코드를 막는 문법 검증
+- 동시 편집 충돌 감지
+- 안전을 위한 파일 자동 백업
 
-**pre-bash** - Check command safety and resource requirements
+**pre-bash** - 명령의 안전성과 자원 요구량을 확인한다
 ```bash
 npx @claude-flow/cli@latest hooks pre-bash --command <cmd>
 
@@ -107,13 +107,13 @@ Examples:
   npx @claude-flow/cli@latest hooks pre-bash --command "docker build ." --estimate-resources
 ```
 
-**Features:**
-- Command safety validation
-- Resource requirement estimation
-- Destructive command confirmation
-- Permission checks
+**기능:**
+- 명령 안전성 검증
+- 자원 요구량 추정
+- 파괴적 명령 확인
+- 권한 확인
 
-**pre-task** - Auto-spawn agents and prepare for complex tasks
+**pre-task** - 에이전트를 자동 생성하고 복잡한 작업을 준비한다
 ```bash
 npx @claude-flow/cli@latest hooks pre-task [options]
 
@@ -130,13 +130,13 @@ Examples:
   npx @claude-flow/cli@latest hooks pre-task -d "Refactor codebase" --optimize-topology
 ```
 
-**Features:**
-- Automatic agent spawning based on task analysis
-- Memory loading for context continuity
-- Topology optimization for task structure
-- Complexity estimation and time prediction
+**기능:**
+- 작업 분석에 따른 에이전트 자동 생성
+- 컨텍스트 연속성을 위한 메모리 불러오기
+- 작업 구조에 맞춘 토폴로지 최적화
+- 복잡도 추정과 소요 시간 예측
 
-**pre-search** - Prepare and optimize search operations
+**pre-search** - 검색 작업을 준비하고 최적화한다
 ```bash
 npx @claude-flow/cli@latest hooks pre-search --query <query>
 
@@ -149,16 +149,16 @@ Examples:
   npx @claude-flow/cli@latest hooks pre-search -q "authentication middleware"
 ```
 
-**Features:**
-- Cache checking for faster results
-- Query optimization
-- Search pattern improvement
+**기능:**
+- 더 빠른 결과를 위한 캐시 확인
+- 쿼리 최적화
+- 검색 패턴 개선
 
-#### Post-Operation Hooks
+#### 작업 후 Hooks
 
-Hooks that execute AFTER operations to process and learn:
+작업 **후에** 실행되어 결과를 처리하고 학습하는 hooks:
 
-**post-edit** - Auto-format, validate, and update memory
+**post-edit** - 자동 포맷팅, 검증, 메모리 갱신
 ```bash
 npx @claude-flow/cli@latest hooks post-edit [options]
 
@@ -175,13 +175,13 @@ Examples:
   npx @claude-flow/cli@latest hooks post-edit -f "utils/helpers.ts" --train-patterns
 ```
 
-**Features:**
-- Language-specific auto-formatting (Prettier, Black, gofmt)
-- Memory storage for edit context and decisions
-- Neural pattern training for continuous improvement
-- Output validation with linting
+**기능:**
+- 언어별 자동 포맷팅 (Prettier, Black, gofmt)
+- 편집 컨텍스트와 결정 사항을 메모리에 저장
+- 지속적 개선을 위한 neural pattern 학습
+- 린트를 통한 출력 검증
 
-**post-bash** - Log execution and update metrics
+**post-bash** - 실행을 기록하고 지표를 갱신한다
 ```bash
 npx @claude-flow/cli@latest hooks post-bash --command <cmd>
 
@@ -195,13 +195,13 @@ Examples:
   npx @claude-flow/cli@latest hooks post-bash -c "npm test" --update-metrics
 ```
 
-**Features:**
-- Command execution logging
-- Performance metric tracking
-- Result storage for analysis
-- Error pattern detection
+**기능:**
+- 명령 실행 기록
+- 성능 지표 추적
+- 분석용 결과 저장
+- 오류 패턴 감지
 
-**post-task** - Performance analysis and decision storage
+**post-task** - 성능 분석과 결정 사항 저장
 ```bash
 npx @claude-flow/cli@latest hooks post-task [options]
 
@@ -218,13 +218,13 @@ Examples:
   npx @claude-flow/cli@latest hooks post-task -t "bug-fix-123" --store-decisions
 ```
 
-**Features:**
-- Execution time and token usage measurement
-- Decision and implementation choice recording
-- Neural learning pattern export
-- Completion report generation
+**기능:**
+- 실행 시간과 토큰 사용량 측정
+- 결정 사항과 구현 선택 기록
+- Neural 학습 패턴 내보내기
+- 완료 보고서 생성
 
-**post-search** - Cache results and improve patterns
+**post-search** - 결과를 캐시하고 패턴을 개선한다
 ```bash
 npx @claude-flow/cli@latest hooks post-search --query <query> --results <path>
 
@@ -238,16 +238,16 @@ Examples:
   npx @claude-flow/cli@latest hooks post-search -q "auth" -r "results.json" --train-patterns
 ```
 
-**Features:**
-- Result caching for faster subsequent searches
-- Search pattern improvement
-- Relevance scoring
+**기능:**
+- 이후 검색을 빠르게 하는 결과 캐싱
+- 검색 패턴 개선
+- 관련도 점수 산정
 
-#### MCP Integration Hooks
+#### MCP 연동 Hooks
 
-Hooks that coordinate with MCP swarm tools:
+MCP 스웜 도구와 조정하는 hooks:
 
-**mcp-initialized** - Persist swarm configuration
+**mcp-initialized** - 스웜 설정을 유지한다
 ```bash
 npx @claude-flow/cli@latest hooks mcp-initialized --swarm-id <id>
 
@@ -257,7 +257,7 @@ Features:
 - Initialize coordination namespace
 ```
 
-**agent-spawned** - Update agent roster and memory
+**agent-spawned** - 에이전트 명단과 메모리를 갱신한다
 ```bash
 npx @claude-flow/cli@latest hooks agent-spawned --agent-id <id> --type <type>
 
@@ -267,7 +267,7 @@ Features:
 - Initialize agent-specific memory namespace
 ```
 
-**task-orchestrated** - Monitor task progress
+**task-orchestrated** - 작업 진행을 모니터링한다
 ```bash
 npx @claude-flow/cli@latest hooks task-orchestrated --task-id <id>
 
@@ -277,7 +277,7 @@ Features:
 - Update coordination state
 ```
 
-**neural-trained** - Save pattern improvements
+**neural-trained** - 패턴 개선 사항을 저장한다
 ```bash
 npx @claude-flow/cli@latest hooks neural-trained --pattern <name>
 
@@ -287,9 +287,9 @@ Features:
 - Share learning across agents
 ```
 
-#### Memory Coordination Hooks
+#### 메모리 조정 Hooks
 
-**memory-write** - Triggered when agents write to coordination memory
+**memory-write** - 에이전트가 조정 메모리에 쓸 때 실행된다
 ```bash
 Features:
 - Validate memory key format
@@ -298,7 +298,7 @@ Features:
 - Notify subscribed agents
 ```
 
-**memory-read** - Triggered when agents read from coordination memory
+**memory-read** - 에이전트가 조정 메모리에서 읽을 때 실행된다
 ```bash
 Features:
 - Log access patterns
@@ -307,7 +307,7 @@ Features:
 - Track usage statistics
 ```
 
-**memory-sync** - Synchronize memory across swarm agents
+**memory-sync** - 스웜 에이전트 간 메모리를 동기화한다
 ```bash
 npx @claude-flow/cli@latest hooks memory-sync --namespace <ns>
 
@@ -318,9 +318,9 @@ Features:
 - Maintain consistency
 ```
 
-#### Session Hooks
+#### 세션 Hooks
 
-**session-start** - Initialize new session
+**session-start** - 새 세션을 초기화한다
 ```bash
 npx @claude-flow/cli@latest hooks session-start --session-id <id>
 
@@ -336,7 +336,7 @@ Features:
 - Set up coordination namespace
 ```
 
-**session-restore** - Load previous session state
+**session-restore** - 이전 세션 상태를 불러온다
 ```bash
 npx @claude-flow/cli@latest hooks session-restore --session-id <id>
 
@@ -350,13 +350,13 @@ Examples:
   npx @claude-flow/cli@latest hooks session-restore -s "feature-auth" --restore-memory
 ```
 
-**Features:**
-- Load previous session context
-- Restore memory state and decisions
-- Reconfigure agents to previous state
-- Resume in-progress tasks
+**기능:**
+- 이전 세션 컨텍스트 불러오기
+- 메모리 상태와 결정 사항 복원
+- 에이전트를 이전 상태로 재구성
+- 진행 중이던 작업 재개
 
-**session-end** - Cleanup and persist session state
+**session-end** - 세션 상태를 정리하고 유지한다
 ```bash
 npx @claude-flow/cli@latest hooks session-end [options]
 
@@ -373,13 +373,13 @@ Examples:
   npx @claude-flow/cli@latest hooks session-end -s "quick-fix" --cleanup-temp
 ```
 
-**Features:**
-- Save current context and progress
-- Export session metrics (duration, commands, tokens, files)
-- Generate work summary with decisions and next steps
-- Cleanup temporary files and optimize storage
+**기능:**
+- 현재 컨텍스트와 진행 상황 저장
+- 세션 지표 내보내기 (소요 시간, 명령, 토큰, 파일)
+- 결정 사항과 다음 단계를 담은 작업 요약 생성
+- 임시 파일 정리와 저장 공간 최적화
 
-**notify** - Custom notifications with swarm status
+**notify** - 스웜 상태를 포함한 사용자 정의 알림
 ```bash
 npx @claude-flow/cli@latest hooks notify --message <msg>
 
@@ -394,17 +394,17 @@ Examples:
   npx @claude-flow/cli@latest hooks notify -m "Critical error" --level error --broadcast
 ```
 
-**Features:**
-- Send notifications to coordination system
-- Include swarm status and metrics
-- Broadcast to all agents
-- Log important events
+**기능:**
+- 조정 시스템에 알림 전송
+- 스웜 상태와 지표 포함
+- 모든 에이전트에 브로드캐스트
+- 중요한 이벤트 기록
 
-### Configuration
+### 설정
 
-#### Basic Configuration
+#### 기본 설정
 
-Edit `.claude/settings.json` to configure hooks:
+`.claude/settings.json`을 편집해 hooks를 설정한다:
 
 ```json
 {
@@ -445,9 +445,9 @@ Edit `.claude/settings.json` to configure hooks:
 }
 ```
 
-#### Advanced Configuration
+#### 고급 설정
 
-Complete hook configuration with all features:
+모든 기능을 담은 전체 hook 설정:
 
 ```json
 {
@@ -546,9 +546,9 @@ Complete hook configuration with all features:
 }
 ```
 
-#### Protected File Patterns
+#### 보호 파일 패턴
 
-Add protection for sensitive files:
+민감한 파일에 보호를 추가한다:
 
 ```json
 {
@@ -568,9 +568,9 @@ Add protection for sensitive files:
 }
 ```
 
-#### Automatic Testing
+#### 자동 테스트
 
-Run tests after file modifications:
+파일 수정 후 테스트를 실행한다:
 
 ```json
 {
@@ -591,11 +591,11 @@ Run tests after file modifications:
 }
 ```
 
-### MCP Tool Integration
+### MCP 도구 연동
 
-Hooks automatically integrate with MCP tools for coordination:
+Hooks는 조정을 위해 MCP 도구와 자동으로 연동된다:
 
-#### Pre-Task Hook with Agent Suggestions
+#### 에이전트 추천이 포함된 Pre-Task Hook
 
 ```javascript
 // Hook command
@@ -610,7 +610,7 @@ mcp__claude-flow__hooks_pre-task {
 }
 ```
 
-#### Post-Edit Hook with Memory Storage
+#### 메모리 저장이 포함된 Post-Edit Hook
 
 ```javascript
 // Hook command
@@ -624,7 +624,7 @@ mcp__claude-flow__hooks_post-edit {
 }
 ```
 
-#### Session End Hook with State Persistence
+#### 상태 유지가 포함된 Session End Hook
 
 ```javascript
 // Hook command
@@ -637,13 +637,13 @@ mcp__claude-flow__hooks_session-end {
 }
 ```
 
-### Memory Coordination Protocol
+### 메모리 조정 프로토콜
 
-All hooks follow a standardized memory coordination pattern:
+모든 hooks는 표준화된 메모리 조정 패턴을 따른다:
 
-#### Three-Phase Memory Protocol
+#### 3단계 메모리 프로토콜
 
-**Phase 1: STATUS** - Hook starts
+**1단계: STATUS** - Hook 시작
 ```javascript
 mcp__claude-flow__memory_store {
   key: "swarm/hooks/pre-edit/status",
@@ -657,7 +657,7 @@ mcp__claude-flow__memory_store {
 }
 ```
 
-**Phase 2: PROGRESS** - Hook processes
+**2단계: PROGRESS** - Hook 처리
 ```javascript
 mcp__claude-flow__memory_store {
   key: "swarm/hooks/pre-edit/progress",
@@ -670,7 +670,7 @@ mcp__claude-flow__memory_store {
 }
 ```
 
-**Phase 3: COMPLETE** - Hook finishes
+**3단계: COMPLETE** - Hook 완료
 ```javascript
 mcp__claude-flow__memory_store {
   key: "swarm/hooks/pre-edit/complete",
@@ -685,11 +685,11 @@ mcp__claude-flow__memory_store {
 }
 ```
 
-### Hook Response Format
+### Hook 응답 형식
 
-Hooks return JSON responses to control operation flow:
+Hooks는 작업 흐름을 제어하는 JSON 응답을 반환한다:
 
-#### Continue Response
+#### 계속 응답
 ```json
 {
   "continue": true,
@@ -702,7 +702,7 @@ Hooks return JSON responses to control operation flow:
 }
 ```
 
-#### Block Response
+#### 차단 응답
 ```json
 {
   "continue": false,
@@ -715,7 +715,7 @@ Hooks return JSON responses to control operation flow:
 }
 ```
 
-#### Warning Response
+#### 경고 응답
 ```json
 {
   "continue": true,
@@ -731,9 +731,9 @@ Hooks return JSON responses to control operation flow:
 }
 ```
 
-### Git Integration
+### Git 연동
 
-Hooks can integrate with Git operations for quality control:
+Hooks는 품질 관리를 위해 Git 작업과 연동할 수 있다:
 
 #### Pre-Commit Hook
 ```bash
@@ -806,11 +806,11 @@ fi
 exit 0
 ```
 
-### Agent Coordination Workflow
+### 에이전트 조정 워크플로
 
-How agents use hooks for coordination:
+에이전트가 조정을 위해 hooks를 쓰는 방식:
 
-#### Agent Workflow Example
+#### 에이전트 워크플로 예시
 
 ```bash
 # Agent 1: Backend Developer
@@ -876,11 +876,11 @@ npx @claude-flow/cli@latest hooks notify \
   --broadcast
 ```
 
-### Custom Hook Creation
+### 사용자 정의 Hook 만들기
 
-Create custom hooks for specific workflows:
+특정 워크플로용 사용자 정의 hooks를 만든다:
 
-#### Custom Hook Template
+#### 사용자 정의 Hook 템플릿
 
 ```javascript
 // .claude/hooks/custom-quality-check.js
@@ -924,7 +924,7 @@ module.exports = {
 };
 ```
 
-#### Register Custom Hook
+#### 사용자 정의 Hook 등록
 
 ```json
 {
@@ -944,9 +944,9 @@ module.exports = {
 }
 ```
 
-### Real-World Examples
+### 실전 예시
 
-#### Example 1: Full-Stack Development Workflow
+#### 예시 1: 풀스택 개발 워크플로
 
 ```bash
 # Session start - initialize coordination
@@ -986,7 +986,7 @@ npx @claude-flow/cli@latest hooks session-end \
   --generate-summary
 ```
 
-#### Example 2: Debugging with Hooks
+#### 예시 2: Hooks로 디버깅하기
 
 ```bash
 # Start debugging session
@@ -1027,7 +1027,7 @@ npx @claude-flow/cli@latest hooks session-end \
   --export-metrics
 ```
 
-#### Example 3: Multi-Agent Refactoring
+#### 예시 3: 멀티 에이전트 리팩터링
 
 ```bash
 # Initialize swarm for refactoring
@@ -1069,19 +1069,19 @@ npx @claude-flow/cli@latest hooks notify \
   --broadcast
 ```
 
-### Performance Tips
+### 성능 팁
 
-1. **Keep Hooks Lightweight** - Target < 100ms execution time
-2. **Use Async for Heavy Operations** - Don't block the main flow
-3. **Cache Aggressively** - Store frequently accessed data
-4. **Batch Related Operations** - Combine multiple actions
-5. **Use Memory Wisely** - Set appropriate TTLs
-6. **Monitor Hook Performance** - Track execution times
-7. **Parallelize When Possible** - Run independent hooks concurrently
+1. **Hooks를 가볍게 유지한다** - 실행 시간 100ms 미만을 목표로 한다
+2. **무거운 작업은 비동기로 처리한다** - 메인 흐름을 막지 않는다
+3. **적극적으로 캐시한다** - 자주 접근하는 데이터를 저장한다
+4. **관련 작업을 묶는다** - 여러 동작을 하나로 합친다
+5. **메모리를 현명하게 쓴다** - 적절한 TTL을 설정한다
+6. **Hook 성능을 모니터링한다** - 실행 시간을 추적한다
+7. **가능하면 병렬화한다** - 독립적인 hooks는 동시에 실행한다
 
-### Debugging Hooks
+### Hooks 디버깅
 
-Enable debug mode for troubleshooting:
+문제 해결을 위해 디버그 모드를 켠다:
 
 ```bash
 # Enable debug output
@@ -1097,75 +1097,75 @@ cat .claude-flow/logs/hooks-$(date +%Y-%m-%d).log
 npx @claude-flow/cli@latest hooks validate-config
 ```
 
-### Benefits
+### 장점
 
-- **Automatic Agent Assignment**: Right agent for every file type
-- **Consistent Code Formatting**: Language-specific formatters
-- **Continuous Learning**: Neural patterns improve over time
-- **Cross-Session Memory**: Context persists between sessions
-- **Performance Tracking**: Comprehensive metrics and analytics
-- **Automatic Coordination**: Agents sync via memory
-- **Smart Agent Spawning**: Task-based agent selection
-- **Quality Gates**: Pre-commit validation and verification
-- **Error Prevention**: Syntax validation before edits
-- **Knowledge Sharing**: Decisions stored and shared
-- **Reduced Manual Work**: Automation of repetitive tasks
-- **Better Collaboration**: Seamless multi-agent coordination
+- **에이전트 자동 배정**: 파일 유형마다 알맞은 에이전트
+- **일관된 코드 포맷팅**: 언어별 포매터
+- **지속적 학습**: Neural pattern이 시간이 갈수록 개선된다
+- **세션 간 메모리**: 컨텍스트가 세션 사이에 유지된다
+- **성능 추적**: 종합적인 지표와 분석
+- **자동 조정**: 에이전트가 메모리를 통해 동기화된다
+- **스마트 에이전트 생성**: 작업 기반 에이전트 선택
+- **품질 게이트**: 커밋 전 검증과 확인
+- **오류 예방**: 편집 전 문법 검증
+- **지식 공유**: 결정 사항을 저장하고 공유한다
+- **수작업 감소**: 반복 작업 자동화
+- **더 나은 협업**: 매끄러운 멀티 에이전트 조정
 
-### Best Practices
+### 모범 사례
 
-1. **Configure Hooks Early** - Set up during project initialization
-2. **Use Memory Keys Strategically** - Organize with clear namespaces
-3. **Enable Auto-Formatting** - Maintain code consistency
-4. **Train Patterns Continuously** - Learn from successful operations
-5. **Monitor Performance** - Track hook execution times
-6. **Validate Configuration** - Test hooks before production use
-7. **Document Custom Hooks** - Maintain hook documentation
-8. **Set Appropriate Timeouts** - Prevent hanging operations
-9. **Handle Errors Gracefully** - Use continueOnError when appropriate
-10. **Review Metrics Regularly** - Optimize based on usage patterns
+1. **Hooks를 일찍 설정한다** - 프로젝트 초기화 때 설정한다
+2. **메모리 키를 전략적으로 쓴다** - 명확한 네임스페이스로 정리한다
+3. **자동 포맷팅을 켠다** - 코드 일관성을 유지한다
+4. **패턴을 꾸준히 학습시킨다** - 성공한 작업에서 배운다
+5. **성능을 모니터링한다** - hook 실행 시간을 추적한다
+6. **설정을 검증한다** - 실사용 전에 hooks를 테스트한다
+7. **사용자 정의 Hooks를 문서화한다** - hook 문서를 유지한다
+8. **적절한 타임아웃을 설정한다** - 멈춘 작업을 막는다
+9. **오류를 우아하게 처리한다** - 필요할 때 continueOnError를 쓴다
+10. **지표를 정기적으로 검토한다** - 사용 패턴에 따라 최적화한다
 
-### Troubleshooting
+### 문제 해결
 
-#### Hooks Not Executing
-- Verify `.claude/settings.json` syntax
-- Check hook matcher patterns
-- Enable debug mode
-- Review permission settings
-- Ensure claude-flow CLI is in PATH
+#### Hooks가 실행되지 않을 때
+- `.claude/settings.json` 문법을 확인한다
+- hook matcher 패턴을 점검한다
+- 디버그 모드를 켠다
+- 권한 설정을 검토한다
+- claude-flow CLI가 PATH에 있는지 확인한다
 
-#### Hook Timeouts
-- Increase timeout values in configuration
-- Make hooks asynchronous for heavy operations
-- Optimize hook logic
-- Check network connectivity for MCP tools
+#### Hook 타임아웃
+- 설정에서 타임아웃 값을 늘린다
+- 무거운 작업용 hooks는 비동기로 만든다
+- hook 로직을 최적화한다
+- MCP 도구의 네트워크 연결을 확인한다
 
-#### Memory Issues
-- Set appropriate TTLs for memory keys
-- Clean up old memory entries
-- Use memory namespaces effectively
-- Monitor memory usage
+#### 메모리 문제
+- 메모리 키에 적절한 TTL을 설정한다
+- 오래된 메모리 항목을 정리한다
+- 메모리 네임스페이스를 효과적으로 쓴다
+- 메모리 사용량을 모니터링한다
 
-#### Performance Problems
-- Profile hook execution times
-- Use caching for repeated operations
-- Batch operations when possible
-- Reduce hook complexity
+#### 성능 문제
+- hook 실행 시간을 프로파일링한다
+- 반복 작업에는 캐싱을 쓴다
+- 가능하면 작업을 묶어서 처리한다
+- hook 복잡도를 줄인다
 
-### Related Commands
+### 관련 명령
 
-- `npx @claude-flow/cli@latest init --hooks` - Initialize hooks system
-- `npx @claude-flow/cli@latest hooks list` - List available hooks
-- `npx @claude-flow/cli@latest memory stats` - Show memory statistics
-- `npx @claude-flow/cli@latest agent spawn` - Spawn agents
-- `npx @claude-flow/cli@latest swarm init` - Initialize swarm
+- `npx @claude-flow/cli@latest init --hooks` - hooks 시스템을 초기화한다
+- `npx @claude-flow/cli@latest hooks list` - 사용 가능한 hooks를 나열한다
+- `npx @claude-flow/cli@latest memory stats` - 메모리 통계를 보여 준다
+- `npx @claude-flow/cli@latest agent spawn` - 에이전트를 생성한다
+- `npx @claude-flow/cli@latest swarm init` - 스웜을 초기화한다
 
-### Integration with Other Skills
+### 다른 스킬과의 연동
 
-This skill works seamlessly with:
-- **SPARC Methodology** - Hooks enhance SPARC workflows
-- **Pair Programming** - Automated quality in pairing sessions
-- **Verification Quality** - Truth-score validation in hooks
-- **GitHub Workflows** - Git integration for commits/PRs
-- **Performance Analysis** - Metrics collection in hooks
-- **Swarm Advanced** - Multi-agent coordination via hooks
+이 스킬은 다음 스킬과 매끄럽게 함께 동작한다:
+- **SPARC Methodology** - Hooks가 SPARC 워크플로를 강화한다
+- **Pair Programming** - 페어링 세션의 품질을 자동으로 관리한다
+- **Verification Quality** - hooks 안에서 truth-score 검증을 한다
+- **GitHub Workflows** - 커밋·PR을 위한 Git 연동
+- **Performance Analysis** - hooks 안에서 지표를 수집한다
+- **Swarm Advanced** - hooks를 통한 멀티 에이전트 조정
